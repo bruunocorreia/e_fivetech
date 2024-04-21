@@ -1,4 +1,4 @@
-import type { Product } from '../payload-types'
+import type { Product } from '../payload-types';
 
 export const product1: Partial<Product> = {
   title: 'Cotton T-Shirt',
@@ -7,7 +7,7 @@ export const product1: Partial<Product> = {
   _status: 'published',
   meta: {
     title: 'Cotton T-Shirt',
-    description: 'Make a one-time purchase for this physical product.',
+    Descrição: 'Make a one-time purchase for this physical product.',  // Corrigido aqui
     image: '{{PRODUCT_IMAGE}}',
   },
   layout: [
@@ -21,18 +21,18 @@ export const product1: Partial<Product> = {
               children: [
                 {
                   text: "This content is completely dynamic using custom layout building blocks configured in the CMS. This can be anything you'd like from rich text and images, to highly designed, complex components.",
-                },
-              ],
-            },
+                }
+              ]
+            }
           ],
           link: {
             reference: null,
             url: '',
             label: '',
           },
-        },
+        }
       ],
-    },
+    }
   ],
   relatedProducts: [], // this is populated by the seed script
-}
+};
