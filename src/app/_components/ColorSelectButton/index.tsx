@@ -1,34 +1,32 @@
 'use client'
-
 import React, { useState } from 'react';
 import classes from './index.module.scss';
 
 export const ColorSelectButton = ({ title = "Cor", colors }) => {
-  const hexaColors = colors.map(cor => "#" + cor);
-  const colorNames = ["Jeans Vintage", "Azul Petróleo", "Mais Um Nome"]; // Substitua pelos nomes das cores apropriados
+  const [selectedColor, setSelectedColor] = useState(colors[0].colorHex);
+  const [selectedColorName, setSelectedColorName] = useState(colors[0].color);
 
-  const handleColorSelection = (color) => {
-    // Aqui você pode lidar com a mudança de cor, talvez atualizar o estado do produto
+  const handleColorSelection = (colorHex, colorName) => {
+    setSelectedColor(colorHex);
+    setSelectedColorName(colorName);
   };
-
-  const [selectedColor, setSelectedColor] = useState(hexaColors[0]);
 
   return (
     <div className={classes.colorSelectWrapper}>
-      <span className={classes.colorLabel}>Cor</span>
+      <div className={classes.colorLabelContainer}> {/* Container adicionado para título e nome da cor */}
+        <span className={classes.colorLabel}>{title}: </span>
+        <span className={classes.selectedColorName}>{selectedColorName}</span> {/* Exibe o nome da cor selecionada ao lado do título */}
+      </div>
       <div className={classes.colorsContainer}>
-        {hexaColors.map((color, index) => (
+        {colors.map(({ color, colorHex }, index) => (
           <button
-            key={color}
-            className={`${classes.colorButton} ${selectedColor === color ? classes.selected : ''}`}
-            onClick={() => {
-              setSelectedColor(color);
-              handleColorSelection(color);
-            }}
+            key={colorHex}
+            className={`${classes.colorButton} ${selectedColor === colorHex ? 'selected' : ''}`}
+            onClick={() => handleColorSelection(colorHex, color)}
             aria-label={`Select ${color}`}
           >
-            <div className={`${classes.circle}`} style={{ backgroundColor: color }}></div>
-            <span className={classes.colorName}>{colorNames[index]}</span>
+            <div className={`${classes.square} ${selectedColor === colorHex ? classes.filledSquare : ''}`} style={{ backgroundColor: colorHex }}></div>
+           
           </button>
         ))}
       </div>

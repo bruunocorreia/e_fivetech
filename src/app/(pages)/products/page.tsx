@@ -33,8 +33,6 @@ const Products = async () => {
     console.log(error)
   }
 
-  console.log('pagina', page?.layout)
-
 
   return (
     <div className={classes.container}>

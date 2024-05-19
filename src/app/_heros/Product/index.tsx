@@ -20,8 +20,9 @@ export const ProductHero: React.FC<{
 }> = ({ product }) => {
   const { title, price, photos, categories, colors, sizes, description, discountPercentage = {} } = product
 
+  //console.log('cor',colors)
+
   const metaImage = photos.map(item => item.photo);
-  //const colors = ['#1c212c', '#ffed03', '#0dcaf0']; // substitua com as cores do seu produto
 
   const priceValue = (price).toLocaleString('pt-BR', {
     style: 'currency',

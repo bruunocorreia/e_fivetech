@@ -6,7 +6,7 @@
 }
 
 .colorLabel {
-  font-size: 15;
+  font-size: 20px;
   margin-bottom: 0.5rem; /* Espaço entre a label e os botões */
 }
 
@@ -18,44 +18,37 @@
 .colorButton {
   display: flex;
   align-items: center;
-  margin-right: 1rem;
-  margin-bottom: 0.5rem;
+  margin-right: 0;
+  margin-bottom: 0;
   cursor: pointer;
   background: none;
   border: none;
   padding: 0;
   outline: none;
+  position: relative;
+  margin-right: 1rem; /* Aumento da margem à direita */
+  margin-bottom: 1rem; /* Aumento da margem embaixo */
 
   &:last-child {
     margin-right: 0;
   }
 
-  .circle {
+  .square {
     width: 24px;
     height: 24px;
-    border: 2px solid #ccc; /* Borda cinza clara */
-    border-radius: 50%; /* Tornar o botão circular */
     background-color: transparent; /* Fundo transparente */
     margin-right: 0.5rem;
     position: relative;
+    transition: box-shadow 0.3s ease; /* Animação suave para o efeito de borda */
   }
 
-  &.selected .circle {
-    border: 2px solid #333; /* Borda mais escura para o botão selecionado */
-
-    &:after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 12px;
-      height: 12px;
-      background-color: #333; /* Cor do círculo interno */
-      border-radius: 50%; /* Tornar o círculo interno */
-      z-index: 1;
-    }
+  .filledSquare {
+    background-color: currentColor; /* Define a cor de fundo para a cor selecionada */
   }
+
+  .selected .square {
+    box-shadow: 0 0 0 20px #555; /* Altere para a cor e tamanho de borda desejados */
+}
 
   .colorName {
     font-size: 14px;
