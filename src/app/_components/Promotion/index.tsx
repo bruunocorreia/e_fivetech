@@ -35,7 +35,7 @@ const Promotion = () => {
     return () => {
       clearInterval(timerInterval) // Cleanup the interval when the component unmounts.
     }
-  }, [targetDate])
+  }, []) // Removed targetDate from dependency array
 
   return (
     <section className={classes.promotion}>

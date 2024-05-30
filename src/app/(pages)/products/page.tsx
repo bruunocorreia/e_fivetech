@@ -1,4 +1,5 @@
 import React from 'react'
+import { GetStaticProps } from 'next'
 import { draftMode } from 'next/headers'
 
 import { Category, Color, Page } from '../../../payload/payload-types'
@@ -12,7 +13,31 @@ import Filters from './Filters'
 
 import classes from './index.module.scss'
 
-const Products = async () => {
+type ProductsProps = {
+  page: Page | null
+  categories: Category[] | null
+  colors: Color[] | null
+}
+
+const Products: React.FC<ProductsProps> = ({ page, categories, colors }) => {
+  return (
+    <div className={classes.container}>
+      <Gutter className={classes.products}>
+        <div className={classes.filters}>
+          <Filters categories={categories} colors={colors} />
+        </div>
+        <div className={classes.productList}>
+          <div className={classes.productView}>
+            <Blocks blocks={page?.layout} disableTopPadding={true} />
+          </div>
+        </div>
+      </Gutter>
+      <HR />
+    </div>
+  )
+}
+
+export const getStaticProps: GetStaticProps = async () => {
   const { isEnabled: isDraftMode } = draftMode()
 
   let page: Page | null = null
@@ -33,21 +58,13 @@ const Products = async () => {
     console.log(error)
   }
 
-  return (
-    <div className={classes.container}>
-      <Gutter className={classes.products}>
-        <div className={classes.filters}>
-          <Filters categories={categories} colors={colors} />
-        </div>
-        <div className={classes.productList}>
-          <div className={classes.productView}>
-            <Blocks blocks={page?.layout} disableTopPadding={true} />
-          </div>
-        </div>
-      </Gutter>
-      <HR />
-    </div>
-  )
+  return {
+    props: {
+      page,
+      categories,
+      colors,
+    },
+  }
 }
 
 export default Products
