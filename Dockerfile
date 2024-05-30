@@ -7,7 +7,10 @@ COPY package*.json ./
 
 COPY . .
 RUN yarn install
-RUN yarn build
+# Running prettier, lint, and build scripts.
+RUN yarn prettier --write && \
+    yarn lint --fix && \
+    yarn build
 
 FROM base as runtime
 
