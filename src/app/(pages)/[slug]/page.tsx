@@ -5,11 +5,11 @@ import { notFound } from 'next/navigation'
 
 import { Category, Page } from '../../../payload/payload-types'
 import { fetchDoc } from '../../_api/fetchDoc'
-import { fetchDocs } from '../../_api/fetchDocs'
-import { Blocks } from '../../_components/Blocks'
-import { Gutter } from '../../_components/Gutter'
-import { Hero } from '../../_components/Hero'
-import { generateMeta } from '../../_utilities/generateMeta'
+import { fetchDocs } from '../..//_api/fetchDocs'
+import { Blocks } from '../..//_components/Blocks'
+import { Gutter } from '../..//_components/Gutter'
+import { Hero } from '../..//_components/Hero'
+import { generateMeta } from '../..//_utilities/generateMeta'
 
 // Payload Cloud caches all files through Cloudflare, so we don't need Next.js to cache them as well
 // This means that we can turn off Next.js data caching and instead rely solely on the Cloudflare CDN
@@ -87,15 +87,6 @@ export async function getServerSideProps(context) {
       page,
       categories,
     },
-  }
-}
-
-export async function generateStaticParams() {
-  try {
-    const pages = await fetchDocs<Page>('pages')
-    return pages?.map(({ slug }) => slug)
-  } catch (error) {
-    return []
   }
 }
 
