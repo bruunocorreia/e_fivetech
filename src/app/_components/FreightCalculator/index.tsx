@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import axios from 'axios'
+
 import classes from './index.module.scss' // Verifique o caminho para o seu arquivo CSS
 
 export const FreightCalculator = ({ onFreightPriceSet }) => {

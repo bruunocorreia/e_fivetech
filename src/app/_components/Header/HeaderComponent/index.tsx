@@ -1,7 +1,8 @@
 'use client'
 import React, { useState } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
+
 // import { HeaderNav } from '../Nav';
 import classes from './index.module.scss' // Garanta que o caminho está correto
 

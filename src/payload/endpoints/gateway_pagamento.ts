@@ -1,5 +1,5 @@
-import { Router } from 'express'
 import axios from 'axios'
+import { Router } from 'express'
 // Step 1: Import the parts of the module you want to use
 import { MercadoPagoConfig, Payment } from 'mercadopago'
 import { v4 as uuidv4 } from 'uuid' // Importa o gerador de UUID

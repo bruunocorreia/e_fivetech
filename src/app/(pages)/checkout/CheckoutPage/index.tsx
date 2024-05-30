@@ -3,23 +3,24 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
+import axios from 'axios' // Certifique-se de ter o axios instalado
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import axios from 'axios' // Certifique-se de ter o axios instalado
 
 import { Button } from '../../../_components/Button'
-import { PaymentGateway } from '../../../_components/PaymentGateway'
+import { CancelShipmentComponent } from '../../../_components/FreightCancel'
+import { FreightCalculator } from '../../../_components/FreightSend'
 import { LoadingShimmer } from '../../../_components/LoadingShimmer'
+import { PaymentGateway } from '../../../_components/PaymentGateway'
 import { useAuth } from '../../../_providers/Auth'
 import { useCart } from '../../../_providers/Cart'
 import { useTheme } from '../../../_providers/Theme'
 import cssVariables from '../../../cssVariables'
 import { CheckoutForm } from '../CheckoutForm'
 import { CheckoutItem } from '../CheckoutItem'
-import { PersonalDataForm } from '../UserDataForm'
 import { ShippingDataForm } from '../ShippingDataForm'
-import { CancelShipmentComponent } from '../../../_components/FreightCancel'
-import { FreightCalculator } from '../../../_components/FreightSend'
+import { PersonalDataForm } from '../UserDataForm'
+
 import classes from './index.module.scss'
 
 export const CheckoutPage = () => {

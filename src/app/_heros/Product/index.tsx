@@ -3,14 +3,13 @@ import React, { Fragment } from 'react'
 import { Category, Product } from '../../../payload/payload-types'
 import { AddToCartButton } from '../../_components/AddToCartButton'
 import { ColorSelectButton } from '../../_components/ColorSelectButton'
-import { SizePicker } from '../../_components/SizePicker'
 import { FavButton } from '../../_components/FavButton'
 import { FreightCalculator } from '../../_components/FreightCalculator'
-import { PaymentGateway } from '../../_components/PaymentGateway'
-
 import { Gutter } from '../../_components/Gutter'
 import { Media } from '../../_components/Media'
+import { PaymentGateway } from '../../_components/PaymentGateway'
 import { Price } from '../../_components/Price'
+import { SizePicker } from '../../_components/SizePicker'
 
 import classes from './index.module.scss'
 

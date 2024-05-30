@@ -8,19 +8,17 @@ dotenv.config({
 })
 
 import express from 'express'
-import calculateFreightRouter from './payload/endpoints/melhor_envio'
+import payload from 'payload'
 
+import EmailRouterCad from './payload/endpoints/email_cadastro'
+import EmailRouter from './payload/endpoints/email_compra'
+import processPayment from './payload/endpoints/gateway_pagamento'
+import calculateFreightRouter from './payload/endpoints/melhor_envio'
 import carrinhoFreightRouter from './payload/endpoints/melhor_envio_add_carrinho'
 import GeraEtiquetaFreightRouter from './payload/endpoints/melhor_envio_add_etiqueta'
-import PrintEtiquetaFreightRouter from './payload/endpoints/melhor_envio_print_etiqueta'
-import CheckoutFreightRouter from './payload/endpoints/melhor_envio_checkout'
 import CancelFreightRouter from './payload/endpoints/melhor_envio_cancelamento'
-import EmailRouter from './payload/endpoints/email_compra'
-import EmailRouterCad from './payload/endpoints/email_cadastro'
-
-import processPayment from './payload/endpoints/gateway_pagamento'
-
-import payload from 'payload'
+import CheckoutFreightRouter from './payload/endpoints/melhor_envio_checkout'
+import PrintEtiquetaFreightRouter from './payload/endpoints/melhor_envio_print_etiqueta'
 
 const app = express()
 const PORT = process.env.PORT || 3000

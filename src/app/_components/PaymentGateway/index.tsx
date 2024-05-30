@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
+import { initMercadoPago, Payment, StatusScreen } from '@mercadopago/sdk-react'
 import axios from 'axios'
-import { Payment, initMercadoPago, StatusScreen } from '@mercadopago/sdk-react'
+import { useRouter } from 'next/navigation'
 
+import { Order } from '../../../payload/payload-types'
 import { useEmailSender } from '../../_components/email'
 import { useAuth } from '../../_providers/Auth'
-
 import { useCart } from '../../_providers/Cart'
-import { Order } from '../../../payload/payload-types'
-
-import { useRouter } from 'next/navigation'
 
 initMercadoPago('TEST-e4e31358-531f-4c4d-bd5c-3e77edc4ee3f', { locale: 'pt-BR' })
 

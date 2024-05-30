@@ -1,8 +1,8 @@
 import React, { ElementType, Fragment } from 'react'
 
-import { Image } from './Image'
-import { HighImpactImage } from './HighImpactImage'
 import { DefaultImage } from './DefaultImage'
+import { HighImpactImage } from './HighImpactImage'
+import { Image } from './Image'
 import { Props } from './types'
 import { Video } from './Video'
 

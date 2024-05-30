@@ -1,10 +1,10 @@
 import Link from 'next/link'
 
+import { FreightCalculator } from '../../../_components/FreightCalculator'
 import { DefaultMedia } from '../../../_components/Media'
 import { Price } from '../../../_components/Price'
 
 import classes from './index.module.scss'
-import { FreightCalculator } from '../../../_components/FreightCalculator'
 
 const DiscountedPrice = ({ price, discountPercentage }) => {
   // Calcula o preço com desconto, considerando desconto nulo como zero

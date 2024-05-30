@@ -1,7 +1,9 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+
 import { useFilter } from '../../../_providers/Filter'
+
 import classes from './index.module.scss'
 
 const getTitlesAndSubtitles = items => {

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+
 import classes from './index.module.scss'
 
 export const ColorSelectButton = ({ title = 'Cor', colors }) => {

@@ -3,17 +3,22 @@ import { Metadata } from 'next'
 import { draftMode } from 'next/headers'
 import { notFound } from 'next/navigation'
 
-import { Product, Product as ProductType } from '../../../../payload/payload-types'
+import {
+  Category,
+  Color,
+  Page,
+  Product,
+  Product as ProductType,
+} from '../../../../payload/payload-types'
 import { fetchDoc } from '../../../_api/fetchDoc'
 import { fetchDocs } from '../../../_api/fetchDocs'
 import { Blocks } from '../../../_components/Blocks'
+import { Gutter } from '../../../_components/Gutter'
+import { HR } from '../../../_components/HR'
 import { PaywallBlocks } from '../../../_components/PaywallBlocks'
 import { ProductHero } from '../../../_heros/Product'
 import { generateMeta } from '../../../_utilities/generateMeta'
-import { Gutter } from '../../../_components/Gutter'
-import { HR } from '../../../_components/HR'
 import Filters from '.././Filters'
-import { Category, Page, Color } from '../../../../payload/payload-types'
 
 import classes from '../index.module.scss'
 

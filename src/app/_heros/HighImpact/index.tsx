@@ -1,9 +1,10 @@
 'use client'
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
+
 import { Page } from '../../../payload/payload-types'
 import { Gutter } from '../../_components/Gutter'
 import { CMSLink } from '../../_components/Link'
-import { Media, HighImpactMedia } from '../../_components/Media'
+import { HighImpactMedia, Media } from '../../_components/Media'
 import RichText from '../../_components/RichText'
 import SplashScreen from '../../_components/SplashScreen/SplashScreen'
 

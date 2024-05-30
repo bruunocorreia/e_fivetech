@@ -1,6 +1,7 @@
 import React from 'react'
 import { FieldValues, UseFormRegister } from 'react-hook-form'
 import InputMask from 'react-input-mask'
+
 import classes from './index.module.scss'
 
 type Props = {
