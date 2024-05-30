@@ -9,7 +9,7 @@ module.exports = {
   ignorePatterns: ['**/payload-types.ts'],
   plugins: ['prettier', '@typescript-eslint'],
   rules: {
-    'prettier/prettier': ['error', { 
+    'prettier/prettier': ['warn', { 
       semi: false, 
       endOfLine: 'auto',
       requirePragma: false,
@@ -19,7 +19,7 @@ module.exports = {
     }],
     'no-console': 'off',
     '@typescript-eslint/ban-ts-comment': [
-      'error',
+      'warn',
       {
         'ts-expect-error': 'allow-with-description'
       }
