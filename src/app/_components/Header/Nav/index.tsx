@@ -2,12 +2,13 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 import { Header as HeaderType, User } from '../../../../payload/payload-types'
 import { useAuth } from '../../../_providers/Auth'
 import { CartLink } from '../../CartLink'
 import { CMSLink } from '../../Link'
-import SearchBar from '../../SearchBar'
+import SearchBar from '../../SearchBar/index'
 
 import classes from './index.module.scss'
 
@@ -42,23 +43,23 @@ export const HeaderNav: React.FC<{ header: HeaderType }> = ({ header }) => {
           return <CMSLink key={i} {...link} appearance="none" />
         })}
         <Link href="https://www.instagram.com" target="_blank">
-          <img src="/instagram.png" alt="Instagram" className={classes.socialIcon} />
+          <Image src="/instagram.png" alt="Instagram" className={classes.socialIcon} width={24} height={24} />
         </Link>
         <Link href="https://www.tiktok.com" target="_blank">
-          <img src="/tiktok.png" alt="TikTok" className={classes.socialIcon} />
+          <Image src="/tiktok.png" alt="TikTok" className={classes.socialIcon} width={24} height={24} />
         </Link>
         <Link href="/products">
-          <img src="/search.png" alt="Search" className={classes.socialIcon} />
+          <Image src="/search.png" alt="Search" className={classes.socialIcon} width={24} height={24} />
         </Link>
         {user && (
           <Link href="/account">
-            <img className={classes.socialIcon} alt="Minha Conta" src="/user_profile.png" />
+            <Image className={classes.socialIcon} alt="Minha Conta" src="/user_profile.png" width={24} height={24} />
           </Link>
         )}
         {!user && (
           <React.Fragment>
             <Link href="/login">
-              <img src="/login.png" alt="Login" className={classes.socialIcon} />
+              <Image src="/login.png" alt="Login" className={classes.socialIcon} width={24} height={24} />
             </Link>
           </React.Fragment>
         )}

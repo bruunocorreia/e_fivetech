@@ -30,8 +30,12 @@ router.post('/send-email', async (req, res) => {
       },
     )
     res.json(response.data)
-  } catch (error) {
-    console.error('Error sending email:', error)
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Error sending email:', error.message)
+    } else {
+      console.error('Unexpected error sending email:', error)
+    }
     res.status(500).send('Failed to send email. Please try again.')
   }
 })

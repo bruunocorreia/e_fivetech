@@ -29,8 +29,12 @@ router.post('/add-to-cart', async (req, res) => {
       },
     )
     res.json(response.data)
-  } catch (error) {
-    console.error('Error generating labels:', error)
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Error generating labels:', error.message)
+    } else {
+      console.error('Unexpected error generating labels:', error)
+    }
     res.status(500).send('Failed to generate labels. Please try again.')
   }
 })

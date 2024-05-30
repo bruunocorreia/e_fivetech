@@ -54,13 +54,13 @@ const FilterMenu = ({ categories, colors, preselectedCategory = null }) => {
     if (preselectedCategory && !categoryFilters.includes(preselectedCategory.title)) {
       setCategoryFilters([...categoryFilters, preselectedCategory.title])
     }
-  }, [preselectedCategory])
+  }, [preselectedCategory, categoryFilters, setCategoryFilters])
 
   useEffect(() => {
     if (preselectedCategory && !subCategoryFilters.includes(preselectedCategory.subtitle)) {
       setSubCategoryFilters([...subCategoryFilters, preselectedCategory.subtitle])
     }
-  }, [preselectedCategory])
+  }, [preselectedCategory, subCategoryFilters, setSubCategoryFilters])
 
   const handleSortChange = value => {
     setSelectedSort(value)

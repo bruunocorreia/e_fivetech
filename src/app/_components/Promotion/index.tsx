@@ -3,6 +3,9 @@ import React, { useEffect, useState } from 'react'
 
 import classes from './index.module.scss'
 
+const targetDate = new Date()
+targetDate.setDate(targetDate.getDate() + 3)
+
 const Promotion = () => {
   const [time, setTime] = useState({
     days: 0,
@@ -10,9 +13,6 @@ const Promotion = () => {
     minutes: 0,
     seconds: 0,
   })
-
-  const targetDate = new Date()
-  targetDate.setDate(targetDate.getDate() + 3)
 
   useEffect(() => {
     const timerInterval = setInterval(() => {
@@ -35,7 +35,7 @@ const Promotion = () => {
     return () => {
       clearInterval(timerInterval) // Cleanup the interval when the component unmounts.
     }
-  }, [])
+  }, [targetDate])
 
   return (
     <section className={classes.promotion}>

@@ -19,12 +19,12 @@ import Users from './collections/Users'
 import BeforeDashboard from './components/BeforeDashboard'
 import BeforeLogin from './components/BeforeLogin'
 import { Footer } from './globals/Footer'
-import { Header } from './globals/Header'
-import { Settings } from './globals/Settings'
+// import { Header } from './globals/Header'
+// import { Settings } from './globals/Settings'
 
-const generateTitle: GenerateTitle = () => {
-  return 'My Store'
-}
+// const generateTitle: GenerateTitle = () => {
+//   return 'My Store'
+// }
 
 const mockModulePath = path.resolve(__dirname, './emptyModuleMock.js')
 

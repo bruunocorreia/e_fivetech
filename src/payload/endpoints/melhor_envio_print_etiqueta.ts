@@ -1,11 +1,11 @@
-import axios from 'axios'
-import { Router } from 'express'
+import axios from 'axios';
+import { Router } from 'express';
 
-const router = Router()
+const router = Router();
 
 // Step 4: Imprime a etiqueta
 router.post('/print-labels', async (req, res) => {
-  const { orders, mode } = req.body
+  const { orders, mode } = req.body;
 
   try {
     const response = await axios.post(
@@ -21,13 +21,17 @@ router.post('/print-labels', async (req, res) => {
           'Content-Type': 'application/json', // Corrected the content-type
           'User-Agent': 'Aplicação (your_email@example.com)', // Replace with your actual contact email
         },
-      },
-    )
-    res.json(response.data)
-  } catch (error) {
-    console.error('Error printing labels:', error)
-    res.status(500).send('Failed to print labels. Please try again.')
+      }
+    );
+    res.json(response.data);
+  } catch (error: unknown) {
+    console.error('Error printing labels:', error);
+    if (error instanceof Error) {
+      res.status(500).send(`Failed to print labels: ${error.message}. Please try again.`);
+    } else {
+      res.status(500).send('Failed to print labels. Please try again.');
+    }
   }
-})
+});
 
-export default router
+export default router;

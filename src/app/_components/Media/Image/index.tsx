@@ -71,7 +71,7 @@ export const Image: React.FC<MediaProps> = props => {
               onClick={() => handleImageChange(index)}
               disabled={index === currentImageIndex}
             >
-              <img
+              <NextImage
                 src={`${process.env.NEXT_PUBLIC_SERVER_URL}/media/${item.filename}`}
                 alt={`Preview ${index + 1}`}
               />

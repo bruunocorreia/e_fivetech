@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { Router } from 'express'
 // Step 1: Import the parts of the module you want to use
 import { MercadoPagoConfig, Payment } from 'mercadopago'
@@ -23,8 +22,12 @@ router.post('/process-payment', async (req, res) => {
   try {
     const result = await payment.create(paymentData)
     res.json(result)
-  } catch (error) {
-    console.error('Error processing payment:', error)
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Error processing payment:', error.message)
+    } else {
+      console.error('Unexpected error processing payment:', error)
+    }
     res.status(500).send('Failed to process payment. Please try again.')
   }
 })

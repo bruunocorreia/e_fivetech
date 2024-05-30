@@ -5,17 +5,9 @@ import { anyone } from '../../access/anyone'
 import adminsAndUser from './access/adminsAndUser'
 import { checkRole } from './checkRole'
 import { customerProxy } from './endpoints/customer'
-import { createStripeCustomer } from './hooks/createStripeCustomer'
 import { ensureFirstUserIsAdmin } from './hooks/ensureFirstUserIsAdmin'
 import { loginAfterCreate } from './hooks/loginAfterCreate'
 import { resolveDuplicatePurchases } from './hooks/resolveDuplicatePurchases'
-import { CustomerSelect } from './ui/CustomerSelect'
-
-// Define the type for the user
-interface User {
-  email: string
-  // other properties
-}
 
 const Users: CollectionConfig = {
   slug: 'users',
@@ -37,11 +29,9 @@ const Users: CollectionConfig = {
   auth: {
     forgotPassword: {
       generateEmailHTML: ({
-        req,
         token,
         user,
       }: {
-        req: any
         token: string
         user: { email: string }
       }) => {

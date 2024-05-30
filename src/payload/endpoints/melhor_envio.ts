@@ -34,8 +34,12 @@ router.post('/calculate-freight', async (req, res) => {
       },
     )
     res.json(response.data)
-  } catch (error) {
-    console.error('Error calculating freight:', error)
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Error calculating freight:', error.message)
+    } else {
+      console.error('Unexpected error calculating freight:', error)
+    }
     res.status(500).send('Failed to calculate freight. Please try again.')
   }
 })

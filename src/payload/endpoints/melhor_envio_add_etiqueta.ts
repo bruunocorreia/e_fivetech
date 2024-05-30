@@ -1,11 +1,11 @@
-import axios from 'axios'
-import { Router } from 'express'
+import axios from 'axios';
+import { Router } from 'express';
 
-const router = Router()
+const router = Router();
 
 // Step 3: Gera a etiqueta
 router.post('/generate-labels', async (req, res) => {
-  const { orderIds } = req.body
+  const { orderIds } = req.body;
 
   try {
     const response = await axios.post(
@@ -20,13 +20,17 @@ router.post('/generate-labels', async (req, res) => {
           'Content-Type': 'application/json',
           'User-Agent': 'Aplicação nicosathler@hotmail.com',
         },
-      },
-    )
-    res.json(response.data)
-  } catch (error) {
-    console.error('Error generating labels:', error)
-    res.status(500).send('Failed to generate labels. Please try again.')
+      }
+    );
+    res.json(response.data);
+  } catch (error: unknown) {
+    console.error('Error generating labels:', error);
+    if (error instanceof Error) {
+      res.status(500).send(`Failed to generate labels: ${error.message}. Please try again.`);
+    } else {
+      res.status(500).send('Failed to generate labels. Please try again.');
+    }
   }
-})
+});
 
-export default router
+export default router;

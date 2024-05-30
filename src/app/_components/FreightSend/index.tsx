@@ -34,18 +34,6 @@ export const FreightCalculator = ({
     watch,
   } = useForm<FormData>()
 
-  useEffect(() => {
-    if (zipCode !== undefined) {
-      const formattedZipCode = zipCode.toString().padStart(8, '0')
-      reset({ zipCode: formattedZipCode })
-      calculateFreight({ zipCode: formattedZipCode })
-    } else if (user.zipCode) {
-      const formattedZipCode = user.zipCode.toString().padStart(8, '0')
-      reset({ zipCode: formattedZipCode })
-      calculateFreight({ zipCode: formattedZipCode })
-    }
-  }, [zipCode, user.zipCode, reset])
-
   const calculateFreight = useCallback(
     async data => {
       const { zipCode } = data
@@ -82,7 +70,7 @@ export const FreightCalculator = ({
         onFreightPriceSet(0)
       }
     },
-    [onFreightPriceSet, user.zipCode, onFreightCalculation],
+    [onFreightPriceSet, onServiceId, onFreightCalculation, user.zipCode, updateUserCep]
   )
 
   const updateUserCep = useCallback(
@@ -107,8 +95,20 @@ export const FreightCalculator = ({
         }
       }
     },
-    [user, setUser],
+    [user, setUser]
   )
+
+  useEffect(() => {
+    if (zipCode !== undefined) {
+      const formattedZipCode = zipCode.toString().padStart(8, '0')
+      reset({ zipCode: formattedZipCode })
+      calculateFreight({ zipCode: formattedZipCode })
+    } else if (user.zipCode) {
+      const formattedZipCode = user.zipCode.toString().padStart(8, '0')
+      reset({ zipCode: formattedZipCode })
+      calculateFreight({ zipCode: formattedZipCode })
+    }
+  }, [zipCode, user.zipCode, reset, calculateFreight])
 
   return (
     <form onSubmit={handleSubmit(calculateFreight)} className={classes.form}>

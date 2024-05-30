@@ -54,16 +54,19 @@ const CreateAccountForm: React.FC = () => {
     }
   }, [reset])
 
-  const resendEmail = async (email: string, name: string) => {
-    const newToken = Math.floor(1000 + Math.random() * 9000).toString()
-    setGeneratedToken(newToken)
-    try {
-      await sendEmailCadastro(email, name, newToken)
-      setError(null)
-    } catch (err) {
-      setError('Houve um erro ao reenviar o e-mail. Por favor, tente novamente.')
-    }
-  }
+  const resendEmail = useCallback(
+    async (email: string, name: string) => {
+      const newToken = Math.floor(1000 + Math.random() * 9000).toString()
+      setGeneratedToken(newToken)
+      try {
+        await sendEmailCadastro(email, name, newToken)
+        setError(null)
+      } catch (err) {
+        setError('Houve um erro ao reenviar o e-mail. Por favor, tente novamente.')
+      }
+    },
+    [sendEmailCadastro]
+  )
 
   const onSubmit = useCallback(
     async (data: FormData) => {
@@ -110,7 +113,7 @@ const CreateAccountForm: React.FC = () => {
         setShowTokenInput(true)
       }
     },
-    [login, router, searchParams, sendEmailCadastro, showTokenInput, generatedToken, watch],
+    [login, router, searchParams, resendEmail, showTokenInput, generatedToken, watch],
   )
 
   return (
