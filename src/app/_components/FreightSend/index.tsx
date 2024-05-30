@@ -70,7 +70,7 @@ export const FreightCalculator = ({
         onFreightPriceSet(0)
       }
     },
-    [onFreightPriceSet, onServiceId, onFreightCalculation, user.zipCode, updateUserCep]
+    [onFreightPriceSet, onServiceId, onFreightCalculation, user.zipCode, updateUserCep],
   )
 
   const updateUserCep = useCallback(
@@ -95,7 +95,7 @@ export const FreightCalculator = ({
         }
       }
     },
-    [user, setUser]
+    [user, setUser],
   )
 
   useEffect(() => {

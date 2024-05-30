@@ -1,8 +1,8 @@
 'use client'
 
 import React, { Fragment, useEffect, useState } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
 
 import { useCart } from '../../_providers/Cart'
 

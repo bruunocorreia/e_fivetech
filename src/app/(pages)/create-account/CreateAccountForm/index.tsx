@@ -65,7 +65,7 @@ const CreateAccountForm: React.FC = () => {
         setError('Houve um erro ao reenviar o e-mail. Por favor, tente novamente.')
       }
     },
-    [sendEmailCadastro]
+    [sendEmailCadastro],
   )
 
   const onSubmit = useCallback(

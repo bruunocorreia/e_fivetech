@@ -1,11 +1,11 @@
-import axios from 'axios';
-import { Router } from 'express';
+import axios from 'axios'
+import { Router } from 'express'
 
-const router = Router();
+const router = Router()
 
 // Step 5: checkout
 router.post('/purchase-labels', async (req, res) => {
-  const { orderIds } = req.body;
+  const { orderIds } = req.body
 
   try {
     const response = await axios.post(
@@ -20,17 +20,17 @@ router.post('/purchase-labels', async (req, res) => {
           'Content-Type': 'application/json',
           'User-Agent': 'Aplicação nicosathler@hotmail.com',
         },
-      }
-    );
-    res.json(response.data);
+      },
+    )
+    res.json(response.data)
   } catch (error: unknown) {
-    console.error('Error purchasing labels:', error);
+    console.error('Error purchasing labels:', error)
     if (error instanceof Error) {
-      res.status(500).send(`Failed to purchase labels: ${error.message}. Please try again.`);
+      res.status(500).send(`Failed to purchase labels: ${error.message}. Please try again.`)
     } else {
-      res.status(500).send('Failed to purchase labels. Please try again.');
+      res.status(500).send('Failed to purchase labels. Please try again.')
     }
   }
-});
+})
 
-export default router;
+export default router

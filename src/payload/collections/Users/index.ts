@@ -28,13 +28,7 @@ const Users: CollectionConfig = {
   },
   auth: {
     forgotPassword: {
-      generateEmailHTML: ({
-        token,
-        user,
-      }: {
-        token: string
-        user: { email: string }
-      }) => {
+      generateEmailHTML: ({ token, user }: { token: string; user: { email: string } }) => {
         // Use the token provided to allow your user to reset their password
         const resetPasswordURL = `localhost:3000/reset-password?token=${token}`
 

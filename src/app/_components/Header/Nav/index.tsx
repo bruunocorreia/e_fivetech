@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
 
 import { Header as HeaderType, User } from '../../../../payload/payload-types'
 import { useAuth } from '../../../_providers/Auth'
@@ -43,23 +43,53 @@ export const HeaderNav: React.FC<{ header: HeaderType }> = ({ header }) => {
           return <CMSLink key={i} {...link} appearance="none" />
         })}
         <Link href="https://www.instagram.com" target="_blank">
-          <Image src="/instagram.png" alt="Instagram" className={classes.socialIcon} width={24} height={24} />
+          <Image
+            src="/instagram.png"
+            alt="Instagram"
+            className={classes.socialIcon}
+            width={24}
+            height={24}
+          />
         </Link>
         <Link href="https://www.tiktok.com" target="_blank">
-          <Image src="/tiktok.png" alt="TikTok" className={classes.socialIcon} width={24} height={24} />
+          <Image
+            src="/tiktok.png"
+            alt="TikTok"
+            className={classes.socialIcon}
+            width={24}
+            height={24}
+          />
         </Link>
         <Link href="/products">
-          <Image src="/search.png" alt="Search" className={classes.socialIcon} width={24} height={24} />
+          <Image
+            src="/search.png"
+            alt="Search"
+            className={classes.socialIcon}
+            width={24}
+            height={24}
+          />
         </Link>
         {user && (
           <Link href="/account">
-            <Image className={classes.socialIcon} alt="Minha Conta" src="/user_profile.png" width={24} height={24} />
+            <Image
+              className={classes.socialIcon}
+              alt="Minha Conta"
+              src="/user_profile.png"
+              width={24}
+              height={24}
+            />
           </Link>
         )}
         {!user && (
           <React.Fragment>
             <Link href="/login">
-              <Image src="/login.png" alt="Login" className={classes.socialIcon} width={24} height={24} />
+              <Image
+                src="/login.png"
+                alt="Login"
+                className={classes.socialIcon}
+                width={24}
+                height={24}
+              />
             </Link>
           </React.Fragment>
         )}
