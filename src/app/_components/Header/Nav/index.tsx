@@ -51,11 +51,7 @@ export const HeaderNav: React.FC<{ header: HeaderType }> = ({ header }) => {
         </Link>
         {user && (
           <Link href="/account">
-            <img
-              className={classes.socialIcon}
-              alt="Minha Conta"
-              src="/user_profile.png"
-            />
+            <img className={classes.socialIcon} alt="Minha Conta" src="/user_profile.png" />
           </Link>
         )}
         {!user && (

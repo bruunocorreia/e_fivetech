@@ -146,7 +146,7 @@ const CreateAccountForm: React.FC = () => {
         label="Confirme sua senha"
         required
         register={register}
-        validate={(value) => value === password.current || 'As senhas não correspondem'}
+        validate={value => value === password.current || 'As senhas não correspondem'}
         error={errors.passwordConfirm}
       />
       {showTokenInput && (
@@ -177,9 +177,7 @@ const CreateAccountForm: React.FC = () => {
       />
       <div>
         {'Já tem uma conta? '}
-        <Link href={`/login${allParams}`}>
-          Faça Login
-        </Link>
+        <Link href={`/login${allParams}`}>Faça Login</Link>
       </div>
     </form>
   )

@@ -44,7 +44,6 @@ export const HighImpactMedia: React.FC<Props> = props => {
   )
 }
 
-
 export const DefaultMedia: React.FC<Props> = props => {
   const { className, resources, htmlElement = 'div' } = props
 

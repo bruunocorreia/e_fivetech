@@ -22,7 +22,6 @@ import classes from '../index.module.scss'
 export const dynamic = 'force-dynamic'
 
 export default async function Product({ params: { slug } }) {
-
   const { isEnabled: isDraftMode } = draftMode()
 
   let page: Page | null = null
@@ -31,101 +30,101 @@ export default async function Product({ params: { slug } }) {
 
   try {
     categories = await fetchDocs<Category>('categories')
-
   } catch (error) {
     console.log(error)
   }
 
   // Função para encontrar o ID de uma categoria cujo título contém a string slug, ignorando maiúsculas e minúsculas
   const findCategoryIdBySlug = (categories: Category[], slug: string): Category | undefined => {
-    const category = categories.find(category => category.slug.toLowerCase().includes(slug.toLowerCase()));
-    return category;
-  };
+    const category = categories.find(category =>
+      category.slug.toLowerCase().includes(slug.toLowerCase()),
+    )
+    return category
+  }
 
   // Testando a função
-  const category = findCategoryIdBySlug(categories, slug);
+  const category = findCategoryIdBySlug(categories, slug)
 
-  if (category){
+  if (category) {
+    try {
+      page = await fetchDoc<Page>({
+        collection: 'pages',
+        slug: 'products',
+        draft: isDraftMode,
+      })
 
-  
-  try {
-    page = await fetchDoc<Page>({
-      collection: 'pages',
-      slug: 'products',
-      draft: isDraftMode,
-    })
+      colors = await fetchDocs<Color>('colors')
+    } catch (error) {
+      console.log(error)
+    }
 
-    colors = await fetchDocs<Color>('colors')
-  } catch (error) {
-    console.log(error)
-  }
+    return (
+      <div className={classes.container}>
+        <Gutter className={classes.products}>
+          <div className={classes.filters}>
+            <Filters categories={categories} colors={colors} preselectedCategory={category} />
+          </div>
+          <div className={classes.productList}>
+            <div className={classes.productView}>
+              <Blocks blocks={page?.layout} disableTopPadding={true} />
+            </div>
+          </div>
+        </Gutter>
+        <HR />
+      </div>
+    )
+  } else {
+    //const { isEnabled: isDraftMode } = draftMode()
 
-  return (
-    <div className={classes.container}>
-      <Gutter className={classes.products}>
-        <div className={classes.filters}><Filters categories={categories} colors={colors} preselectedCategory={category}/></div>
-        <div className={classes.productList}>
-        <div className={classes.productView}>
-        <Blocks blocks={page?.layout} disableTopPadding={true} />
-        </div>
-        </div>
-      </Gutter>
-      <HR />
-    </div>
-  )
- } else {
-  //const { isEnabled: isDraftMode } = draftMode()
+    let product: Product | null = null
 
-  let product: Product | null = null
+    try {
+      product = await fetchDoc<Product>({
+        collection: 'products',
+        slug,
+        draft: isDraftMode,
+      })
+    } catch (error) {
+      console.error(error) // eslint-disable-line no-console
+    }
 
-  try {
-    product = await fetchDoc<Product>({
-      collection: 'products',
-      slug,
-      draft: isDraftMode,
-    })
-  } catch (error) {
-    console.error(error) // eslint-disable-line no-console
-  }
+    if (!product) {
+      notFound()
+    }
 
+    const { relatedProducts } = product
 
-  if (!product) {
-    notFound()
-  }
+    return (
+      <>
+        <div className={classes.productContainer}>
+          <ProductHero product={product} />
 
-  const { relatedProducts } = product
-
-  return (
-    <>
-    <div className={classes.productContainer}>
-      <ProductHero product={product}  />
-
-      <Blocks
-        disableTopPadding
-        blocks={[
-          {
-            blockType: 'relatedProducts',
-            blockName: 'Produtos Relacionados',
-            relationTo: 'products',
-            introContent: [
+          <Blocks
+            disableTopPadding
+            blocks={[
               {
-                type: 'h3',
-                children: [
+                blockType: 'relatedProducts',
+                blockName: 'Produtos Relacionados',
+                relationTo: 'products',
+                introContent: [
                   {
-                    text: 'Produtos Relacionados',
+                    type: 'h3',
+                    children: [
+                      {
+                        text: 'Produtos Relacionados',
+                      },
+                    ],
                   },
                 ],
+                docs: relatedProducts,
               },
-            ],
-            docs: relatedProducts,
-          },
-        ]}
-      />
-      </div>
-    </>
-    
-  )
-}}
+            ]}
+          />
+        </div>
+      </>
+    )
+  }
+}
 
 export async function generateStaticParams() {
   try {

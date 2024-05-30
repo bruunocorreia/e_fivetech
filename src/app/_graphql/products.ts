@@ -4,7 +4,6 @@ import { PRODUCT_COLORS } from './colors'
 import { META } from './meta'
 import { MEDIA_FIELDS } from './media'
 
-
 export const PRODUCTS = `
   query Products {
     Products(limit: 300) {
