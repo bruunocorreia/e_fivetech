@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from 'react'
 
-import { useFilter } from '../../../_providers/Filter'
-
+import Image from 'next/image'
 import classes from './index.module.scss'
+import { useFilter } from '../../../_providers/Filter'
 
 const getTitlesAndSubtitles = items => {
   const titles = new Set()
@@ -43,13 +43,17 @@ const FilterMenu = ({ categories, colors, preselectedCategory = null }) => {
     setSizeFilters,
     sort,
     setSort,
+    searchTerm,
+    setSearchTerm,
   } = useFilter()
+
+  const [searchValue, setSearchValue] = useState(searchTerm || '')
   const [selectedSort, setSelectedSort] = useState(sort)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const sizes = ['GG', 'G', 'M', 'P', 'PP']
   const { titles, subtitles } = getTitlesAndSubtitles(categories)
   const availableColors = getColors(colors)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false) // Add this line
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [selectedFilter, setSelectedFilter] = useState(null)
 
   useEffect(() => {
@@ -105,22 +109,58 @@ const FilterMenu = ({ categories, colors, preselectedCategory = null }) => {
   }
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen) // Add this function
+    setIsMobileMenuOpen(!isMobileMenuOpen)
   }
+
+  const handleSelectedFilter = filter => {
+    setSelectedFilter(filter)
+  }
+
+  const handleSearchTermChange = e => {
+    setSearchValue(e.target.value)
+    setSearchTerm(e.target.value)
+  }
+
+  const handleClearSearch = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSearchValue('');
+    setSearchTerm('');
+  }
+  
 
   const dropdownOptions = [
     { value: 'relevance', label: 'Relevância' },
     { value: '-createdAt', label: 'Mais Recente' },
     { value: 'createdAt', label: 'Mais Antigo' },
   ]
-
-  const filters = ['Coleção', 'Categoria', 'Cor', 'Tamanho']
-
-  const handleSelectedFilter = filter => {
-    setSelectedFilter(filter)
+  const handleSearchIconClick = () => {
+    setSearchTerm(searchValue); // Assume que setSearchTerm é o método para atualizar o termo de busca no contexto
   }
+
+  const filters = ['Coleção', 'Categoria', 'Cor', 'Tamanho', 'Texto']
+
   return (
     <div className={classes.filterMenu}>
+      <div className={classes.filterInputContainer}>
+        <Image src="/search.png" alt="Search Icon" width={20} height={20} className={classes.searchIcon} onClick={handleSearchIconClick} />
+        <input 
+          type="text" 
+          value={searchValue} 
+          onChange={handleSearchTermChange} 
+          placeholder="Busca"
+        />
+        {searchValue && (
+          <Image
+            src="/x_image.png"
+            alt="Clear Icon"
+            width={30}
+            height={30}
+            className={classes.clearIcon}
+            onClick={handleClearSearch}
+          />
+        )}
+      </div>
       <button className={classes.mobileFilterButton} onClick={toggleMobileMenu}>
         Filtrar
       </button>
@@ -143,12 +183,12 @@ const FilterMenu = ({ categories, colors, preselectedCategory = null }) => {
             <div>
               {titles.map((title, index) => (
                 <div key={index} className={classes.filterOption}>
-                  {title}
                   <input
                     type="checkbox"
                     checked={categoryFilters.includes(title)}
                     onChange={() => handleCategoryFilterChange(title)}
                   />
+                  {title}
                 </div>
               ))}
             </div>
@@ -190,6 +230,15 @@ const FilterMenu = ({ categories, colors, preselectedCategory = null }) => {
                   {size}
                 </div>
               ))}
+            </div>
+          ) : selectedFilter === 'Texto' ? (
+            <div className={classes.filterOption}>
+              <input
+                type="text"
+                value={searchValue}
+                onChange={handleSearchTermChange}
+                placeholder="Buscar pelo título..."
+              />
             </div>
           ) : (
             <p>teste</p>
