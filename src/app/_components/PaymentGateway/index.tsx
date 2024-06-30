@@ -1,31 +1,25 @@
+import { Payment, StatusScreen, initMercadoPago } from '@mercadopago/sdk-react'
 import React, { useState } from 'react'
-import { initMercadoPago, Payment, StatusScreen } from '@mercadopago/sdk-react'
-import axios from 'axios'
-import { useRouter } from 'next/navigation'
 
 import { Order } from '../../../payload/payload-types'
-import { useEmailSender } from '../../_components/email'
+import axios from 'axios'
 import { useAuth } from '../../_providers/Auth'
 import { useCart } from '../../_providers/Cart'
+import { useEmailSender } from '../../_components/email'
+import { useRouter } from 'next/navigation'
 
 initMercadoPago('TEST-e4e31358-531f-4c4d-bd5c-3e77edc4ee3f', { locale: 'pt-BR' })
 
 export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipCode }) => {
   const router = useRouter()
-  const [orderIds, setOrderIds] = useState([]) // Initialize orderIds state
-  const [error, setError] = useState('')
+  const [orderIds, setOrderIds] = useState<string[]>([]) // Initialize orderIds state
+  const [error, setError] = useState<string>('')
 
-  const [loading, setLoading] = useState(false)
-  const {
-    sendEmail,
-    sendEmailCadastro,
-    loading: loadingEmail,
-    error: emailError,
-    success: emailSuccess,
-  } = useEmailSender()
+  const [loading, setLoading] = useState<boolean>(false)
+  const { sendEmail } = useEmailSender()
   const { user } = useAuth()
 
-  const [paymentId, setPaymentId] = useState(null)
+  const [paymentId, setPaymentId] = useState<string | null>(null)
   const transactionDescription = 'Minimo1'
   const { cart, cartTotal } = useCart()
 
@@ -75,14 +69,14 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
       } else {
         console.error('No valid ID returned from the API')
         setError('Failed to retrieve order ID from the response.')
-        return
+        return null
       }
 
       // Step 4: checkout
-      const checkoutResponse = await axios.post('/api/purchase-labels', { orderIds: localOrderIds })
+      await axios.post('/api/purchase-labels', { orderIds: localOrderIds })
 
       // Step 5: Gera a etiqueta
-      const generateLabelResponse = await axios.post('/api/generate-labels', {
+      await axios.post('/api/generate-labels', {
         orderIds: localOrderIds,
       })
 
@@ -97,7 +91,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
       } else {
         throw new Error('No URL returned from the API')
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro durante o processo de compra de frete:', err)
       setError(`Falha durante o processo de compra de frete: ${err.message || err}`)
       return null
@@ -118,19 +112,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
     },
   }
 
-  const onSubmit = async ({ formData }) => {
-    //   const paymentData = {
-    //     ...formData,
-    //     description: transactionDescription, // Inclui a descrição do produto, além do formulário
-    //     transaction_amount: amount
-    // };
-    //   // Callback chamado ao clicar no botão de submissão dos dados
-    //   const response = await axios.post('/api/process-payment', { paymentData });
-    //   if (response.data && response.data.id) {
-    //     setPaymentId(response.data.id);
-    //     console.log('Payment processed', response);
-    //   }
-
+  const onSubmit = async ({ formData }: { formData: any }) => {
     try {
       const shippingTicketUrl = await completeFreightPurchase()
 
@@ -159,22 +141,19 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
         }),
       })
 
-
       if (!orderReq.ok) throw new Error(orderReq.statusText || 'Something went wrong.')
-      
-      const order = await orderReq.json();
+
+      const order = await orderReq.json()
       sendEmail(userData.email, userData.name)
 
       router.push(`/order-confirmation?order_id=${order.id}`)
-    } catch (err) {
-      // don't throw an error if the order was not created successfully
-      // this is because payment _did_ in fact go through, and we don't want the user to pay twice
+    } catch (err: any) {
       console.error(err.message) // eslint-disable-line no-console
       router.push(`/order-confirmation?error=${encodeURIComponent(err.message)}`)
     }
   }
 
-  const onError = error => {
+  const onError = (error: any) => {
     console.error('Error processing payment', error)
   }
 
