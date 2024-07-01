@@ -2,71 +2,28 @@
 
 import React, { useRef, useState } from 'react'
 
+import Image from 'next/image'
+import Link from 'next/link'
 import classes from './index.module.scss'
 
-// Helper function to organize categories
 const organizeCategories = categories => {
   const catMap = {}
-  if (categories && Array.isArray(categories)) {
-    categories.forEach(cat => {
-      if (cat.title) {
-        if (!catMap[cat.title]) {
-          catMap[cat.title] = []
-        }
-        catMap[cat.title].push({
-          id: cat.id,
-          subtitle: cat.subtitle,
-          category: cat.category,
-          slug: cat.slug,
-        })
+  categories.forEach(cat => {
+    if (cat.title) {
+      if (!catMap[cat.title]) {
+        catMap[cat.title] = []
       }
-    })
-  }
+      catMap[cat.title].push({
+        id: cat.id,
+        subtitle: cat.subtitle,
+        category: cat.category,
+        slug: cat.slug,
+      })
+    }
+  })
   return catMap
 }
 
-// Function to handle navigation
-const handleNavigation = url => {
-  window.location.href = url
-}
-
-// Dropdown component to handle dropdown logic
-const Dropdown = ({ title, categoriesMap, isOpen, onMouseEnter, onMouseLeave, onClick }) => {
-  return (
-    <div
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      onClick={onClick}
-      style={{ position: 'relative' }}
-    >
-      <span className={classes.buttonLink}>
-        {title}
-      </span>
-      {isOpen && (
-        <div className={classes.dropdownMenuVertical}>
-          {Object.entries(categoriesMap).map(([category, items], index) => (
-            <div key={index} className={classes.dropdownColumn}>
-              <span className={`${classes.dropdownItem} ${classes.boldUnderlineDropdownItem}`}>
-                {category.toUpperCase()}
-              </span>
-              {items.map(item => (
-                <span
-                  key={item.id}
-                  className={classes.dropdownItem}
-                  onClick={() => handleNavigation(`/products/${item.slug}`)}
-                >
-                  {item.subtitle.toUpperCase()}
-                </span>
-              ))}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
-// Header component
 export const HeaderComponent = ({ categories }) => {
   const [dropdownStates, setDropdownStates] = useState({
     peças: false,
@@ -75,12 +32,13 @@ export const HeaderComponent = ({ categories }) => {
     newIn: false,
   })
 
+  const timerRef = useRef(null)
+
   const categoriesMap = organizeCategories(categories)
-  const timerRefs = useRef({})
 
   const toggleDropdown = (buttonName, state) => {
-    if (timerRefs.current[buttonName]) {
-      clearTimeout(timerRefs.current[buttonName])
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
     }
 
     if (state) {
@@ -89,48 +47,66 @@ export const HeaderComponent = ({ categories }) => {
         [buttonName]: true,
       }))
     } else {
-      timerRefs.current[buttonName] = setTimeout(() => {
+      timerRef.current = setTimeout(() => {
         setDropdownStates(prevStates => ({
           ...prevStates,
           [buttonName]: false,
         }))
-      }, 200)
+      }, 200) // Ajuste o tempo conforme necessário
     }
-  }
-
-  const handleDropdownClick = (buttonName) => {
-    setDropdownStates(prevStates => ({
-      ...prevStates,
-      [buttonName]: !prevStates[buttonName],
-    }))
   }
 
   return (
     <div className={classes.headerButtons}>
       {/* New in */}
-      <span className={classes.buttonLink} onClick={() => handleNavigation('/new-in')}>
-        New in
-      </span>
+      <Link href="/new-in" passHref>
+        <span className={classes.buttonLink}>New in</span>
+      </Link>
 
       {/* Peças */}
-      <Dropdown
-        title="Peças"
-        categoriesMap={categoriesMap}
-        isOpen={dropdownStates.peças}
+      <div
         onMouseEnter={() => toggleDropdown('peças', true)}
         onMouseLeave={() => toggleDropdown('peças', false)}
-        onClick={() => handleDropdownClick('peças')}
-      />
+        style={{ position: 'relative' }}
+      >
+        <span className={classes.buttonLink} onClick={() => toggleDropdown('peças', true)}>
+          Peças
+          {dropdownStates.peças && (
+            <div
+              className={classes.dropdownMenuVertical}
+              onMouseEnter={() => toggleDropdown('peças', true)}
+              onMouseLeave={() => toggleDropdown('peças', false)}
+            >
+              {Object.entries(categoriesMap).map(([category, items], index) => (
+                <div key={index} className={classes.dropdownColumn}>
+                  <Link href={`/products/${items[0].slug}`} passHref>
+                    <span className={`${classes.dropdownItem} ${classes.boldUnderlineDropdownItem}`}>
+                      {category.toUpperCase()}
+                    </span>
+                  </Link>
+                  {items.map(item => (
+                    <Link key={item.id} href={`/products/${item.slug}`} passHref>
+                      <span className={classes.dropdownItem}>
+                        {item.subtitle.toUpperCase()}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
+        </span>
+      </div>
 
       {/* Em Alta */}
-      <span className={classes.buttonLink} onClick={() => handleNavigation('/hot')}>
-        Em Alta
-      </span>
+      <Link href="/hot" passHref>
+        <span className={classes.buttonLink}>Em Alta</span>
+      </Link>
 
       {/* Sale */}
-      <span className={classes.buttonLink} onClick={() => handleNavigation('/sale')}>
-        Sale
-      </span>
+      <Link href="/sale" passHref>
+        <span className={classes.buttonLink}>Sale</span>
+      </Link>
     </div>
   )
 }
