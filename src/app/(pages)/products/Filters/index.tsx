@@ -1,13 +1,12 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import Image from 'next/image'
 
 import { Gutter } from '../../../_components/Gutter'
+import Image from 'next/image'
 import { PageRange } from '../../../_components/PageRange'
-import { useFilter } from '../../../_providers/Filter'
-
 import classes from './index.module.scss'
+import { useFilter } from '../../../_providers/Filter'
 
 const getTitlesAndSubtitles = items => {
   const titles = new Set()
@@ -61,13 +60,17 @@ const FilterMenu = ({ categories, colors, preselectedCategory = null }) => {
 
   useEffect(() => {
     if (preselectedCategory && !categoryFilters.includes(preselectedCategory.title)) {
+      setCategoryFilters([])
       setCategoryFilters([...categoryFilters, preselectedCategory.title])
+      console.log(setCategoryFilters)
     }
   }, [preselectedCategory])
 
   useEffect(() => {
     if (preselectedCategory && !subCategoryFilters.includes(preselectedCategory.subtitle)) {
+      setSubCategoryFilters([])
       setSubCategoryFilters([...subCategoryFilters, preselectedCategory.subtitle])
+      console.log(subCategoryFilters)
     }
   }, [preselectedCategory])
 
