@@ -3,10 +3,11 @@
 // components/HamburgerMenu.js
 
 import React, { useState } from 'react'
-
 import Link from 'next/link'
-import classes from './index.module.scss'
+
 import { useAuth } from '../../../_providers/Auth'
+
+import classes from './index.module.scss'
 
 const HamburgerMenu = ({ categories }) => {
   const [isOpen, setIsOpen] = useState(false)
