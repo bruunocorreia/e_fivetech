@@ -1,12 +1,12 @@
 'use client'
 
 // components/HamburgerMenu.js
+
 import React, { useState } from 'react'
+
 import Link from 'next/link'
-
-import { useAuth } from '../../../_providers/Auth'
-
 import classes from './index.module.scss'
+import { useAuth } from '../../../_providers/Auth'
 
 const HamburgerMenu = ({ categories }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -45,7 +45,7 @@ const HamburgerMenu = ({ categories }) => {
           )}
         </div>
         {!selectedCategory && (
-          <Link key={'new'} href={`/new`} onClick={toggleMenu}>
+          <Link key={'new'} href={`/new-in`} onClick={toggleMenu}>
             NEW IN
           </Link>
         )}
