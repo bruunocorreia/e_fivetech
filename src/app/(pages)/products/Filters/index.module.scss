@@ -19,7 +19,7 @@
   width: 100%;
   z-index: 99;
   gap: 20px;
-
+  white-space: nowrap; // Evita a quebra de linha dos botões
 }
 
 .hbar {
