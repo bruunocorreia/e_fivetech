@@ -5,7 +5,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh; // Isso vai garantir que o formulário ocupe toda a altura da tela
+  height: auto; // Isso vai garantir que o formulário ocupe toda a altura da tela
   padding: 0 20px; // Isso adiciona um pouco de espaço dos lados para não ficar muito justo nas bordas
 
   @include mid-break {
@@ -27,6 +27,11 @@
   width: 100%;
   min-width: 500px; // Você pode ajustar esta largura para que seja mais próximo do que você precisa
   margin: auto; // Isso garante que o wrapper esteja centralizado horizontalmente
+
+  @include small-break{
+    min-width: 330px;
+
+  }
 }
 
 .formContainer {
