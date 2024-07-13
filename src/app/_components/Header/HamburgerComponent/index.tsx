@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 
 import { useAuth } from '../../../_providers/Auth'
+import { CartLink } from '../../CartLink'
 
 import classes from './index.module.scss'
 
@@ -29,9 +30,12 @@ const HamburgerMenu = ({ categories }) => {
 
   return (
     <div className={classes.hamburgerMenu}>
-      <button className={classes.hamburgerButton} onClick={toggleMenu}>
-        ☰
-      </button>
+      <div className={classes.menuHeader}>
+        <CartLink />
+        <button className={classes.hamburgerButton} onClick={toggleMenu}>
+          ☰
+        </button>
+      </div>
       <nav className={`${classes.navMenu} ${isOpen ? classes.open : ''}`}>
         <div className={classes.navHeader}>
           <h2>MENU</h2>
