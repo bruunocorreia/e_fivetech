@@ -7,6 +7,12 @@
     display: block;
   }
 }
+.menuHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 9px;
+}
 
 .hamburgerButton {
   font-size: 24px;
