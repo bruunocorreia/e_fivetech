@@ -11,7 +11,7 @@ import classes from './index.module.scss'
 export default async function Purchases() {
   const { user } = await getMeUser({
     nullUserRedirect: `/login?error=${encodeURIComponent(
-      'You must be logged in to access your account.',
+      'Voce precisa estar logado para acessar sua conta.',
     )}&redirect=${encodeURIComponent('/account')}`,
   })
 
@@ -30,7 +30,7 @@ export default async function Purchases() {
                     <Link href={`/products/${purchase.slug}`} className={classes.item}>
                       <div className={classes.mediaWrapper}>
                         {!purchase.meta.image && (
-                          <div className={classes.placeholder}>No image</div>
+                          <div className={classes.placeholder}>Sem imagens</div>
                         )}
                         {purchase.meta.image && typeof purchase.meta.image !== 'string' && (
                           <Media imgClassName={classes.image} resource={purchase.meta.image} />
@@ -39,7 +39,7 @@ export default async function Purchases() {
                       <div className={classes.itemDetails}>
                         <h6>{purchase.title}</h6>
                         <Price product={purchase} />
-                        <p className={classes.purchasedDate}>{`Purchased On: ${formatDateTime(
+                        <p className={classes.purchasedDate}>{`Comprado em: ${formatDateTime(
                           purchase.createdAt,
                         )}`}</p>
                       </div>
@@ -50,7 +50,7 @@ export default async function Purchases() {
             })}
           </ul>
         ) : (
-          <div className={classes.noPurchases}>You have no purchases.</div>
+          <div className={classes.noPurchases}>Nenhuma compra efetuada.</div>
         )}
       </div>
     </div>
