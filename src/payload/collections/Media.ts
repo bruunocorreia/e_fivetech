@@ -21,6 +21,8 @@ export const Media: CollectionConfig = {
     {
       name: 'caption',
       type: 'richText',
+      required: false,
+      hidden: true,
       editor: slateEditor({
         admin: {
           elements: ['link'],
