@@ -1,6 +1,6 @@
-import type { CollectionConfig } from 'payload/types'
-import path from 'path'
 import { slateEditor } from '@payloadcms/richtext-slate'
+import path from 'path'
+import type { CollectionConfig } from 'payload/types'
 
 export const Media: CollectionConfig = {
   slug: 'media',
