@@ -1,6 +1,6 @@
-import { slateEditor } from '@payloadcms/richtext-slate'
-import path from 'path'
 import type { CollectionConfig } from 'payload/types'
+import path from 'path'
+import { slateEditor } from '@payloadcms/richtext-slate'
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -21,6 +21,9 @@ export const Media: CollectionConfig = {
     {
       name: 'caption',
       type: 'richText',
+      required: false,
+      hidden: true,
+      defaultValue: '.',
       editor: slateEditor({
         admin: {
           elements: ['link'],
