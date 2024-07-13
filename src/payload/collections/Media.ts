@@ -23,7 +23,6 @@ export const Media: CollectionConfig = {
       type: 'richText',
       required: false,
       hidden: true,
-      defaultValue: '.',
       editor: slateEditor({
         admin: {
           elements: ['link'],
