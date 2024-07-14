@@ -153,13 +153,6 @@ const CreateAccountForm: React.FC = () => {
         validate={value => value === password.current || 'As senhas não correspondem'}
         error={errors.passwordConfirm}
       />
-      <Button
-        type="button"
-        appearance="secondary"
-        label="Voltar"
-        onClick={handleBackToCreateAccount}
-        className={classes.submit}
-      />
       {showTokenInput && (
         <div className={classes.tokenContainer}>
           <Input
@@ -184,6 +177,13 @@ const CreateAccountForm: React.FC = () => {
         label={loading ? 'Processando' : showTokenInput ? 'Verificar Token' : 'Criar conta'}
         disabled={loading}
         appearance="primary"
+        className={classes.submit}
+      />
+      <Button
+        type="button"
+        appearance="secondary"
+        label="Voltar"
+        onClick={handleBackToCreateAccount}
         className={classes.submit}
       />
       <div>
