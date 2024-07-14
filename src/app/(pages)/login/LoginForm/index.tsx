@@ -62,6 +62,10 @@ const LoginForm: React.FC = () => {
     setEmailOnlyForm(true)
   }, [])
 
+  const handleBackToLogin = useCallback(() => {
+    setEmailOnlyForm(false)
+  }, [])
+
   const handleEmailSubmit = useCallback(async (data: FormData) => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/forgot-password`,
@@ -205,6 +209,13 @@ const LoginForm: React.FC = () => {
                 type="submit"
                 appearance="primary"
                 label="Recuperar Senha"
+                className={classes.submit}
+              />
+              <Button
+                type="button"
+                appearance="secondary"
+                label="Voltar"
+                onClick={handleBackToLogin}
                 className={classes.submit}
               />
             </form>
