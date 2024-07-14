@@ -108,6 +108,10 @@ export const CheckoutPage = () => {
               onZipCodeChange={handleZipCodeChange}
             />
             <div className={classes.orderTotal}>
+              <p>Total sem frete</p>
+              <p>R$ {cartTotal.raw.toFixed(2)}</p>
+            </div>
+            <div className={classes.orderTotal}>
               <p>Total do pedido</p>
               <p>R$ {totalWithFreight.toFixed(2)}</p>
             </div>
