@@ -65,6 +65,10 @@ const CreateAccountForm: React.FC = () => {
     }
   }
 
+  const handleBackToCreateAccount = useCallback(() => {
+    window.location.href = `/login${allParams}`
+  }, [allParams])
+
   const onSubmit = useCallback(
     async (data: FormData) => {
       if (showTokenInput) {
@@ -148,6 +152,13 @@ const CreateAccountForm: React.FC = () => {
         register={register}
         validate={value => value === password.current || 'As senhas não correspondem'}
         error={errors.passwordConfirm}
+      />
+      <Button
+        type="button"
+        appearance="secondary"
+        label="Voltar"
+        onClick={handleBackToCreateAccount}
+        className={classes.submit}
       />
       {showTokenInput && (
         <div className={classes.tokenContainer}>
