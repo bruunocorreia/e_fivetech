@@ -12,14 +12,13 @@ const Products: CollectionConfig = {
     useAsTitle: 'title',
     livePreview: {
       url: ({ data }) =>
-        `${process.env.PAYLOAD_PUBLIC_SITE_URL}${data.slug !== 'home' ? `/${data.slug}` : ''}`,
+        `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/api/preview?url=${encodeURIComponent(
+          `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/products/${
+            data.slug !== 'home' ? data.slug : ''
+          }`,
+        )}&secret=${process.env.PAYLOAD_PUBLIC_DRAFT_SECRET}`,
     },
     defaultColumns: ['title', 'price', 'discountPercentage', '_status'],
-    preview: doc => {
-      return `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/api/preview?url=${encodeURIComponent(
-        `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/products/${doc.slug}`,
-      )}&secret=${process.env.PAYLOAD_PUBLIC_DRAFT_SECRET}`
-    },
   },
   hooks: {
     afterChange: [revalidateProduct],

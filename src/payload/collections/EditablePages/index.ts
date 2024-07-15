@@ -16,7 +16,10 @@ export const EditablePages: CollectionConfig = {
   labels: { plural: 'Páginas', singular: 'Página' },
   admin: {
     livePreview: {
-      url: ({ data }) => `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/${data.slug}`,
+      url: ({ data }) =>
+        `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/api/preview?url=${encodeURIComponent(
+          `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/${data.slug !== 'home' ? data.slug : ''}`,
+        )}&secret=${process.env.PAYLOAD_PUBLIC_DRAFT_SECRET}`,
     },
     hidden: false,
     useAsTitle: 'title',
