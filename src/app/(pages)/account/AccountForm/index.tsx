@@ -107,27 +107,27 @@ const AccountForm: React.FC = () => {
           <Input name="zip_code" label="CEP" register={register} error={errors.name} />
 
           <p>
-            {'Change your account details below, or '}
+            {'Modifique os dados da sua conta, ou '}
             <button
               type="button"
               className={classes.changePassword}
               onClick={() => setChangePassword(!changePassword)}
             >
-              click here
+              clique aqui
             </button>
-            {' to change your password.'}
+            {' para modificar sua senha.'}
           </p>
         </Fragment>
       ) : (
         <Fragment>
           <p>
-            {'Change your password below, or '}
+            {'Modifique sua senha, ou '}
             <button
               type="button"
               className={classes.changePassword}
               onClick={() => setChangePassword(!changePassword)}
             >
-              cancel
+              Cancelar
             </button>
             .
           </p>
@@ -145,14 +145,14 @@ const AccountForm: React.FC = () => {
             label="Confirm Password"
             required
             register={register}
-            validate={value => value === password.current || 'The passwords do not match'}
+            validate={value => value === password.current || 'As senhas não são iguais, verifique'}
             error={errors.passwordConfirm}
           />
         </Fragment>
       )}
       <Button
         type="submit"
-        label={isLoading ? 'Processing' : changePassword ? 'Change Password' : 'Update Account'}
+        label={isLoading ? 'Processando' : changePassword ? 'Mudar senha' : 'Atualizar conta'}
         disabled={isLoading}
         appearance="primary"
         className={classes.submit}
