@@ -15,7 +15,7 @@ export const Orders: CollectionConfig = {
     useAsTitle: 'createdAt',
     description: 'Pedidos',
     defaultColumns: ['createdAt', 'orderedBy'],
-    preview: doc => `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/orders/${doc.id}`,
+    // preview: doc => `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/orders/${doc.id}`,
     components: {
       BeforeListTable: [ExportButton], // Adicione o componente aqui
     },
