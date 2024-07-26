@@ -6,17 +6,18 @@
 
 .sizeOptions {
   display: flex;
-  gap: 10px; /* Espaço entre os botões */
+  gap: 5px; /* Espaço entre os botões */
+  flex-wrap: wrap; 
 }
 
 .sizeButton {
-  padding:16px 24px;
+  padding:10px 18px;
   border: 1px solid #ccc;
   background-color: #fff;
   border-radius: 1px; /* Bordas arredondadas */
   cursor: pointer;
-  font-size: 14px;
-  
+  font-size: 12px;
+  align-items: center;
   transition: background-color 0.3s, border-color 0.3s;
   margin-bottom: 1rem;
 
