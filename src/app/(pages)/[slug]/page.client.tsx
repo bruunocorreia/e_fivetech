@@ -24,9 +24,7 @@ export const PageTemplate: React.FC<{
   })
   const { hero, layout } = data
 
-  console.log(data)
-
-  const pageTitle = page.title === 'hot' ? 'Em Alta' : page.title
+  const pageTitle = page.title === 'hot' || page.title === 'em-alta' ? 'Em Alta' : page.title
 
   return (
     <React.Fragment>
@@ -54,20 +52,24 @@ export const PageTemplate: React.FC<{
       ) : (
         <>
           <Hero {...hero} />
-          <div className={classes.filters}>
-            <Filters
-              categories={categories}
-              colors={categories}
-              page_name={pageTitle}
-              preselectedCategory={categories}
-            />
-          </div>
-          <Gutter>
-            <Blocks
-              blocks={layout}
-              disableTopPadding={!hero || hero?.type === 'none' || hero?.type === 'lowImpact'}
-            />
-          </Gutter>
+          {hero?.type !== 'highImpact' && (
+            <>
+              <div className={classes.filters}>
+                <Filters
+                  categories={categories}
+                  colors={categories}
+                  page_name={pageTitle}
+                  preselectedCategory={categories}
+                />
+              </div>
+              <Gutter>
+                <Blocks
+                  blocks={layout}
+                  disableTopPadding={!hero || hero?.type === 'none' || hero?.type === 'lowImpact'}
+                />
+              </Gutter>
+            </>
+          )}
         </>
       )}
     </React.Fragment>

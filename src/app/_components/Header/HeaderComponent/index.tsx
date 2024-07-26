@@ -109,7 +109,7 @@ export const HeaderComponent = ({ categories }) => {
       </div>
 
       {/* Em Alta */}
-      <Link href="/hot" passHref>
+      <Link href="/em-alta" passHref>
         <span className={classes.buttonLink}>Em Alta</span>
       </Link>
 
