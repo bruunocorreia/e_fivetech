@@ -26,7 +26,9 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = props => {
           {docs?.map(doc => {
             if (typeof doc === 'string') return null
 
-            return <RelatedProductsCard key={doc.id} relationTo={relationTo} doc={doc} showCategories />
+            return (
+              <RelatedProductsCard key={doc.id} relationTo={relationTo} doc={doc} showCategories />
+            )
           })}
         </div>
       </Gutter>

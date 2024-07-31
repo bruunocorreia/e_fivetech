@@ -1,6 +1,7 @@
 'use client'
 
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react'
+import { equal } from 'assert'
 import qs from 'qs'
 
 import { Category, Product } from '../../../payload/payload-types'
@@ -11,7 +12,6 @@ import { PageRange } from '../PageRange'
 import { Pagination } from '../Pagination'
 
 import classes from './index.module.scss'
-import { equal } from 'assert'
 
 type Result = {
   totalDocs: number
@@ -156,11 +156,10 @@ export const CollectionArchive: React.FC<Props> = props => {
                 }
               : {}),
 
-            '_status': {
+            _status: {
               equals: 'published', // Ajuste para a chave correta que representa a cor nos seus dados
             },
 
-            
             ...(whereConditions.length > 0 ? { or: whereConditions } : {}),
           },
           limit,

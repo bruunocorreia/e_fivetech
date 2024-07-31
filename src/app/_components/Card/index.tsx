@@ -139,4 +139,3 @@ export const RelatedProductsCard: React.FC<{
     </Link>
   )
 }
-
