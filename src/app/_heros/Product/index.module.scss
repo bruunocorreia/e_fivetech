@@ -6,36 +6,34 @@
   gap: 20px;
   width: 100%;
   background-color: white; /* Cor de fundo */
-  min-height: 650px; /* Aumentado para refletir a mudança */
+  // min-height: 650px; /* Aumentado para refletir a mudança */
   @include small-break {
     grid-template-columns: 1fr;
   }
 }
 
 .mediaWrapper {
+  text-decoration: none;
+  display: block;
   position: relative;
-  min-height: 400px;
-  background-color: rgba(252, 252, 252);
-  // padding: 20px;
-  width: 100%;
-  @include small-break {
-    
-  }
+
+  background-color: white;
+
 }
 
 .image {
-  padding: 5px;
-  object-fit: contain;
-  aspect-ratio: 3/4; /* Ajustado para dar mais altura */
-  max-width: 100%;
-  height: auto; /* Garantir que a imagem ocupe toda a altura disponível */
-}
+
+    padding: 1px;
+    object-fit: fill;
+    aspect-ratio: 1/1;
+    max-width: 100%;
+    
+  }
 
 .details {
   display: flex;
   flex-direction: column;
   margin-top: 30px;
-  margin-bottom: 30px;
   margin-left: 15%;
   padding: 24px 60px;
   background-color: white; /* Cor de fundo */

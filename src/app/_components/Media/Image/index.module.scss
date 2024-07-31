@@ -3,6 +3,7 @@
 .container__slider {
   position: relative;
   width: 100%;
+  height: 700px;
   padding: 0;
   overflow: hidden;
   display: flex;
@@ -12,7 +13,8 @@
   flex-wrap: nowrap;
   background-color: rgb(255, 255, 255);
   gap: 5px;
-  height: 620px; /* Define uma altura fixa para o container */
+  // max-height: 900px; /* Define uma altura fixa para o container */
+  // max-width: 900px; /* Define uma altura fixa para o container */
 }
 
 .container__slider > button {
@@ -82,7 +84,7 @@
 
 .slider__item_active_1 {
   transform: translateX(0);
-  background-color: white;
+
 }
 
 .slider__item_active_2 {
@@ -112,4 +114,5 @@
 .slider__item img {
   width: 100%;
   height: 100%;
+  object-fit: cover; /* Garante que a imagem cubra o container */
 }
