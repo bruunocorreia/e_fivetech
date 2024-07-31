@@ -11,6 +11,7 @@ import { PageRange } from '../PageRange'
 import { Pagination } from '../Pagination'
 
 import classes from './index.module.scss'
+import { equal } from 'assert'
 
 type Result = {
   totalDocs: number
@@ -154,6 +155,12 @@ export const CollectionArchive: React.FC<Props> = props => {
                   },
                 }
               : {}),
+
+            '_status': {
+              equals: 'published', // Ajuste para a chave correta que representa a cor nos seus dados
+            },
+
+            
             ...(whereConditions.length > 0 ? { or: whereConditions } : {}),
           },
           limit,
