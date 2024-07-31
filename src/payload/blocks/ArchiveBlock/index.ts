@@ -1,7 +1,5 @@
 import type { Block } from 'payload/types'
 
-import richText from '../../fields/richText'
-
 export const Archive: Block = {
   slug: 'archive',
   labels: {
@@ -9,13 +7,10 @@ export const Archive: Block = {
     plural: 'Produtos',
   },
   fields: [
-    richText({
-      name: 'introContent',
-      label: 'Intro Content',
-    }),
     {
       name: 'populateBy',
       type: 'select',
+      hidden: true,
       defaultValue: 'collection',
       options: [
         {
@@ -31,6 +26,7 @@ export const Archive: Block = {
     {
       type: 'select',
       name: 'relationTo',
+      hidden: true,
       label: 'Collections To Show',
       defaultValue: 'products',
       admin: {
