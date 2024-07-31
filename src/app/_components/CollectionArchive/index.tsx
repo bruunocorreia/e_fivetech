@@ -101,18 +101,20 @@ export const CollectionArchive: React.FC<Props> = props => {
       }
 
       if (categories.length > 0) {
-        whereConditions.push({ and: [
-          {
-            'categories.title': {
-              in: categories[0].title,
+        whereConditions.push({
+          and: [
+            {
+              'categories.title': {
+                in: categories[0].title,
+              },
             },
-          },
-          {
-            'categories.subtitle': {
-              in: categories[0].subtitle,
+            {
+              'categories.subtitle': {
+                in: categories[0].subtitle,
+              },
             },
-          },
-        ],})
+          ],
+        })
       }
 
       const searchQuery = qs.stringify(
