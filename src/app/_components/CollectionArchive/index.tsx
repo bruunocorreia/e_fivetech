@@ -51,6 +51,7 @@ export const CollectionArchive: React.FC<Props> = props => {
     limit = 10,
     populatedDocs,
     populatedDocsTotal,
+    categories,
     new: newFilter,
     sale: saleFilter,
     hot: hotFilter,
@@ -97,6 +98,21 @@ export const CollectionArchive: React.FC<Props> = props => {
       }
       if (hotFilter === true) {
         whereConditions.push({ hot: { equals: hotFilter } })
+      }
+
+      if (categories.length > 0) {
+        whereConditions.push({ and: [
+          {
+            'categories.title': {
+              in: categories[0].title,
+            },
+          },
+          {
+            'categories.subtitle': {
+              in: categories[0].subtitle,
+            },
+          },
+        ],})
       }
 
       const searchQuery = qs.stringify(
