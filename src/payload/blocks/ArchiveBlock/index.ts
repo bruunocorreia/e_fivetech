@@ -9,6 +9,7 @@ export const Archive: Block = {
     plural: 'Produtos',
   },
   fields: [
+    
     richText({
       name: 'introContent',
       label: 'Intro Content',
