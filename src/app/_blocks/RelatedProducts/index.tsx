@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { Product } from '../../../payload/payload-types'
-import { Card } from '../../_components/Card'
+import { RelatedProductsCard } from '../../_components/Card'
 import { Gutter } from '../../_components/Gutter'
 import RichText from '../../_components/RichText'
 
@@ -26,7 +26,7 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = props => {
           {docs?.map(doc => {
             if (typeof doc === 'string') return null
 
-            return <Card key={doc.id} relationTo={relationTo} doc={doc} showCategories />
+            return <RelatedProductsCard key={doc.id} relationTo={relationTo} doc={doc} showCategories />
           })}
         </div>
       </Gutter>
