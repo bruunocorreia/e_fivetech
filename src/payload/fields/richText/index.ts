@@ -37,6 +37,7 @@ const richText: RichText = (
                 type: 'richText',
                 name: 'caption',
                 label: 'Caption',
+                required: false,
                 editor: slateEditor({
                   admin: {
                     elements: [...elements],
@@ -96,7 +97,7 @@ const richText: RichText = (
     {
       name: 'richText',
       type: 'richText',
-      required: true,
+      required: false,
       editor: slateEditor({
         admin: slateOptions,
       }),

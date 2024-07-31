@@ -57,9 +57,11 @@ export interface Page {
   layout: (
     | {
         invertBackground?: boolean | null;
-        richText: {
-          [k: string]: unknown;
-        }[];
+        richText?:
+          | {
+              [k: string]: unknown;
+            }[]
+          | null;
         links?:
           | {
               link: {
@@ -86,9 +88,11 @@ export interface Page {
         columns?:
           | {
               size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
-              richText: {
-                [k: string]: unknown;
-              }[];
+              richText?:
+                | {
+                    [k: string]: unknown;
+                  }[]
+                | null;
               enableLink?: boolean | null;
               link?: {
                 type?: ('reference' | 'custom') | null;
@@ -118,9 +122,11 @@ export interface Page {
         blockType: 'mediaBlock';
       }
     | {
-        introContent: {
-          [k: string]: unknown;
-        }[];
+        introContent?:
+          | {
+              [k: string]: unknown;
+            }[]
+          | null;
         populateBy?: ('collection' | 'selection') | null;
         relationTo?: 'products' | null;
         categories?: (string | Category)[] | null;
@@ -232,9 +238,11 @@ export interface Editablepage {
   };
   layout?:
     | {
-        introContent: {
-          [k: string]: unknown;
-        }[];
+        introContent?:
+          | {
+              [k: string]: unknown;
+            }[]
+          | null;
         populateBy?: ('collection' | 'selection') | null;
         relationTo?: 'products' | null;
         categories?: (string | Category)[] | null;
