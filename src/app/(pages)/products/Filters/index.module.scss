@@ -8,18 +8,20 @@
   padding: 25px 0px;
   font-size: 15px;
 
-
-
 }
 
 .filterMenuButtons {
   display: flex;
   align-items: center;
-  justify-content: flex-star;
+  justify-content: center;
   width: 100%;
   z-index: 99;
   gap: 20px;
   white-space: nowrap; // Evita a quebra de linha dos botões
+
+  @include mid-break {
+    justify-content: flex-start;
+  }
 }
 
 .hbar {
