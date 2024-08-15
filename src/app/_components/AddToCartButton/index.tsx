@@ -29,39 +29,49 @@ export const AddToCartButton: React.FC<{
   const { cart, addItemToCart, isProductInCart, hasInitializedCart } = useCart()
 
   const [isInCart, setIsInCart] = useState<boolean>()
+  const [showPopup, setShowPopup] = useState<boolean>(false) // Estado para o pop-up
   const router = useRouter()
 
   useEffect(() => {
     setIsInCart(isProductInCart({ product, selectedSize, selectedColor }))
   }, [isProductInCart, product, cart, selectedSize, selectedColor])
 
+  const handleAddToCart = () => {
+    addItemToCart({
+      product,
+      quantity,
+      selectedColor,
+      selectedSize,
+    })
+
+    // Mostra o pop-up e esconde após 3 segundos
+    setShowPopup(true)
+    setTimeout(() => {
+      setShowPopup(false)
+    }, 3000)
+  }
+
   return (
-    <Button
-      href={isInCart ? '/cart' : undefined}
-      type={!isInCart ? 'button' : undefined}
-      label={isInCart ? '✓ Ver na sacola' : 'Adicionar à sacola'}
-      el={isInCart ? 'link' : undefined}
-      appearance={appearance}
-      className={[
-        className,
-        classes.addToCartButton,
-        appearance === 'default' && isInCart && classes.green,
-        !hasInitializedCart && classes.hidden,
-      ]
-        .filter(Boolean)
-        .join(' ')}
-      onClick={
-        !isInCart
-          ? () => {
-              addItemToCart({
-                product,
-                quantity,
-                selectedColor,
-                selectedSize,
-              })
-            }
-          : undefined
-      }
-    />
+    <>
+      <Button
+        href={isInCart ? '/cart' : undefined}
+        type={!isInCart ? 'button' : undefined}
+        label={isInCart ? '✓ Ver na sacola' : 'Adicionar à sacola'}
+        el={isInCart ? 'link' : undefined}
+        appearance={appearance}
+        className={[
+          className,
+          classes.addToCartButton,
+          appearance === 'default' && isInCart && classes.green,
+          !hasInitializedCart && classes.hidden,
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        onClick={!isInCart ? handleAddToCart : undefined}
+      />
+
+      {/* Pop-up de confirmação */}
+      {showPopup && <div className={classes.popup}>Item adicionado à sacola!</div>}
+    </>
   )
 }
