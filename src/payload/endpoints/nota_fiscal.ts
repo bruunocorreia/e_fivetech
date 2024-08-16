@@ -1,11 +1,11 @@
-import { Router } from 'express'
 import axios from 'axios'
+import { Router } from 'express'
 
 const router = Router()
 
 router.post('/enviar-nfe', async (req, res) => {
-  const { ref } = "12345"
-  const token = ${process.env.NOTA_FISCAL}`,
+  const ref = '12345' // Atribuição correta da variável ref
+  const token = process.env.NOTA_FISCAL // Atribuição correta do token
 
   try {
     const response = await axios.post(
