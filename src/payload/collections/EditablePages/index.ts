@@ -36,8 +36,8 @@ export const EditablePages: CollectionConfig = {
   access: {
     read: adminsOrPublished,
     update: admins,
-    // create: () => false,
-    create: adminsOrPublished,
+    create: () => false,
+    // create: adminsOrPublished,
     delete: admins,
   },
   fields: [
