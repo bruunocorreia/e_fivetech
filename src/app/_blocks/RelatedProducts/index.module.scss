@@ -17,8 +17,8 @@
 .grid {
   display: grid;
   padding: 0;
-  grid-template-columns: repeat(4, minmax(30%, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(4, minmax(10%, 1fr));
+  gap: 20px;
 
   @include mid-break {
     gap: 20px;
