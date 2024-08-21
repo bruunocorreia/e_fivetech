@@ -26,7 +26,7 @@ export const Orders: CollectionConfig = {
   access: {
     read: adminsOrOrderedBy,
     update: admins,
-    create: adminsOrLoggedIn,
+    create: () => false,
     delete: admins,
   },
   fields: [
