@@ -29,6 +29,8 @@ export const PRODUCT = `
           id
           slug
           title
+          price
+          discountPercentage
           photos {
             photo{
               ${MEDIA_FIELDS}
