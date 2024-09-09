@@ -17,6 +17,7 @@ export type RelatedProductsProps = {
 
 export const RelatedProducts: React.FC<RelatedProductsProps> = props => {
   const { docs, relationTo } = props
+  console.log(docs)
 
   return (
     <div className={classes.relatedProducts}>
@@ -25,9 +26,19 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = props => {
         <div className={classes.grid}>
           {docs?.map(doc => {
             if (typeof doc === 'string') return null
+            // Verifique se o preço e o desconto estão corretos
+            console.log('Preço: ', doc.price, 'Desconto: ', doc.discountPercentage)
 
             return (
-              <RelatedProductsCard key={doc.id} relationTo={relationTo} doc={doc} showCategories />
+              <RelatedProductsCard
+                key={doc.id}
+                relationTo={relationTo}
+                doc={doc}
+                showCategories
+                // Passar o preço e desconto para o cartão de produtos
+                price={doc.price} // Corrigido: acessar doc.price
+                discountPercentage={doc.discountPercentage} // Corrigido: acessar doc.discountPercentage
+              />
             )
           })}
         </div>
