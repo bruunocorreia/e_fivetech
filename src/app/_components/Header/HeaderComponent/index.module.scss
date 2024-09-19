@@ -154,6 +154,10 @@
 .dropdownColumn:last-child {
   border-right: none; /* Remove the border from the last column */
 }
+.dropdownColumn *:hover {
+  font-style: italic;
+  text-decoration: underline;
+}
 
 .dropdownItem {
   text-align: left; /* Center the text if needed */
