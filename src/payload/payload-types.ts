@@ -42,6 +42,8 @@ export interface Page {
   hero: {
     type: 'none' | 'highImpact' | 'lowImpact';
     media?: string | Media | null;
+    numberOfPhotosCarousel1?: number | null;
+    numberOfPhotosCarousel2?: number | null;
     carrossel?:
       | {
           medias?:
@@ -224,6 +226,8 @@ export interface Editablepage {
   hero: {
     type: 'none' | 'highImpact' | 'lowImpact';
     media?: string | Media | null;
+    numberOfPhotosCarousel1?: number | null;
+    numberOfPhotosCarousel2?: number | null;
     carrossel?:
       | {
           medias?:
