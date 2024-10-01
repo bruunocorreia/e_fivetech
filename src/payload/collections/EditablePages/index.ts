@@ -2,24 +2,24 @@ import type { CollectionConfig } from 'payload/types'
 
 import { admins } from '../../access/admins'
 import { Archive } from '../../blocks/ArchiveBlock'
-// import { CallToAction } from '../../blocks/CallToAction'
-// import { Content } from '../../blocks/Content'
-// import { MediaBlock } from '../../blocks/MediaBlock'
 import { hero } from '../../fields/hero'
 import { slugField } from '../../fields/slug'
 import { populateArchiveBlock } from '../../hooks/populateArchiveBlock'
 import { adminsOrPublished } from './access/adminsOrPublished'
 import { revalidatePage } from './hooks/revalidatePage'
 
+// import { CallToAction } from '../../blocks/CallToAction'
+// import { Content } from '../../blocks/Content'
+// import { MediaBlock } from '../../blocks/MediaBlock'
+
 export const EditablePages: CollectionConfig = {
   slug: 'editablepages',
   labels: { plural: 'Páginas', singular: 'Página' },
   admin: {
-    livePreview: {
-      url: ({ data }) =>
-        `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/api/preview?url=${encodeURIComponent(
-          `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/${data.slug !== 'home' ? data.slug : ''}`,
-        )}&secret=${process.env.PAYLOAD_PUBLIC_DRAFT_SECRET}`,
+    preview: doc => {
+      return `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/api/preview?url=${encodeURIComponent(
+        `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/${doc.slug !== 'home' ? doc.slug : ''}`,
+      )}&secret=${process.env.PAYLOAD_PUBLIC_DRAFT_SECRET}`
     },
     hidden: false,
     useAsTitle: 'title',
