@@ -1,13 +1,8 @@
 import dotenv from 'dotenv'
+import express from 'express'
 import next from 'next'
 import nextBuild from 'next/dist/build'
 import path from 'path'
-
-dotenv.config({
-  path: path.resolve(__dirname, '../.env'),
-})
-
-import express from 'express'
 import payload from 'payload'
 
 import EmailRouterCad from './payload/endpoints/email_cadastro'
@@ -19,7 +14,13 @@ import GeraEtiquetaFreightRouter from './payload/endpoints/melhor_envio_add_etiq
 import CancelFreightRouter from './payload/endpoints/melhor_envio_cancelamento'
 import CheckoutFreightRouter from './payload/endpoints/melhor_envio_checkout'
 import PrintEtiquetaFreightRouter from './payload/endpoints/melhor_envio_print_etiqueta'
+import NotaFiscal from './payload/endpoints/nota_fiscal'
+import NotaFiscalImprimir from './payload/endpoints/nota_fiscal_imprimir'
 import orderHandler from './payload/endpoints/order-handler'
+
+dotenv.config({
+  path: path.resolve(__dirname, '../.env'),
+})
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -35,7 +36,8 @@ app.use('/api', CancelFreightRouter)
 app.use('/api', EmailRouter)
 app.use('/api', EmailRouterCad)
 app.use('/api', orderHandler)
-
+app.use('/api', NotaFiscal)
+app.use('/api', NotaFiscalImprimir)
 app.use('/api', processPayment)
 
 const start = async (): Promise<void> => {
