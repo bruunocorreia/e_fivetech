@@ -1,23 +1,22 @@
-'use client';
+'use client'
 
-import React, { useEffect, useState } from 'react';
-
-import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 
 // import classes from './index.module.scss'; // Uncomment and adjust the import path if you're using CSS modules
 
 const NFeHandler = () => {
-  const [nfeId, setNfeId] = useState(null);
-  const [nfeStatus, setNfeStatus] = useState(null);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [nfeId, setNfeId] = useState(null)
+  const [nfeStatus, setNfeStatus] = useState(null)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
   // Function to create the NF-e
   const createNFe = async () => {
-    setError('');
-    setSuccess('');
-    setNfeId(null);
-    setNfeStatus(null);
+    setError('')
+    setSuccess('')
+    setNfeId(null)
+    setNfeStatus(null)
 
     // NF-e data as provided
     const nfeData = {
@@ -150,73 +149,71 @@ const NFeHandler = () => {
           numero: '99999999',
         },
       },
-    };
+    }
 
     // Log the data to be sent
-    console.log('Enviando dados para criar NF-e:', nfeData);
+    console.log('Enviando dados para criar NF-e:', nfeData)
 
     try {
       const response = await axios.post('/api/enviar-nfe', nfeData, {
         headers: {
           'Content-Type': 'application/json',
         },
-      });
+      })
 
       // Log the response received
-      console.log('Resposta recebida do backend:', response.data);
+      console.log('Resposta recebida do backend:', response.data)
 
-      const nfeResponse = response.data;
+      const nfeResponse = response.data
 
       if (nfeResponse.documents && nfeResponse.documents[0]) {
-        setSuccess('NF-e criada com sucesso!');
-        setNfeId(nfeResponse.documents[0].id);
-        setNfeStatus(nfeResponse.message || 'Processando');
+        setSuccess('NF-e criada com sucesso!')
+        setNfeId(nfeResponse.documents[0].id)
+        setNfeStatus(nfeResponse.message || 'Processando')
       } else {
-        setError('Resposta inesperada do servidor. ID da NF-e não encontrado.');
-        console.error('Estrutura de resposta inesperada:', nfeResponse);
+        setError('Resposta inesperada do servidor. ID da NF-e não encontrado.')
+        console.error('Estrutura de resposta inesperada:', nfeResponse)
       }
     } catch (err) {
       // Detailed error logging
       if (err.response) {
-        console.error('Erro na resposta do backend:', err.response.data);
+        console.error('Erro na resposta do backend:', err.response.data)
       } else if (err.request) {
-        console.error('Nenhuma resposta recebida do backend:', err.request);
+        console.error('Nenhuma resposta recebida do backend:', err.request)
       } else {
-        console.error('Erro ao configurar a requisição:', err.message);
+        console.error('Erro ao configurar a requisição:', err.message)
       }
-      setError('Falha ao criar a NF-e. Verifique os dados e tente novamente.');
+      setError('Falha ao criar a NF-e. Verifique os dados e tente novamente.')
     }
-  };
+  }
 
   // Function to download the NF-e PDF using the nfeId
   const downloadNFePDF = async () => {
     try {
       const response = await axios.get(`/api/nfe/${nfeId}/pdf`, {
         responseType: 'blob', // Important to receive binary data
-      });
+      })
 
       // Create a URL for the received blob
-      const url = window.URL.createObjectURL(
-        new Blob([response.data], { type: 'application/pdf' }),
-      );
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }))
 
       // Create a temporary link to trigger the download
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `nfe_${nfeId}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `nfe_${nfeId}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
     } catch (error) {
-      console.error('Erro ao baixar o PDF da NF-e:', error);
-      alert('Falha ao baixar o PDF da NF-e. Por favor, tente novamente.');
+      console.error('Erro ao baixar o PDF da NF-e:', error)
+      alert('Falha ao baixar o PDF da NF-e. Por favor, tente novamente.')
     }
-  };
+  }
 
   // Execute createNFe when the component mounts
   useEffect(() => {
-    createNFe();
-  }, []);
+    createNFe()
+  }, [])
 
   return (
     <div className="nfe-container">
@@ -236,7 +233,7 @@ const NFeHandler = () => {
       )}
       {!error && !success && <p>Criando NF-e...</p>}
     </div>
-  );
-};
+  )
+}
 
-export default NFeHandler;
+export default NFeHandler
