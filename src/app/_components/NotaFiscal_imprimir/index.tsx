@@ -8,42 +8,41 @@ const NFeComponent = () => {
   const [nfeId, setNfeId] = useState(null);
   const [error, setError] = useState(null);
 
-  // Função para criar a NF-e e obter o ID
+  // Simulate fetching the nfeId when the component mounts
   useEffect(() => {
-    const createNFe = async () => {
+    const fetchNFeId = async () => {
       try {
-        const response = await axios.post('/api/nfe/create', {
-          // Envie os dados necessários para criar a NF-e
-          // Substitua este objeto pelos dados reais
-          // Por exemplo, itens do pedido, dados do cliente, etc.
-        });
+        // Replace this with your actual API call to create/get the NF-e ID
+        // For example:
+        // const response = await axios.post('/api/nfe/create');
+        // setNfeId(response.data.nfeId);
 
-        // Extrai o ID da NF-e da resposta da API
-        const nfeId = response.data.documents[0].id;
-        console.log('NF-e ID:', nfeId);
-        setNfeId(nfeId); // Armazena o ID da NF-e no estado
+        // Simulating an API call with a timeout
+        setTimeout(() => {
+          setNfeId('66fda69435f6c637936295cf');
+        }, 1000);
       } catch (error) {
-        console.error('Erro ao criar a NF-e:', error);
-        setError('Falha ao criar a NF-e. Por favor, tente novamente.');
+        console.error('Erro ao criar NF-e:', error);
+        setError('Falha ao criar NF-e. Por favor, tente novamente.');
       }
     };
 
-    createNFe();
+    fetchNFeId();
   }, []);
 
-  // Função para obter o PDF da NF-e
+  // Function to download the NF-e PDF
   const downloadNFePDF = async () => {
     try {
       const response = await axios.get(`/api/nfe/${nfeId}/pdf`, {
-        responseType: 'blob', // Importante para receber dados binários
+        responseType: 'blob', // Important to receive binary data
       });
 
-      // Cria um URL para o blob recebido
+      // Create a URL for the received blob
       const url = window.URL.createObjectURL(
         new Blob([response.data], { type: 'application/pdf' }),
       );
 
-      // Cria um link temporário para fazer o download
+      // Create a temporary link to trigger the download
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', `nfe_${nfeId}.pdf`);
@@ -65,10 +64,8 @@ const NFeComponent = () => {
           <p>
             <strong>ID da NF-e:</strong> {nfeId}
           </p>
-          {/* Botão para baixar o PDF da NF-e */}
-          <button onClick={downloadNFePDF}>
-            Baixar NF-e em PDF
-          </button>
+          {/* Button to download the NF-e PDF */}
+          <button onClick={downloadNFePDF}>Baixar NF-e em PDF</button>
         </>
       ) : (
         <p>Criando NF-e...</p>
