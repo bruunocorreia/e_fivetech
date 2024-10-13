@@ -50,12 +50,15 @@ export const HighImpactImage: React.FC<MediaProps> = props => {
     width: '100%',
     margin: '0 auto',
   }
+
+  console.log(resources)
   const sizes = Object.entries(breakpoints)
     .map(([, value]) => `(max-width: ${value}px) ${value}px`)
     .join(', ')
   return (
     <div style={containerStyle}>
       {resources?.map((resource, index) => (
+        
         <NextImage
           key={index}
           className={[classes.image, imgClassName].filter(Boolean).join(' ')}
@@ -68,6 +71,10 @@ export const HighImpactImage: React.FC<MediaProps> = props => {
           height={!fill ? resource.height : undefined}
           sizes={sizes}
           priority={priority}
+          style={{
+            objectFit: 'cover',
+            objectPosition: `${resource.X_position || 50}% ${resource.Y_position || 50}%`, // Adiciona '%' após x_position e y_position
+          }}
         />
       ))}
     </div>

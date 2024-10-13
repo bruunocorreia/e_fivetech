@@ -12,6 +12,20 @@ export const Media: CollectionConfig = {
   },
   fields: [
     {
+      name: 'X_position',
+      type: 'number',
+      required: false,
+      hidden: false,
+      defaultValue: 100,
+    },
+    {
+      name: 'Y_position',
+      type: 'number',
+      required: false,
+      hidden: false,
+      defaultValue: 100,
+    },
+    {
       name: 'alt',
       type: 'text',
       required: false,

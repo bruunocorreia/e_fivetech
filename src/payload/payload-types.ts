@@ -161,6 +161,8 @@ export interface Page {
 }
 export interface Media {
   id: string;
+  X_position?: number | null;
+  Y_position?: number | null;
   alt?: string | null;
   caption?:
     | {
