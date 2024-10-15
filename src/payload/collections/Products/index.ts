@@ -5,7 +5,6 @@ import { ConditionalText } from '../../fields/conditionalText'
 import { slugField } from '../../fields/slug'
 import { revalidateProduct } from './hooks/revalidateProduct'
 
-
 const Products: CollectionConfig = {
   slug: 'products',
   labels: { plural: 'Produtos', singular: 'Produto' },
@@ -82,7 +81,7 @@ const Products: CollectionConfig = {
       relationTo: 'categories',
       hasMany: true,
     },
- 
+
     {
       name: 'slider', // required
       type: 'array', // required
@@ -90,27 +89,27 @@ const Products: CollectionConfig = {
       minRows: 1,
       validate: async (val, args) => {
         // Verifica se `val` é válido e contém mais de um item
+
+        console.log(args)
         if (!val || val.length <= 1) {
-          return true;
+          return true
         }
 
-        const combinacoesVistas: string[] = [];
+        const combinacoesVistas: string[] = []
         for (const item of val) {
-          const combinacao = `${item.colors}-${item.sizes}`;
-
+          const combinacao = `${item.colors}-${item.sizes}`
 
           // Se a combinação já foi vista, retorna a mensagem de erro
           if (combinacoesVistas.includes(combinacao)) {
-            return `A variação ${combinacao} já foi cadastrada`; // Retorna a mensagem de erro se duplicado
+            return `A variação ${combinacao} já foi cadastrada` // Retorna a mensagem de erro se duplicado
           }
 
           // Caso contrário, adiciona a combinação ao Set
-          combinacoesVistas.push(combinacao);
+          combinacoesVistas.push(combinacao)
         }
 
         // Se não encontrar duplicidades, retorna true
-        return true;
-
+        return true
       },
 
       interfaceName: 'CardSlider', // optional
@@ -149,7 +148,6 @@ const Products: CollectionConfig = {
           },
         },
       ],
-
     },
     {
       name: 'description',
@@ -259,7 +257,6 @@ const Products: CollectionConfig = {
       },
     },
     slugField(),
-
   ],
 }
 

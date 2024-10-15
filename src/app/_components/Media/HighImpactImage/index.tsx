@@ -58,7 +58,6 @@ export const HighImpactImage: React.FC<MediaProps> = props => {
   return (
     <div style={containerStyle}>
       {resources?.map((resource, index) => (
-        
         <NextImage
           key={index}
           className={[classes.image, imgClassName].filter(Boolean).join(' ')}
