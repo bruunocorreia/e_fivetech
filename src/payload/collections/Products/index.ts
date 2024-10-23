@@ -81,25 +81,73 @@ const Products: CollectionConfig = {
       relationTo: 'categories',
       hasMany: true,
     },
+
     {
-      name: 'colors',
-      label: 'Cores disponíveis',
-      type: 'relationship',
-      relationTo: 'colors',
-      hasMany: true,
-    },
-    {
-      name: 'sizes',
-      label: 'Tamanhos disponíveis',
-      type: 'select',
-      options: [
-        { value: 'GG', label: 'GG' },
-        { value: 'G', label: 'G' },
-        { value: 'M', label: 'M' },
-        { value: 'P', label: 'P' },
-        { value: 'PP', label: 'PP' },
+      name: 'slider', // required
+      type: 'array', // required
+      label: 'Estoque',
+      minRows: 1,
+      validate: async (val, args) => {
+        // Verifica se `val` é válido e contém mais de um item
+
+        console.log(args)
+        if (!val || val.length <= 1) {
+          return true
+        }
+
+        const combinacoesVistas: string[] = []
+        for (const item of val) {
+          const combinacao = `${item.colors}-${item.sizes}`
+
+          // Se a combinação já foi vista, retorna a mensagem de erro
+          if (combinacoesVistas.includes(combinacao)) {
+            return `A variação ${combinacao} já foi cadastrada` // Retorna a mensagem de erro se duplicado
+          }
+
+          // Caso contrário, adiciona a combinação ao Set
+          combinacoesVistas.push(combinacao)
+        }
+
+        // Se não encontrar duplicidades, retorna true
+        return true
+      },
+
+      interfaceName: 'CardSlider', // optional
+      labels: {
+        singular: 'Variação',
+        plural: 'Variações',
+      },
+      fields: [
+        {
+          name: 'colors',
+          label: 'Cores disponíveis',
+          type: 'relationship',
+          relationTo: 'colors',
+          hasMany: false,
+        },
+        {
+          name: 'sizes',
+          label: 'Tamanhos disponíveis',
+          type: 'select',
+          options: [
+            { value: 'GG', label: 'GG' },
+            { value: 'G', label: 'G' },
+            { value: 'M', label: 'M' },
+            { value: 'P', label: 'P' },
+            { value: 'PP', label: 'PP' },
+          ],
+          hasMany: false,
+        },
+        {
+          name: 'stock',
+          type: 'number',
+          label: 'Estoque',
+          required: true,
+          admin: {
+            step: 1.0,
+          },
+        },
       ],
-      hasMany: true,
     },
     {
       name: 'description',
@@ -127,6 +175,26 @@ const Products: CollectionConfig = {
       admin: {
         step: 20.0,
       },
+    },
+    {
+      name: 'installments',
+      label: 'Máx. Parcelas',
+      type: 'select',
+      options: [
+        { value: '1', label: '1' },
+        { value: '2', label: '2' },
+        { value: '3', label: '3' },
+        { value: '4', label: '4' },
+        { value: '5', label: '5' },
+        { value: '6', label: '6' },
+        { value: '7', label: '7' },
+        { value: '8', label: '8' },
+        { value: '9', label: '9' },
+        { value: '10', label: '10' },
+        { value: '11', label: '11' },
+        { value: '12', label: '12' },
+      ],
+      hasMany: true,
     },
     {
       name: 'discountPercentage',

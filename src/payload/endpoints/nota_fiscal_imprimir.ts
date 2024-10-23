@@ -5,7 +5,6 @@ const router = Router()
 
 router.get('/nfe/:id/pdf', async (req, res) => {
   const apiKey = process.env.PLUGNOTAS_API_KEY // Defina sua API Key no arquivo .env
-
   const nfeId = req.params.id
 
   // Log do ID da NF-e recebida
@@ -30,14 +29,20 @@ router.get('/nfe/:id/pdf', async (req, res) => {
 
     // Enviar o PDF para o cliente
     res.send(response.data)
-  } catch (error) {
-    // Log detalhado do erro
-    console.error('Erro ao obter o PDF da NF-e:', error.response?.data || error.message)
-
-    res.status(500).json({
-      error: 'Falha ao obter o PDF da NF-e. Por favor, verifique o ID e tente novamente.',
-      details: error.response?.data || error.message,
-    })
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error('Erro ao obter o PDF da NF-e:', error.response?.data || error.message)
+      res.status(500).json({
+        error: 'Falha ao obter o PDF da NF-e. Por favor, verifique o ID e tente novamente.',
+        details: error.response?.data || error.message,
+      })
+    } else {
+      console.error('Erro desconhecido:', (error as Error).message)
+      res.status(500).json({
+        error: 'Erro desconhecido ao obter o PDF da NF-e.',
+        details: (error as Error).message,
+      })
+    }
   }
 })
 

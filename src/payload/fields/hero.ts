@@ -43,25 +43,6 @@ export const hero: Field = {
         condition: (_, { type } = {}) => !['highImpact'].includes(type),
       },
     },
-    // Novos campos adicionados aqui
-    {
-      name: 'numberOfPhotosCarousel1',
-      label: 'Número de Fotos no Carrossel 1',
-      type: 'number',
-      required: true,
-      admin: {
-        condition: (_, { type } = {}) => ['highImpact'].includes(type),
-      },
-    },
-    {
-      name: 'numberOfPhotosCarousel2',
-      label: 'Número de Fotos no Carrossel 2',
-      type: 'number',
-      required: true,
-      admin: {
-        condition: (_, { type } = {}) => ['highImpact'].includes(type),
-      },
-    },
     {
       name: 'carrossel',
       label: 'Carrosel',
