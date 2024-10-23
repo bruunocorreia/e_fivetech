@@ -9,6 +9,7 @@ const policies = {
     'https://maps.googleapis.com',
     'https://*.mercadopago.com/',
     'https://*.mercadolibre.com/',
+    'https://http2.mlstatic.com', // Adicionado mlstatic.com aqui
   ],
   'child-src': ["'self'"],
   'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
@@ -19,6 +20,7 @@ const policies = {
     'https://*.mercadolivre.com/',
     'https://*.mercadopago.com/',
     'https://*.mercadolibre.com/',
+    'https://http2.mlstatic.com', // Adicionado mlstatic.com aqui
   ],
   'font-src': ["'self'"],
   'frame-src': [
@@ -28,6 +30,7 @@ const policies = {
     'https://hooks.stripe.com',
     'https://*.mercadopago.com/',
     'https://*.mercadolibre.com/',
+    'https://http2.mlstatic.com', // Adicionado mlstatic.com aqui
   ],
   'connect-src': [
     "'self'",
@@ -37,6 +40,7 @@ const policies = {
     'https://*.mercadopago.com/',
     'https://api.mercadolibre.com/',
     'https://*.mercadolibre.com/',
+    'https://http2.mlstatic.com', // Adicionado mlstatic.com aqui
   ],
 }
 
