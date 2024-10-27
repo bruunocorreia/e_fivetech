@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-
 import axios from 'axios'
 
 export const useEmailSender = () => {
@@ -51,27 +50,27 @@ export const useEmailSender = () => {
   // Função para enviar a Nota Fiscal como anexo no email
   // Função para enviar a Nota Fiscal por email com o PDF em anexo
   const sendNotaFiscalEmail = async (to_email, to_name, pdfBlob) => {
-    setLoading(true); // Inicia o estado de carregamento
-    setError(''); // Limpa o estado de erro anterior
-    setSuccess(''); // Limpa o estado de sucesso anterior
+    setLoading(true) // Inicia o estado de carregamento
+    setError('') // Limpa o estado de erro anterior
+    setSuccess('') // Limpa o estado de sucesso anterior
 
     try {
-      const formData = new FormData();
-      formData.append('pdf', pdfBlob, 'nota_fiscal.pdf');
-      formData.append('to_email', to_email);
-      formData.append('to_name', to_name);
-      formData.append('subject', 'Sua Nota Fiscal Eletrônica');
-      formData.append('message', 'Segue em anexo a sua Nota Fiscal Eletrônica.');
+      const formData = new FormData()
+      formData.append('pdf', pdfBlob, 'nota_fiscal.pdf')
+      formData.append('to_email', to_email)
+      formData.append('to_name', to_name)
+      formData.append('subject', 'Sua Nota Fiscal Eletrônica')
+      formData.append('message', 'Segue em anexo a sua Nota Fiscal Eletrônica.')
 
-      await axios.post('/api/send-email-nota-fiscal', formData);
-      setSuccess('Nota Fiscal enviada com sucesso!'); // Define o estado de sucesso
+      await axios.post('/api/send-email-nota-fiscal', formData)
+      setSuccess('Nota Fiscal enviada com sucesso!') // Define o estado de sucesso
     } catch (err) {
-      console.error('Erro ao enviar a Nota Fiscal:', err);
-      setError('Falha ao enviar a Nota Fiscal. Tente novamente.'); // Define o estado de erro
+      console.error('Erro ao enviar a Nota Fiscal:', err)
+      setError('Falha ao enviar a Nota Fiscal. Tente novamente.') // Define o estado de erro
     } finally {
-      setLoading(false); // Finaliza o estado de carregamento
+      setLoading(false) // Finaliza o estado de carregamento
     }
-  };
+  }
 
-  return { sendEmail, sendEmailCadastro,sendNotaFiscalEmail, loading, error, success }
+  return { sendEmail, sendEmailCadastro, sendNotaFiscalEmail, loading, error, success }
 }
