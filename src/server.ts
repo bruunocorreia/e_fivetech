@@ -1,22 +1,22 @@
+import CancelFreightRouter from './payload/endpoints/melhor_envio_cancelamento'
+import CheckoutFreightRouter from './payload/endpoints/melhor_envio_checkout'
+import EmailRouter from './payload/endpoints/email_compra'
+import EmailRouterCad from './payload/endpoints/email_cadastro'
+import EmailRouterFiscal from './payload/endpoints/email_notafiscal'
+import GeraEtiquetaFreightRouter from './payload/endpoints/melhor_envio_add_etiqueta'
+import NotaFiscal from './payload/endpoints/nota_fiscal'
+import NotaFiscalImprimir from './payload/endpoints/nota_fiscal_imprimir'
+import PrintEtiquetaFreightRouter from './payload/endpoints/melhor_envio_print_etiqueta'
+import calculateFreightRouter from './payload/endpoints/melhor_envio'
+import carrinhoFreightRouter from './payload/endpoints/melhor_envio_add_carrinho'
 import dotenv from 'dotenv'
 import express from 'express'
 import next from 'next'
 import nextBuild from 'next/dist/build'
+import orderHandler from './payload/endpoints/order-handler'
 import path from 'path'
 import payload from 'payload'
-
-import EmailRouterCad from './payload/endpoints/email_cadastro'
-import EmailRouter from './payload/endpoints/email_compra'
 import processPayment from './payload/endpoints/gateway_pagamento'
-import calculateFreightRouter from './payload/endpoints/melhor_envio'
-import carrinhoFreightRouter from './payload/endpoints/melhor_envio_add_carrinho'
-import GeraEtiquetaFreightRouter from './payload/endpoints/melhor_envio_add_etiqueta'
-import CancelFreightRouter from './payload/endpoints/melhor_envio_cancelamento'
-import CheckoutFreightRouter from './payload/endpoints/melhor_envio_checkout'
-import PrintEtiquetaFreightRouter from './payload/endpoints/melhor_envio_print_etiqueta'
-import NotaFiscal from './payload/endpoints/nota_fiscal'
-import NotaFiscalImprimir from './payload/endpoints/nota_fiscal_imprimir'
-import orderHandler from './payload/endpoints/order-handler'
 
 dotenv.config({
   path: path.resolve(__dirname, '../.env'),
@@ -35,6 +35,7 @@ app.use('/api', CheckoutFreightRouter)
 app.use('/api', CancelFreightRouter)
 app.use('/api', EmailRouter)
 app.use('/api', EmailRouterCad)
+app.use('/api', EmailRouterFiscal)
 app.use('/api', orderHandler)
 app.use('/api', NotaFiscal)
 app.use('/api', NotaFiscalImprimir)
