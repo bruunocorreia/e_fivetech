@@ -6,14 +6,6 @@
  * and re-run `payload generate:types` to regenerate this file.
  */
 
-export type CardSlider =
-  | {
-      colors?: (string | null) | Color;
-      sizes?: ('GG' | 'G' | 'M' | 'P' | 'PP') | null;
-      stock: number;
-      id?: string | null;
-    }[]
-  | null;
 export type CartItems =
   | {
       product?: (string | null) | Product;
@@ -200,11 +192,11 @@ export interface Product {
   sale?: boolean | null;
   hot?: boolean | null;
   categories?: (string | Category)[] | null;
-  slider?: CardSlider;
+  colors?: (string | Color)[] | null;
+  sizes?: ('GG' | 'G' | 'M' | 'P' | 'PP')[] | null;
   description: string;
   composition: string;
   price: number;
-  installments?: ('1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12')[] | null;
   discountPercentage?: number | null;
   photos?:
     | {
