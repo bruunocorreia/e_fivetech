@@ -1,55 +1,55 @@
-import { Payment, StatusScreen, initMercadoPago } from '@mercadopago/sdk-react';
-import React, { useState } from 'react';
+import React, { useState } from 'react'
+import { initMercadoPago, Payment, StatusScreen } from '@mercadopago/sdk-react'
+import axios from 'axios'
+import { useRouter } from 'next/navigation'
 
-import axios from 'axios';
-import { useAuth } from '../../_providers/Auth';
-import { useCart } from '../../_providers/Cart';
-import { useEmailSender } from '../../_components/email';
-import { useRouter } from 'next/navigation';
+import { useEmailSender } from '../../_components/email'
+import { useAuth } from '../../_providers/Auth'
+import { useCart } from '../../_providers/Cart'
 
-initMercadoPago('TEST-e4e31358-531f-4c4d-bd5c-3e77edc4ee3f', { locale: 'pt-BR' });
+initMercadoPago('TEST-e4e31358-531f-4c4d-bd5c-3e77edc4ee3f', { locale: 'pt-BR' })
 
 export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipCode }) => {
-  const router = useRouter();
-  const [orderIds, setOrderIds] = useState([]);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [paymentId, setPaymentId] = useState(null);
-  const [validationErrors, setValidationErrors] = useState([]);
+  const router = useRouter()
+  const [orderIds, setOrderIds] = useState([])
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [paymentId, setPaymentId] = useState(null)
+  const [validationErrors, setValidationErrors] = useState([])
 
-  const { sendEmail, sendNotaFiscalEmail } = useEmailSender();
-  const { user } = useAuth();
-  const { cart, cartTotal } = useCart();
+  const { sendEmail, sendNotaFiscalEmail } = useEmailSender()
+  const { user } = useAuth()
+  const { cart, cartTotal } = useCart()
 
-  const transactionDescription = 'Minimo1';
+  const transactionDescription = 'Minimo1'
 
-  const validateCartItems = (items) => {
-    const errors = [];
+  const validateCartItems = items => {
+    const errors = []
     items.forEach((item, index) => {
       if (!item.selectedSize) {
-        errors.push({ field: `items.${index}.selectedSize`, message: 'This field is required.' });
+        errors.push({ field: `items.${index}.selectedSize`, message: 'This field is required.' })
       }
       if (!item.selectedColor) {
-        errors.push({ field: `items.${index}.selectedColor`, message: 'This field is required.' });
+        errors.push({ field: `items.${index}.selectedColor`, message: 'This field is required.' })
       }
-    });
-    return errors;
-  };
+    })
+    return errors
+  }
 
   // Função para gerar a nota fiscal e enviar o email com o PDF anexado
-  const generateAndSendNotaFiscal = async (order) => {
+  const generateAndSendNotaFiscal = async order => {
     try {
       // Extrair dados necessários do sistema
-      const { items } = cart || {};
-      const totalValue = cartTotal?.raw;
-  
+      const { items } = cart || {}
+      const totalValue = cartTotal?.raw
+
       // Funções auxiliares para formatação
-      const formatCpfCnpj = (value) => value ? value.replace(/\D/g, '') : '';
-      const formatCep = (value) => value ? value.replace(/\D/g, '') : '';
+      const formatCpfCnpj = value => (value ? value.replace(/\D/g, '') : '')
+      const formatCep = value => (value ? value.replace(/\D/g, '') : '')
       const generateCodigo = () => {
-        return Math.floor(10000000 + Math.random() * 90000000).toString();
-      };
-  
+        return Math.floor(10000000 + Math.random() * 90000000).toString()
+      }
+
       // Construir o objeto nfeData com dados dinâmicos
       const nfeData = {
         enviarEmail: true,
@@ -82,7 +82,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
             descricaoPais: 'Brasil',
           },
           telefone: {
-            ddd: process.env.NEXT_PUBLIC_COMPANY_TELEFONE_DDD ,
+            ddd: process.env.NEXT_PUBLIC_COMPANY_TELEFONE_DDD,
             numero: process.env.NEXT_PUBLIC_COMPANY_TELEFONE_NUMERO,
           },
           email: process.env.NEXT_PUBLIC_COMPANY_EMAIL,
@@ -111,11 +111,11 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
           },
         },
         itens: items?.map((item, index) => {
-          const product = item.product;
-          const quantity = item.quantity || 1;
-          const unitPrice = parseFloat(product.price);
-          const totalPrice = unitPrice * quantity;
-  
+          const product = item.product
+          const quantity = item.quantity || 1
+          const unitPrice = parseFloat(product.price)
+          const totalPrice = unitPrice * quantity
+
           return {
             codigo: product.id?.toString() || `00${index + 1}`,
             ncm: product.ncm || '11081200', // Utilize o NCM real do produto
@@ -162,7 +162,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
                 valor: totalPrice * 0.076,
               },
             },
-          };
+          }
         }),
         total: {
           baseCalculoIcms: totalValue,
@@ -188,55 +188,58 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
             numero: process.env.NEXT_PUBLIC_RESP_TEC_TELEFONE_NUMERO,
           },
         },
-      };
-  
+      }
+
       // Passo 1: Criar NF-e
       const createResponse = await axios.post('/api/enviar-nfe', nfeData, {
         headers: {
           'Content-Type': 'application/json',
         },
-      });
-  
-      const nfeResponse = createResponse.data;
-  
+      })
+
+      const nfeResponse = createResponse.data
+
       if (nfeResponse.documents && nfeResponse.documents[0]) {
-        const nfeId = nfeResponse.documents[0].id;
-  
+        const nfeId = nfeResponse.documents[0].id
+
         // Passo 2: Baixar o PDF da NF-e usando o nfeId
         const pdfResponse = await axios.get(`/api/nfe/${nfeId}/pdf`, {
           responseType: 'arraybuffer',
-        });
-  
+        })
+
         // Converter o PDF em base64
-        const pdfBuffer = Buffer.from(pdfResponse.data);
+        const pdfBuffer = Buffer.from(pdfResponse.data)
         const attachment = {
           filename: 'nota_fiscal.pdf',
           content: pdfBuffer.toString('base64'),
           encoding: 'base64',
           contentType: 'application/pdf',
-        };
-  
+        }
+
         // Passo 3: Enviar e-mail com o PDF anexado
-        sendNotaFiscalEmail(userData.email, userData.name, attachment);
-  
-        console.log('Nota Fiscal enviada com sucesso!');
+        sendNotaFiscalEmail(userData.email, userData.name, attachment)
+
+        console.log('Nota Fiscal enviada com sucesso!')
       } else {
-        setError('Resposta inesperada do servidor. ID da NF-e não encontrado.');
-        console.error('Estrutura de resposta inesperada:', nfeResponse);
+        setError('Resposta inesperada do servidor. ID da NF-e não encontrado.')
+        console.error('Estrutura de resposta inesperada:', nfeResponse)
       }
     } catch (err) {
       if (err.response && err.response.data) {
-        console.error('Erro ao enviar NF-e:', JSON.stringify(err.response.data, null, 2));
+        console.error('Erro ao enviar NF-e:', JSON.stringify(err.response.data, null, 2))
         if (err.response.data.data && err.response.data.data.fields) {
-          console.error('Detalhes dos campos com erro:', JSON.stringify(err.response.data.data.fields, null, 2));
+          console.error(
+            'Detalhes dos campos com erro:',
+            JSON.stringify(err.response.data.data.fields, null, 2),
+          )
         }
       } else {
-        console.error('Erro ao enviar NF-e:', err);
+        console.error('Erro ao enviar NF-e:', err)
       }
-      setError('Falha ao gerar ou enviar a Nota Fiscal.');
+      setError('Falha ao gerar ou enviar a Nota Fiscal.')
     }
-  };
-  
+  }
+
   // Restante do código permanece o mesmo
 
   const completeFreightPurchase = async () => {
@@ -311,36 +314,36 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
 
   const initialization = {
     amount: amount,
-  };
+  }
 
   const customization = {
     paymentMethods: {
       bankTransfer: 'all',
       creditCard: 'all',
     },
-  };
+  }
 
   const onSubmit = async ({ formData }) => {
     const paymentData = {
       ...formData,
       description: transactionDescription,
       transaction_amount: parseFloat(amount.toFixed(2)),
-    };
-
-    const response = await axios.post('/api/process-payment', { paymentData });
-    if (response.data && response.data.id) {
-      setPaymentId(response.data.id);
-      console.log('Payment processed', response);
     }
 
-    const errors = validateCartItems(cart?.items || []);
+    const response = await axios.post('/api/process-payment', { paymentData })
+    if (response.data && response.data.id) {
+      setPaymentId(response.data.id)
+      console.log('Payment processed', response)
+    }
+
+    const errors = validateCartItems(cart?.items || [])
     if (errors.length > 0) {
-      setValidationErrors(errors);
-      return;
+      setValidationErrors(errors)
+      return
     }
 
     try {
-      const shippingTicketUrl = await completeFreightPurchase();
+      const shippingTicketUrl = await completeFreightPurchase()
 
       const orderReq = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/create-order`, {
         method: 'POST',
@@ -349,15 +352,13 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
         },
         body: JSON.stringify({
           total: cartTotal.raw,
-          items: (cart?.items || [])?.map(
-            ({ product, quantity, selectedColor, selectedSize }) => ({
-              product: typeof product === 'string' ? product : product.id,
-              quantity,
-              selectedSize,
-              selectedColor,
-              price: typeof product === 'object' ? product.price : undefined,
-            })
-          ),
+          items: (cart?.items || [])?.map(({ product, quantity, selectedColor, selectedSize }) => ({
+            product: typeof product === 'string' ? product : product.id,
+            quantity,
+            selectedSize,
+            selectedColor,
+            price: typeof product === 'object' ? product.price : undefined,
+          })),
           shippingTicket: shippingTicketUrl,
           shippingZipCode: zipCode,
           shippingHouseNumber: shippingData.houseNumber,
@@ -367,30 +368,30 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
           userSocialId: userData.socialId,
           userPhoneNumber: userData.phoneNumber,
         }),
-      });
+      })
 
-      if (!orderReq.ok) throw new Error(orderReq.statusText || 'Something went wrong.');
+      if (!orderReq.ok) throw new Error(orderReq.statusText || 'Something went wrong.')
 
-      const order = await orderReq.json();
-      sendEmail(userData.email, userData.name);
+      const order = await orderReq.json()
+      sendEmail(userData.email, userData.name)
 
       // Gera a Nota Fiscal e envia o e-mail com o PDF após a confirmação do pedido
-      await generateAndSendNotaFiscal(order);
+      await generateAndSendNotaFiscal(order)
 
-      router.push(`/order-confirmation?order_id=${order.id}`);
+      router.push(`/order-confirmation?order_id=${order.id}`)
     } catch (err) {
-      console.error(err.message);
-      router.push(`/order-confirmation?error=${encodeURIComponent(err.message)}`);
+      console.error(err.message)
+      router.push(`/order-confirmation?error=${encodeURIComponent(err.message)}`)
     }
-  };
+  }
 
-  const onError = (error) => {
-    console.error('Error processing payment', error);
-  };
+  const onError = error => {
+    console.error('Error processing payment', error)
+  }
 
   const onReady = () => {
-    console.log('Payment form ready');
-  };
+    console.log('Payment form ready')
+  }
 
   return (
     <div>
@@ -414,9 +415,9 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
       ) : (
         <StatusScreen
           initialization={{ paymentId: paymentId }}
-          onError={(error) => console.error(error)}
+          onError={error => console.error(error)}
         />
       )}
     </div>
-  );
-};
+  )
+}
