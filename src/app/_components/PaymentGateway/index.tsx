@@ -1,228 +1,243 @@
-import { Payment, StatusScreen, initMercadoPago } from '@mercadopago/sdk-react'
-import React, { useState } from 'react'
+import { Payment, StatusScreen, initMercadoPago } from '@mercadopago/sdk-react';
+import React, { useState } from 'react';
 
-import axios from 'axios'
-import { useAuth } from '../../_providers/Auth'
-import { useCart } from '../../_providers/Cart'
-import { useEmailSender } from '../../_components/email'
-import { useRouter } from 'next/navigation'
+import axios from 'axios';
+import { useAuth } from '../../_providers/Auth';
+import { useCart } from '../../_providers/Cart';
+import { useEmailSender } from '../../_components/email';
+import { useRouter } from 'next/navigation';
 
-initMercadoPago('TEST-e4e31358-531f-4c4d-bd5c-3e77edc4ee3f', { locale: 'pt-BR' })
+initMercadoPago('TEST-e4e31358-531f-4c4d-bd5c-3e77edc4ee3f', { locale: 'pt-BR' });
 
 export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipCode }) => {
-  const router = useRouter()
-  const [orderIds, setOrderIds] = useState([])
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [paymentId, setPaymentId] = useState(null)
-  const [validationErrors, setValidationErrors] = useState([])
+  const router = useRouter();
+  const [orderIds, setOrderIds] = useState([]);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [paymentId, setPaymentId] = useState(null);
+  const [validationErrors, setValidationErrors] = useState([]);
 
-  const { sendEmail, sendNotaFiscalEmail } = useEmailSender()
-  const { user } = useAuth()
-  const { cart, cartTotal } = useCart()
+  const { sendEmail, sendNotaFiscalEmail } = useEmailSender();
+  const { user } = useAuth();
+  const { cart, cartTotal } = useCart();
 
-  const transactionDescription = 'Minimo1'
+  const transactionDescription = 'Minimo1';
 
-  const validateCartItems = items => {
-    const errors = []
+  const validateCartItems = (items) => {
+    const errors = [];
     items.forEach((item, index) => {
       if (!item.selectedSize) {
-        errors.push({ field: `items.${index}.selectedSize`, message: 'This field is required.' })
+        errors.push({ field: `items.${index}.selectedSize`, message: 'This field is required.' });
       }
       if (!item.selectedColor) {
-        errors.push({ field: `items.${index}.selectedColor`, message: 'This field is required.' })
+        errors.push({ field: `items.${index}.selectedColor`, message: 'This field is required.' });
       }
-    })
-    return errors
-  }
-
-// NF-e data as provided
-const nfeData = {
-  enviarEmail: true,
-  presencial: false,
-  codigo: 1234567,
-  natureza: 'Venda de Produto Teste',
-  consumidorFinal: true,
-  emitente: {
-    incentivoFiscal: false,
-    incentivadorCultural: false,
-    cpfCnpj: '08187168000160',
-    inscricaoEstadual: '9044016688',
-    inscricaoMunicipal: '096650',
-    razaoSocial: 'TESTE TECNOSPEED S/A',
-    simplesNacional: false,
-    regimeTributario: 3,
-    regimeTributarioEspecial: 0,
-    endereco: {
-      tipoLogradouro: 'AVENIDA',
-      logradouro: 'AVENIDA DUQUE DE CAXIAS',
-      numero: '882',
-      complemento: 'Torre II - 17 andar',
-      tipoBairro: 'ZONA',
-      bairro: 'ZONA',
-      codigoCidade: '4115200',
-      descricaoCidade: 'MARINGAPR',
-      estado: 'PR',
-      cep: '87020025',
-      codigoPais: '1058',
-      descricaoPais: 'Brasil',
-    },
-    telefone: {
-      ddd: '44',
-      numero: '44444444',
-    },
-    email: 'email.teste@tecnospeed.com.br',
-  },
-  destinatario: {
-    cpfCnpj: '00000000000191',
-    razaoSocial: 'NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL',
-    nomeFantasia: 'NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL',
-    inscricaoMunicipal: '8214100099',
-    email: 'email.teste@tecnospeed.com.br',
-    endereco: {
-      descricaoCidade: 'Maringa',
-      cep: '87020100',
-      tipoLogradouro: 'Rua',
-      logradouro: 'Barao do rio branco',
-      tipoBairro: 'Centro',
-      codigoCidade: '4115200',
-      complemento: 'sala 02',
-      estado: 'PR',
-      numero: '1001',
-      bairro: 'Centro',
-    },
-    telefone: {
-      ddd: '44',
-      numero: '99999999',
-    },
-  },
-  itens: [
-    {
-      codigo: '001',
-      ncm: '11081200',
-      cest: '0123456',
-      cfop: '5102',
-      unidade: {
-        comercial: 'CX',
-        tributavel: 'CX',
-      },
-      valorUnitario: {
-        comercial: 0.01,
-        tributavel: 0.01,
-      },
-      valor: 0.01,
-      descricao: 'PRODUTO TESTE PLUGNOTAS',
-      compoeTotal: true,
-      tributos: {
-        icms: {
-          origem: '0',
-          cst: '00',
-          baseCalculo: {
-            modalidadeDeterminacao: '0',
-            valor: 0.01,
-          },
-          aliquota: 12,
-          valor: 0.01,
-        },
-        pis: {
-          cst: '01',
-          baseCalculo: {
-            valor: 0.01,
-          },
-          aliquota: 1.65,
-          valor: 0.01,
-        },
-        cofins: {
-          cst: '01',
-          baseCalculo: {
-            valor: 0.01,
-          },
-          aliquota: 7.6,
-          valor: 0.01,
-        },
-      },
-    },
-  ],
-  total: {
-    baseCalculoIcms: 0.01,
-    valorIcms: 0.01,
-    valorProdutosServicos: 0.01,
-    valorCofins: 0.01,
-    valorPis: 0.01,
-    valorNfe: 0.01,
-  },
-  pagamentos: [
-    {
-      aVista: true,
-      meio: '01',
-      valor: 0.01,
-    },
-  ],
-  responsavelTecnico: {
-    cpfCnpj: '99999999999999',
-    nome: 'Desenvolvedor Responsável',
-    email: 'email.teste@tecnospeed.com.br',
-    telefone: {
-      ddd: '44',
-      numero: '99999999',
-    },
-  },
-}
+    });
+    return errors;
+  };
 
   // Função para gerar a nota fiscal e enviar o email com o PDF anexado
-  // In your PaymentGateway component
-const generateAndSendNotaFiscal = async () => {
-  try {
-    // Step 1: Create NF-e
-    const createResponse = await axios.post('/api/enviar-nfe', nfeData, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    const nfeResponse = createResponse.data;
-
-    if (nfeResponse.documents && nfeResponse.documents[0]) {
-      const nfeId = nfeResponse.documents[0].id;
-
-      // Step 2: Download the NF-e PDF using the nfeId
-      const pdfResponse = await axios.get(`/api/nfe/${nfeId}/pdf`, {
-        responseType: 'arraybuffer', // Important to receive binary data
-      });
-
-      // Converter o PDF em base64
-      const pdfBuffer = Buffer.from(pdfResponse.data);
-      const attachment = {
-        filename: 'nota_fiscal.pdf',
-        content: pdfBuffer.toString('base64'),
-        encoding: 'base64',
-        contentType: 'application/pdf',
+  const generateAndSendNotaFiscal = async (order) => {
+    try {
+      // Extrair dados necessários do sistema
+      const { items } = cart || {};
+      const totalValue = cartTotal?.raw;
+  
+      // Funções auxiliares para formatação
+      const formatCpfCnpj = (value) => value ? value.replace(/\D/g, '') : '';
+      const formatCep = (value) => value ? value.replace(/\D/g, '') : '';
+      const generateCodigo = () => {
+        return Math.floor(10000000 + Math.random() * 90000000).toString();
       };
-
-      // Step 3: Send email with PDF attached
-      sendNotaFiscalEmail(userData.email, userData.name,attachment)
-
-      console.log('Nota Fiscal enviada com sucesso!');
-    } else {
-      setError('Resposta inesperada do servidor. ID da NF-e não encontrado.');
-      console.error('Estrutura de resposta inesperada:', nfeResponse);
+  
+      // Construir o objeto nfeData com dados dinâmicos
+      const nfeData = {
+        enviarEmail: true,
+        presencial: false,
+        codigo: generateCodigo(),
+        natureza: 'Venda de Produtos',
+        consumidorFinal: true,
+        emitente: {
+          incentivoFiscal: false,
+          incentivadorCultural: false,
+          cpfCnpj: '08187168000160',
+          inscricaoEstadual: '9044016688',
+          inscricaoMunicipal: '096650',
+          razaoSocial: 'TESTE TECNOSPEED S/A',
+          simplesNacional: false,
+          regimeTributario: 3,
+          regimeTributarioEspecial: 0,
+          endereco: {
+            tipoLogradouro: 'AVENIDA',
+            logradouro: 'AVENIDA DUQUE DE CAXIAS',
+            numero: '882',
+            complemento: 'Torre II - 17 andar',
+            tipoBairro: 'ZONA',
+            bairro: 'ZONA',
+            codigoCidade: '4115200',
+            descricaoCidade: 'MARINGAPR',
+            estado: 'PR',
+            cep: '87020025',
+            codigoPais: '1058',
+            descricaoPais: 'Brasil',
+          },
+          telefone: {
+            ddd: '44',
+            numero: '44444444',
+          },
+          email: 'email.teste@tecnospeed.com.br',
+        },
+        destinatario: {
+          cpfCnpj: formatCpfCnpj(userData.socialId || ''),
+          razaoSocial: userData.name,
+          nomeFantasia: userData.name,
+          iinscricaoMunicipal: '8214100099',
+          email: userData.email,
+          endereco: {
+            descricaoCidade: shippingData.city,
+            cep: formatCep(zipCode || ''),
+            tipoLogradouro: shippingData.streetType,
+            logradouro: shippingData.address,
+            tipoBairro: 'Bairro',
+            codigoCidade: shippingData.cityCode || 4115200,
+            complemento: shippingData.complement,
+            estado: shippingData.state,
+            numero: shippingData.houseNumber,
+            bairro: shippingData.neighborhood,
+          },
+          telefone: {
+            ddd: userData.phoneNumber ? userData.phoneNumber.replace(/\D/g, '').slice(0, 2) : '',
+            numero: userData.phoneNumber ? userData.phoneNumber.replace(/\D/g, '').slice(2) : '',
+          },
+        },
+        itens: items?.map((item, index) => {
+          const product = item.product;
+          const quantity = item.quantity || 1;
+          const unitPrice = parseFloat(product.price);
+          const totalPrice = unitPrice * quantity;
+  
+          return {
+            codigo: product.id?.toString() || `00${index + 1}`,
+            ncm: product.ncm || '11081200', // Utilize o NCM real do produto
+            cest: product.cest || '0123456', // Utilize o CEST real do produto
+            cfop: '5102',
+            unidade: {
+              comercial: 'UN',
+              tributavel: 'UN',
+            },
+            quantidadeComercial: quantity,
+            quantidadeTributavel: quantity,
+            valorUnitario: {
+              comercial: unitPrice,
+              tributavel: unitPrice,
+            },
+            valor: totalPrice,
+            descricao: product.name || 'Produto',
+            compoeTotal: true,
+            tributos: {
+              icms: {
+                origem: '0',
+                cst: '00',
+                baseCalculo: {
+                  modalidadeDeterminacao: '0',
+                  valor: totalPrice,
+                },
+                aliquota: 12,
+                valor: totalPrice * 0.12,
+              },
+              pis: {
+                cst: '01',
+                baseCalculo: {
+                  valor: totalPrice,
+                },
+                aliquota: 1.65,
+                valor: totalPrice * 0.0165,
+              },
+              cofins: {
+                cst: '01',
+                baseCalculo: {
+                  valor: totalPrice,
+                },
+                aliquota: 7.6,
+                valor: totalPrice * 0.076,
+              },
+            },
+          };
+        }),
+        total: {
+          baseCalculoIcms: totalValue,
+          valorIcms: totalValue * 0.12,
+          valorProdutosServicos: totalValue,
+          valorCofins: totalValue * 0.076,
+          valorPis: totalValue * 0.0165,
+          valorNfe: totalValue,
+        },
+        pagamentos: [
+          {
+            aVista: true,
+            meio: '01', // Código para pagamento em dinheiro
+            valor: totalValue,
+          },
+        ],
+        responsavelTecnico: {
+          cpfCnpj: process.env.NEXT_PUBLIC_RESP_TEC_CPF_CNPJ,
+          nome: process.env.NEXT_PUBLIC_RESP_TEC_NOME,
+          email: process.env.NEXT_PUBLIC_RESP_TEC_EMAIL,
+          telefone: {
+            ddd: process.env.NEXT_PUBLIC_RESP_TEC_TELEFONE_DDD,
+            numero: process.env.NEXT_PUBLIC_RESP_TEC_TELEFONE_NUMERO,
+          },
+        },
+      };
+  
+      // Passo 1: Criar NF-e
+      const createResponse = await axios.post('/api/enviar-nfe', nfeData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      const nfeResponse = createResponse.data;
+  
+      if (nfeResponse.documents && nfeResponse.documents[0]) {
+        const nfeId = nfeResponse.documents[0].id;
+  
+        // Passo 2: Baixar o PDF da NF-e usando o nfeId
+        const pdfResponse = await axios.get(`/api/nfe/${nfeId}/pdf`, {
+          responseType: 'arraybuffer',
+        });
+  
+        // Converter o PDF em base64
+        const pdfBuffer = Buffer.from(pdfResponse.data);
+        const attachment = {
+          filename: 'nota_fiscal.pdf',
+          content: pdfBuffer.toString('base64'),
+          encoding: 'base64',
+          contentType: 'application/pdf',
+        };
+  
+        // Passo 3: Enviar e-mail com o PDF anexado
+        sendNotaFiscalEmail(userData.email, userData.name, attachment);
+  
+        console.log('Nota Fiscal enviada com sucesso!');
+      } else {
+        setError('Resposta inesperada do servidor. ID da NF-e não encontrado.');
+        console.error('Estrutura de resposta inesperada:', nfeResponse);
+      }
+    } catch (err) {
+      if (err.response && err.response.data) {
+        console.error('Erro ao enviar NF-e:', JSON.stringify(err.response.data, null, 2));
+        if (err.response.data.data && err.response.data.data.fields) {
+          console.error('Detalhes dos campos com erro:', JSON.stringify(err.response.data.data.fields, null, 2));
+        }
+      } else {
+        console.error('Erro ao enviar NF-e:', err);
+      }
+      setError('Falha ao gerar ou enviar a Nota Fiscal.');
     }
-  } catch (err) {
-    console.error('Erro ao gerar ou enviar a Nota Fiscal:', err);
-    setError('Falha ao gerar ou enviar a Nota Fiscal.');
-  }
-};
-
-// Helper function to convert ArrayBuffer to base64
-function arrayBufferToBase64(buffer) {
-  let binary = '';
-  const bytes = new Uint8Array(buffer);
-  const len = bytes.byteLength;
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return window.btoa(binary);
-}
+  };
+  
+  // Restante do código permanece o mesmo
 
   const completeFreightPurchase = async () => {
     setLoading(true)
@@ -296,36 +311,36 @@ function arrayBufferToBase64(buffer) {
 
   const initialization = {
     amount: amount,
-  }
+  };
 
   const customization = {
     paymentMethods: {
       bankTransfer: 'all',
       creditCard: 'all',
     },
-  }
+  };
 
   const onSubmit = async ({ formData }) => {
     const paymentData = {
       ...formData,
-      description: transactionDescription, // Inclui a descrição do produto, além do formulário
+      description: transactionDescription,
       transaction_amount: parseFloat(amount.toFixed(2)),
-    }
-    // Callback chamado ao clicar no botão de submissão dos dados
-    const response = await axios.post('/api/process-payment', { paymentData })
+    };
+
+    const response = await axios.post('/api/process-payment', { paymentData });
     if (response.data && response.data.id) {
-      setPaymentId(response.data.id)
-      console.log('Payment processed', response)
+      setPaymentId(response.data.id);
+      console.log('Payment processed', response);
     }
 
-    const errors = validateCartItems(cart?.items || [])
+    const errors = validateCartItems(cart?.items || []);
     if (errors.length > 0) {
-      setValidationErrors(errors)
-      return
+      setValidationErrors(errors);
+      return;
     }
 
     try {
-      const shippingTicketUrl = await completeFreightPurchase()
+      const shippingTicketUrl = await completeFreightPurchase();
 
       const orderReq = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/create-order`, {
         method: 'POST',
@@ -334,13 +349,15 @@ function arrayBufferToBase64(buffer) {
         },
         body: JSON.stringify({
           total: cartTotal.raw,
-          items: (cart?.items || [])?.map(({ product, quantity, selectedColor, selectedSize }) => ({
-            product: typeof product === 'string' ? product : product.id,
-            quantity,
-            selectedSize,
-            selectedColor,
-            price: typeof product === 'object' ? product.price : undefined,
-          })),
+          items: (cart?.items || [])?.map(
+            ({ product, quantity, selectedColor, selectedSize }) => ({
+              product: typeof product === 'string' ? product : product.id,
+              quantity,
+              selectedSize,
+              selectedColor,
+              price: typeof product === 'object' ? product.price : undefined,
+            })
+          ),
           shippingTicket: shippingTicketUrl,
           shippingZipCode: zipCode,
           shippingHouseNumber: shippingData.houseNumber,
@@ -350,30 +367,30 @@ function arrayBufferToBase64(buffer) {
           userSocialId: userData.socialId,
           userPhoneNumber: userData.phoneNumber,
         }),
-      })
+      });
 
-      if (!orderReq.ok) throw new Error(orderReq.statusText || 'Something went wrong.')
+      if (!orderReq.ok) throw new Error(orderReq.statusText || 'Something went wrong.');
 
-      const order = await orderReq.json()
-      sendEmail(userData.email, userData.name)
+      const order = await orderReq.json();
+      sendEmail(userData.email, userData.name);
 
       // Gera a Nota Fiscal e envia o e-mail com o PDF após a confirmação do pedido
-      await generateAndSendNotaFiscal()
+      await generateAndSendNotaFiscal(order);
 
-      router.push(`/order-confirmation?order_id=${order.id}`)
+      router.push(`/order-confirmation?order_id=${order.id}`);
     } catch (err) {
-      console.error(err.message)
-      router.push(`/order-confirmation?error=${encodeURIComponent(err.message)}`)
+      console.error(err.message);
+      router.push(`/order-confirmation?error=${encodeURIComponent(err.message)}`);
     }
-  }
+  };
 
-  const onError = error => {
-    console.error('Error processing payment', error)
-  }
+  const onError = (error) => {
+    console.error('Error processing payment', error);
+  };
 
   const onReady = () => {
-    console.log('Payment form ready')
-  }
+    console.log('Payment form ready');
+  };
 
   return (
     <div>
@@ -397,9 +414,9 @@ function arrayBufferToBase64(buffer) {
       ) : (
         <StatusScreen
           initialization={{ paymentId: paymentId }}
-          onError={error => console.error(error)}
+          onError={(error) => console.error(error)}
         />
       )}
     </div>
-  )
-}
+  );
+};
