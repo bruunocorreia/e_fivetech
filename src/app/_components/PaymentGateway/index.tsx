@@ -187,30 +187,20 @@ const generateAndSendNotaFiscal = async () => {
 
       // Step 2: Download the NF-e PDF using the nfeId
       const pdfResponse = await axios.get(`/api/nfe/${nfeId}/pdf`, {
-        responseType: 'stream', // Important to receive binary data
+        responseType: 'arraybuffer', // Important to receive binary data
       });
 
-      // Collect the stream data into a Buffer
-      const chunks = [];
-      pdfResponse.data.on('data', (chunk) => chunks.push(chunk));
-      await new Promise((resolve, reject) => {
-        pdfResponse.data.on('end', resolve);
-        pdfResponse.data.on('error', reject);
-      });
-
-      const pdfBuffer = Buffer.concat(chunks);
-
-      // Optional: Write the buffer to a file to check if it's valid
-      fs.writeFileSync('test.pdf', pdfBuffer);
-      console.log('PDF file saved as test.pdf');
-
-      // Log the types and contents
-      console.log('Type of pdfResponse.data:', typeof pdfResponse.data);
-      console.log('Is pdfBuffer an instance of Buffer?', pdfBuffer instanceof Buffer);
-
+      // Converter o PDF em base64
+      const pdfBuffer = Buffer.from(pdfResponse.data);
+      const attachment = {
+        filename: 'nota_fiscal.pdf',
+        content: pdfBuffer.toString('base64'),
+        encoding: 'base64',
+        contentType: 'application/pdf',
+      };
 
       // Step 3: Send email with PDF attached
-      sendNotaFiscalEmail(userData.email, userData.name,pdfBuffer)
+      sendNotaFiscalEmail(userData.email, userData.name,attachment)
 
       console.log('Nota Fiscal enviada com sucesso!');
     } else {

@@ -22,13 +22,7 @@ router.post('/send-email-nota-fiscal', async (req, res) => {
     to: to_email,
     subject: 'Bem-vindo à Minimo 1! Aqui está sua nota fiscal!',
     html: emailTemplate,
-    attachments: [
-      {
-        filename: 'nota_fiscal.pdf',
-        content: pdf,
-        contentType: 'application/pdf',
-      },
-    ],
+    attachments: [pdf],
   })})
 
   export default router
