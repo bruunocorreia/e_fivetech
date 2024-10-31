@@ -1,8 +1,9 @@
 import type { CollectionConfig } from 'payload/types'
-import { ConditionalText } from '../../fields/conditionalText'
+
 import { admins } from '../../access/admins'
-import { revalidateProduct } from './hooks/revalidateProduct'
+import { ConditionalText } from '../../fields/conditionalText'
 import { slugField } from '../../fields/slug'
+import { revalidateProduct } from './hooks/revalidateProduct'
 
 const Products: CollectionConfig = {
   slug: 'products',
