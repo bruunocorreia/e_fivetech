@@ -1,11 +1,11 @@
+import { Payment, StatusScreen, initMercadoPago } from '@mercadopago/sdk-react'
 import React, { useState } from 'react'
-import { initMercadoPago, Payment, StatusScreen } from '@mercadopago/sdk-react'
-import axios from 'axios'
-import { useRouter } from 'next/navigation'
 
-import { useEmailSender } from '../../_components/email'
+import axios from 'axios'
 import { useAuth } from '../../_providers/Auth'
 import { useCart } from '../../_providers/Cart'
+import { useEmailSender } from '../../_components/email'
+import { useRouter } from 'next/navigation'
 
 initMercadoPago('TEST-e4e31358-531f-4c4d-bd5c-3e77edc4ee3f', { locale: 'pt-BR' })
 
@@ -20,17 +20,17 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
   const { sendEmail, sendNotaFiscalEmail } = useEmailSender()
   const { user } = useAuth()
   const { cart, cartTotal } = useCart()
-
+  const [showPixMessage, setShowPixMessage] = useState(false) 
   const transactionDescription = 'Minimo1'
 
   const validateCartItems = items => {
     const errors = []
     items.forEach((item, index) => {
       if (!item.selectedSize) {
-        errors.push({ field: `items.${index}.selectedSize`, message: 'This field is required.' })
+        errors.push({ field: `items.${index}.selectedSize`, message: 'Este campo é obrigatório.' })
       }
       if (!item.selectedColor) {
-        errors.push({ field: `items.${index}.selectedColor`, message: 'This field is required.' })
+        errors.push({ field: `items.${index}.selectedColor`, message: 'Este campo é obrigatório.' })
       }
     })
     return errors
@@ -91,7 +91,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
           cpfCnpj: formatCpfCnpj(userData.socialId || ''),
           razaoSocial: userData.name,
           nomeFantasia: userData.name,
-          iinscricaoMunicipal: '8214100099',
+          iinscricaoMunicipal: process.env.NEXT_PUBLIC_COMPANY_INSCRICAOMUNICIPAL,
           email: userData.email,
           endereco: {
             descricaoCidade: shippingData.city,
@@ -240,8 +240,6 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
     }
   }
 
-  // Restante do código permanece o mesmo
-
   const completeFreightPurchase = async () => {
     setLoading(true)
     setError('')
@@ -251,18 +249,18 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
         service: serviceId,
         agency: '',
         from: {
-          postal_code: '96020360',
-          name: 'cliente_name2',
-          address: 'cliente_address',
-          city: 'cliente_city',
-          document: '18548537086',
+          postal_code: process.env.NEXT_PUBLIC_COMPANY_CEP,
+          name: process.env.NEXT_PUBLIC_COMPANY_RAZAO_SOCIAL,
+          address: process.env.NEXT_PUBLIC_COMPANY_LOGRADOURO,
+          city: process.env.NEXT_PUBLIC_COMPANY_CIDADE,
+          document: process.env.NEXT_PUBLIC_COMPANY_CPF,
         },
         to: {
-          postal_code: '09121929',
-          name: 'Ale',
-          address: '456 Elm Street',
-          city: 'Big City',
-          document: '44810439895',
+          postal_code: zipCode,
+          name: userData.name,
+          address: shippingData.city,
+          city: shippingData.city,
+          document: userData.socialId,
         },
         products: [
           {
@@ -284,10 +282,10 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
         const localOrderIds = [addToCartResponse.data.id]
         setOrderIds(localOrderIds)
 
-        const checkoutResponse = await axios.post('/api/purchase-labels', {
+        await axios.post('/api/purchase-labels', {
           orderIds: localOrderIds,
         })
-        const generateLabelResponse = await axios.post('/api/generate-labels', {
+        await axios.post('/api/generate-labels', {
           orderIds: localOrderIds,
         })
         const printableResponse = await axios.post('/api/print-labels', {
@@ -298,10 +296,10 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
         if (printableResponse.data && printableResponse.data.url) {
           return printableResponse.data.url
         } else {
-          throw new Error('No URL returned from the API')
+          throw new Error('Nenhuma URL retornada da API')
         }
       } else {
-        throw new Error('Failed to retrieve order ID from the response.')
+        throw new Error('Falha ao recuperar o ID do pedido da resposta.')
       }
     } catch (err) {
       console.error('Erro durante o processo de compra de frete:', err)
@@ -324,24 +322,75 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
   }
 
   const onSubmit = async ({ formData }) => {
-    const paymentData = {
-      ...formData,
-      description: transactionDescription,
-      transaction_amount: parseFloat(amount.toFixed(2)),
-    }
-
-    const response = await axios.post('/api/process-payment', { paymentData })
-    if (response.data && response.data.id) {
-      setPaymentId(response.data.id)
-      console.log('Payment processed', response)
-    }
-
     const errors = validateCartItems(cart?.items || [])
     if (errors.length > 0) {
       setValidationErrors(errors)
       return
     }
 
+    try {
+      const paymentData = {
+        ...formData,
+        description: transactionDescription,
+        transaction_amount: parseFloat(amount.toFixed(2)),
+      }
+
+      const response = await axios.post('/api/process-payment', { paymentData })
+      const paymentResponse = response.data
+
+      if (paymentResponse && paymentResponse.id) {
+        setPaymentId(paymentResponse.id)
+        console.log('Payment processed', paymentResponse)
+      } else {
+        throw new Error('Falha no processamento do pagamento')
+      }
+
+      // Verifica o status do pagamento
+      if (paymentResponse.status === 'approved') {
+        // Pagamento aprovado, prossegue com o fluxo
+        await proceedWithOrder(paymentResponse)
+      } else if (paymentResponse.payment_method_id === 'pix') {
+
+        //Se for PIX, exibe a mensagem informando que tem 1 minuto para concluir o pagamento
+        setShowPixMessage(true)
+        // Se for PIX, espera 1 minuto e verifica novamente
+        setTimeout(async () => {
+          try {
+            // Passa o paymentId como parâmetro
+            const statusResponse = await axios.get('/api/payment-status', {
+              params: { payment_id: paymentResponse.id },
+            })
+            const updatedPayment = statusResponse.data
+
+            if (updatedPayment.status === 'approved') {
+              // Pagamento aprovado após 1 minuto
+              await proceedWithOrder(updatedPayment)
+            } else {
+              // Pagamento não aprovado após 1 minuto
+              const errorMessage = 'Pagamento não aprovado. Por favor, tente novamente.'
+              console.log(updatedPayment.status)
+              setError(errorMessage)
+              router.push(`/order-confirmation?error=${encodeURIComponent(errorMessage)}`)
+                        }
+          } catch (err) {
+            console.error('Erro ao verificar o status do pagamento:', err)
+            setError('Erro ao verificar o status do pagamento.')
+          }
+        }, 60000) // 60000 milissegundos = 1 minuto
+      } else {
+        // Pagamento não aprovado e não é PIX
+        const errorMessage = 'Pagamento não aprovado. Por favor, tente novamente.'
+        setError('Pagamento não aprovado. Por favor, tente novamente.')
+        router.push(`/order-confirmation?error=${encodeURIComponent(errorMessage)}`)
+      }
+    } catch (err) {
+      console.error('Erro durante o processo de pagamento:', err)
+      setError(`Falha durante o processo de pagamento: ${err.message || err}`)
+    }
+  }
+
+  // Função para prosseguir com o pedido após o pagamento aprovado
+  const proceedWithOrder = async paymentResponse => {
     try {
       const shippingTicketUrl = await completeFreightPurchase()
 
@@ -352,13 +401,15 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
         },
         body: JSON.stringify({
           total: cartTotal.raw,
-          items: (cart?.items || [])?.map(({ product, quantity, selectedColor, selectedSize }) => ({
-            product: typeof product === 'string' ? product : product.id,
-            quantity,
-            selectedSize,
-            selectedColor,
-            price: typeof product === 'object' ? product.price : undefined,
-          })),
+          items: (cart?.items || [])?.map(
+            ({ product, quantity, selectedColor, selectedSize }) => ({
+              product: typeof product === 'string' ? product : product.id,
+              quantity,
+              selectedSize,
+              selectedColor,
+              price: typeof product === 'object' ? product.price : undefined,
+            }),
+          ),
           shippingTicket: shippingTicketUrl,
           shippingZipCode: zipCode,
           shippingHouseNumber: shippingData.houseNumber,
@@ -370,7 +421,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
         }),
       })
 
-      if (!orderReq.ok) throw new Error(orderReq.statusText || 'Something went wrong.')
+      if (!orderReq.ok) throw new Error(orderReq.statusText || 'Algo deu errado.')
 
       const order = await orderReq.json()
       sendEmail(userData.email, userData.name)
@@ -380,13 +431,15 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
 
       router.push(`/order-confirmation?order_id=${order.id}`)
     } catch (err) {
-      console.error(err.message)
+      console.error('Erro ao processar o pedido:', err)
+      setError(`Falha ao processar o pedido: ${err.message || err}`)
       router.push(`/order-confirmation?error=${encodeURIComponent(err.message)}`)
     }
   }
 
   const onError = error => {
     console.error('Error processing payment', error)
+    setError(`Falha durante o processo de pagamento: ${error.message || error}`)
   }
 
   const onReady = () => {
@@ -411,11 +464,19 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
               ))}
             </div>
           )}
+          {error && (
+            <div className="error-message" style={{ color: 'red', marginTop: '10px' }}>
+              {error}
+            </div>
+          )}
         </div>
       ) : (
         <StatusScreen
           initialization={{ paymentId: paymentId }}
-          onError={error => console.error(error)}
+          onError={error => {
+            console.error(error)
+            setError(`Falha ao exibir o status do pagamento: ${error.message || error}`)
+          }}
         />
       )}
     </div>
