@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-implicit-any-catch */
+
 import { Router } from 'express'
 import MercadoPago, { Payment } from 'mercadopago'
 
@@ -18,11 +19,13 @@ router.get('/payment-status', async (req, res) => {
       options: { timeout: 5000 },
     })
 
-    // Obtém o payment_id dos parâmetros de consulta
-    const paymentId = req.query.payment_id
+    // Obtém o payment_id dos parâmetros de consulta e garante que seja uma string
+    const paymentId = Array.isArray(req.query.payment_id)
+      ? req.query.payment_id[0]
+      : req.query.payment_id
 
-    if (!paymentId) {
-      return res.status(400).json({ error: 'O parâmetro payment_id é obrigatório.' })
+    if (typeof paymentId !== 'string') {
+      return res.status(400).json({ error: 'O parâmetro payment_id deve ser uma string.' })
     }
 
     // Cria uma instância de Payment
