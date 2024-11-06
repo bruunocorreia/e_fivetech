@@ -88,26 +88,26 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
           email: process.env.NEXT_PUBLIC_COMPANY_EMAIL,
         },
         destinatario: {
-          cpfCnpj: formatCpfCnpj(userData.socialId || ''),
-          razaoSocial: userData.name,
-          nomeFantasia: userData.name,
+          cpfCnpj: formatCpfCnpj(userData?.socialId || ''),
+          razaoSocial: userData?.name,
+          nomeFantasia: userData?.name,
           iinscricaoMunicipal: process.env.NEXT_PUBLIC_COMPANY_INSCRICAOMUNICIPAL,
-          email: userData.email,
+          email: userData?.email,
           endereco: {
-            descricaoCidade: shippingData.city,
+            descricaoCidade: shippingData?.city,
             cep: formatCep(zipCode || ''),
-            tipoLogradouro: shippingData.streetType,
-            logradouro: shippingData.address,
+            tipoLogradouro: shippingData?.streetType,
+            logradouro: shippingData?.address,
             tipoBairro: 'Bairro',
-            codigoCidade: shippingData.cityCode || 4115200,
-            complemento: shippingData.complement,
-            estado: shippingData.state,
-            numero: shippingData.houseNumber,
-            bairro: shippingData.neighborhood,
+            codigoCidade: shippingData?.cityCode || 4115200,
+            complemento: shippingData?.complement,
+            estado: shippingData?.state,
+            numero: shippingData?.houseNumber,
+            bairro: shippingData?.neighborhood,
           },
           telefone: {
-            ddd: userData.phoneNumber ? userData.phoneNumber.replace(/\D/g, '').slice(0, 2) : '',
-            numero: userData.phoneNumber ? userData.phoneNumber.replace(/\D/g, '').slice(2) : '',
+            ddd: userData?.phoneNumber ? userData?.phoneNumber.replace(/\D/g, '').slice(0, 2) : '',
+            numero: userData?.phoneNumber ? userData?.phoneNumber.replace(/\D/g, '').slice(2) : '',
           },
         },
         itens: items?.map((item, index) => {
@@ -243,13 +243,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
   const completeFreightPurchase = async () => {
     setLoading(true)
     setError('')
-
-    // Verifique se userData tem os dados necessários
-    if (!userData || !userData.name || !userData.socialId) {
-      setError('Os dados do usuário estão incompletos. Por favor, preencha todos os campos obrigatórios.')
-      setLoading(false)
-      return null
-    }
+    
     try {
       const addToCartResponse = await axios.post('/api/add-to-cart', {
         service: serviceId,
@@ -264,8 +258,8 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
         to: {
           postal_code: zipCode,
           name: userData?.name || 'Nome do Destinatário',
-          address: shippingData.city,
-          city: shippingData.city,
+          address: shippingData?.city,
+          city: shippingData?.city,
           document: userData?.socialId,
         },
         products: [
@@ -415,12 +409,12 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
           })),
           shippingTicket: shippingTicketUrl,
           shippingZipCode: zipCode,
-          shippingHouseNumber: shippingData.houseNumber,
-          shippingComplement: shippingData.complement,
-          userName: userData.name,
-          userMail: userData.email,
-          userSocialId: userData.socialId,
-          userPhoneNumber: userData.phoneNumber,
+          shippingHouseNumber: shippingData?.houseNumber,
+          shippingComplement: shippingData?.complement,
+          userName: userData?.name,
+          userMail: userData?.email,
+          userSocialId: userData?.socialId,
+          userPhoneNumber: userData?.phoneNumber,
         }),
       })
 
