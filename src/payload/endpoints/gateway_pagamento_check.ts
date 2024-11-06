@@ -1,6 +1,6 @@
-import MercadoPago, { Payment } from 'mercadopago'
-
+/* eslint-disable @typescript-eslint/no-implicit-any-catch */
 import { Router } from 'express'
+import MercadoPago, { Payment } from 'mercadopago'
 
 const router = Router()
 
