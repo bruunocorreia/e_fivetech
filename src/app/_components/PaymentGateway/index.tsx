@@ -1,11 +1,11 @@
-import { Payment, StatusScreen, initMercadoPago } from '@mercadopago/sdk-react'
 import React, { useState } from 'react'
-
+import { initMercadoPago, Payment, StatusScreen } from '@mercadopago/sdk-react'
 import axios from 'axios'
+import { useRouter } from 'next/navigation'
+
+import { useEmailSender } from '../../_components/email'
 import { useAuth } from '../../_providers/Auth'
 import { useCart } from '../../_providers/Cart'
-import { useEmailSender } from '../../_components/email'
-import { useRouter } from 'next/navigation'
 
 initMercadoPago('TEST-e4e31358-531f-4c4d-bd5c-3e77edc4ee3f', { locale: 'pt-BR' })
 
@@ -20,7 +20,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
   const { sendEmail, sendNotaFiscalEmail } = useEmailSender()
   const { user } = useAuth()
   const { cart, cartTotal } = useCart()
-  const [showPixMessage, setShowPixMessage] = useState(false) 
+  const [showPixMessage, setShowPixMessage] = useState(false)
   const transactionDescription = 'Minimo1'
 
   const validateCartItems = items => {
@@ -350,7 +350,6 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
         // Pagamento aprovado, prossegue com o fluxo
         await proceedWithOrder(paymentResponse)
       } else if (paymentResponse.payment_method_id === 'pix') {
-
         //Se for PIX, exibe a mensagem informando que tem 1 minuto para concluir o pagamento
         setShowPixMessage(true)
         // Se for PIX, espera 1 minuto e verifica novamente
@@ -371,7 +370,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
               console.log(updatedPayment.status)
               setError(errorMessage)
               router.push(`/order-confirmation?error=${encodeURIComponent(errorMessage)}`)
-                        }
+            }
           } catch (err) {
             console.error('Erro ao verificar o status do pagamento:', err)
             setError('Erro ao verificar o status do pagamento.')
@@ -401,15 +400,13 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
         },
         body: JSON.stringify({
           total: cartTotal.raw,
-          items: (cart?.items || [])?.map(
-            ({ product, quantity, selectedColor, selectedSize }) => ({
-              product: typeof product === 'string' ? product : product.id,
-              quantity,
-              selectedSize,
-              selectedColor,
-              price: typeof product === 'object' ? product.price : undefined,
-            }),
-          ),
+          items: (cart?.items || [])?.map(({ product, quantity, selectedColor, selectedSize }) => ({
+            product: typeof product === 'string' ? product : product.id,
+            quantity,
+            selectedSize,
+            selectedColor,
+            price: typeof product === 'object' ? product.price : undefined,
+          })),
           shippingTicket: shippingTicketUrl,
           shippingZipCode: zipCode,
           shippingHouseNumber: shippingData.houseNumber,
