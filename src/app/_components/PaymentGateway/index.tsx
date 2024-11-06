@@ -244,6 +244,12 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
     setLoading(true)
     setError('')
 
+    // Verifique se userData tem os dados necessários
+    if (!userData || !userData.name || !userData.socialId) {
+      setError('Os dados do usuário estão incompletos. Por favor, preencha todos os campos obrigatórios.')
+      setLoading(false)
+      return null
+    }
     try {
       const addToCartResponse = await axios.post('/api/add-to-cart', {
         service: serviceId,
@@ -257,10 +263,10 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
         },
         to: {
           postal_code: zipCode,
-          name: userData.name || 'Nome do Destinatário',
+          name: userData?.name || 'Nome do Destinatário',
           address: shippingData.city,
           city: shippingData.city,
-          document: userData.socialId,
+          document: userData?.socialId,
         },
         products: [
           {
