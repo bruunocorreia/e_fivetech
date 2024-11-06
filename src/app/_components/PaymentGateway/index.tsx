@@ -257,7 +257,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
         },
         to: {
           postal_code: zipCode,
-          name: userData.name || '',
+          name: userData.name || 'Nome do Destinatário',
           address: shippingData.city,
           city: shippingData.city,
           document: userData.socialId,
