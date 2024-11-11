@@ -1,25 +1,29 @@
+// src/app/_components/Media/HighImpactImage/index.tsx
+
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
-import NextImage from 'next/image';
+import React, { useEffect, useRef, useState } from 'react';
 
-import cssVariables from '../../../cssVariables';
 import { Props as MediaProps } from '../types';
-
+import NextImage from 'next/image';
 import classes from './index.module.scss';
+import cssVariables from '../../../cssVariables';
 
 const { breakpoints } = cssVariables;
 
-export const HighImpactImage: React.FC<MediaProps & { allowImageControls?: boolean }> = props => {
+export const HighImpactImage: React.FC<
+  MediaProps & { allowImageControls?: boolean; isPreview?: boolean }
+> = props => {
   const {
     imgClassName,
     onClick,
     onLoad: onLoadFromProps,
     resources,
     priority,
-    fill,
     allowImageControls = true,
+    isPreview,
   } = props;
+
   const [gridColumns, setGridColumns] = useState('repeat(1, 1fr)');
 
   const handleLoad = () => {
@@ -60,6 +64,7 @@ export const HighImpactImage: React.FC<MediaProps & { allowImageControls?: boole
     .join(', ');
 
   const ControlledImage = ({ resource, index }) => {
+    // Zoom effect states and refs
     const containerRef = useRef(null);
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
@@ -73,14 +78,17 @@ export const HighImpactImage: React.FC<MediaProps & { allowImageControls?: boole
       setZoom(initialZoom);
     }, [resource.height, resource.width]);
 
-    const handleMouseDown = (e) => {
+    // Event handlers for zoom effect
+    const handleMouseDown = e => {
       e.preventDefault();
       setIsDragging(true);
       setStartPos({ x: e.clientX - position.x, y: e.clientY - position.y });
-      containerRef.current.style.cursor = 'grabbing';
+      if (containerRef.current) {
+        containerRef.current.style.cursor = 'grabbing';
+      }
     };
 
-    const handleMouseMove = (e) => {
+    const handleMouseMove = e => {
       if (!isDragging) return;
       e.preventDefault();
       const x = e.clientX - startPos.x;
@@ -90,36 +98,39 @@ export const HighImpactImage: React.FC<MediaProps & { allowImageControls?: boole
 
     const handleMouseUp = () => {
       setIsDragging(false);
-      containerRef.current.style.cursor = 'grab';
+      if (containerRef.current) {
+        containerRef.current.style.cursor = 'grab';
+      }
     };
 
-    const handleWheel = (e) => {
-      e.preventDefault(); // Impede o comportamento padrão de scroll
-      e.stopPropagation(); // Impede a propagação do evento para evitar que a página role
-      setZoom((prevZoom) => Math.max(1, prevZoom - e.deltaY * 0.001));
+    const handleWheel = e => {
+      e.preventDefault();
+      e.stopPropagation();
+      setZoom(prevZoom => Math.max(1, prevZoom - e.deltaY * 0.001));
     };
 
     useEffect(() => {
       const currentRef = containerRef.current;
-      if (currentRef) {
+      if (currentRef && isPreview) {
         currentRef.addEventListener('wheel', handleWheel, { passive: false });
       }
       return () => {
-        if (currentRef) {
+        if (currentRef && isPreview) {
           currentRef.removeEventListener('wheel', handleWheel);
         }
       };
-    }, []);
+    }, [isPreview]);
 
+    // Conditionally render the image with or without zoom effect
     return (
       <div
-        className={`${classes.imageContainer}`}
+        className={classes.imageContainer}
         ref={containerRef}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        style={{ cursor: 'grab' }}
+        onMouseDown={isPreview ? handleMouseDown : undefined}
+        onMouseMove={isPreview ? handleMouseMove : undefined}
+        onMouseUp={isPreview ? handleMouseUp : undefined}
+        onMouseLeave={isPreview ? handleMouseUp : undefined}
+        style={{ cursor: isPreview ? 'grab' : 'default' }}
       >
         <div className={classes.imageWrapper}>
           <NextImage
@@ -133,10 +144,14 @@ export const HighImpactImage: React.FC<MediaProps & { allowImageControls?: boole
             height={resource.height}
             sizes={sizes}
             priority={priority}
-            style={{
-              transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
-              transformOrigin: 'center center',
-            }}
+            style={
+              isPreview
+                ? {
+                    transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
+                    transformOrigin: 'center center',
+                  }
+                : undefined
+            }
           />
         </div>
       </div>
@@ -144,7 +159,7 @@ export const HighImpactImage: React.FC<MediaProps & { allowImageControls?: boole
   };
 
   return (
-    <div style={containerStyle} className={`${classes.highImpactImageContainer}`}>
+    <div style={containerStyle} className={classes.highImpactImageContainer}>
       {resources?.map((resource, index) => (
         <ControlledImage resource={resource} index={index} key={index} />
       ))}

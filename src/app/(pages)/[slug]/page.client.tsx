@@ -1,28 +1,29 @@
-'use client'
+// src/app/(pages)/[slug]/page.client.tsx
 
-import React from 'react'
-import { useLivePreview } from '@payloadcms/live-preview-react'
+'use client';
 
-import { Gutter } from '../../../app/_components/Gutter'
-import { Blocks } from '../../_components/Blocks'
-import ExitPreviewButton from '../../_components/ExitPreview'
-import { Hero } from '../../_components/Hero'
-import Filters from '../products/Filters'
-
-import classes from './index.module.scss'
+import { Blocks } from '../../_components/Blocks';
+import ExitPreviewButton from '../../_components/ExitPreview';
+import Filters from '../products/Filters';
+import { Gutter } from '../../../app/_components/Gutter';
+import { Hero } from '../../_components/Hero';
+import React from 'react';
+import classes from './index.module.scss';
+import { useLivePreview } from '@payloadcms/live-preview-react';
 
 export const PageTemplate: React.FC<{
-  page: Page | null | undefined
-  slug
-  categories
-  isDraftMode
+  page: Page | null | undefined;
+  slug: string;
+  categories: Category[] | null;
+  isDraftMode: boolean;
 }> = ({ page, slug, categories, isDraftMode }) => {
-  const { hero, layout } = page || {}
+  const { hero, layout } = page || {};
 
-  const pageTitle = page.title === 'hot' || page.title === 'em-alta' ? 'Em Alta' : page.title
+  const pageTitle =
+    page?.title === 'hot' || page?.title === 'em-alta' ? 'Em Alta' : page?.title;
 
   return (
-    <React.Fragment>
+    <>
       {isDraftMode && (
         <div
           style={{
@@ -42,11 +43,11 @@ export const PageTemplate: React.FC<{
       )}
       {slug === 'home' ? (
         <section>
-          <Hero {...hero} />
+          <Hero {...hero} isPreview={isDraftMode} />
         </section>
       ) : (
         <>
-          <Hero {...hero} />
+          <Hero {...hero} isPreview={isDraftMode} /> {/* Added isPreview prop here */}
           {hero?.type !== 'highImpact' && (
             <>
               <div className={classes.filters}>
@@ -67,6 +68,6 @@ export const PageTemplate: React.FC<{
           )}
         </>
       )}
-    </React.Fragment>
-  )
-}
+    </>
+  );
+};
