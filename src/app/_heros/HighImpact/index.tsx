@@ -1,33 +1,38 @@
 // src/app/_heros/HighImpact/index.tsx
 
-'use client';
+'use client'
 
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react'
 
-import { HighImpactMedia } from '../../_components/Media';
-import { Page } from '../../../payload/payload-types';
-import SplashScreen from '../../_components/SplashScreen/SplashScreen';
-import classes from './index.module.scss';
+import { Page } from '../../../payload/payload-types'
+import { HighImpactMedia } from '../../_components/Media'
+import SplashScreen from '../../_components/SplashScreen/SplashScreen'
 
-export const HighImpactHero: React.FC<Page['hero'] & { isPreview?: boolean }> = ({ carrossel, media, isPreview }) => {
-  const [showSplashScreen, setShowSplashScreen] = useState(false);
+import classes from './index.module.scss'
+
+export const HighImpactHero: React.FC<Page['hero'] & { isPreview?: boolean }> = ({
+  carrossel,
+  media,
+  isPreview,
+}) => {
+  const [showSplashScreen, setShowSplashScreen] = useState(false)
 
   useEffect(() => {
-    const firstVisitOrReload = sessionStorage.getItem('firstVisitOrReload');
+    const firstVisitOrReload = sessionStorage.getItem('firstVisitOrReload')
     if (!firstVisitOrReload) {
-      setShowSplashScreen(true);
+      setShowSplashScreen(true)
       const timer = setTimeout(() => {
-        setShowSplashScreen(false);
-        sessionStorage.setItem('firstVisitOrReload', 'true');
-      }, 4000); // 4000ms = 4 seconds
+        setShowSplashScreen(false)
+        sessionStorage.setItem('firstVisitOrReload', 'true')
+      }, 4000) // 4000ms = 4 seconds
 
-      return () => clearTimeout(timer);
+      return () => clearTimeout(timer)
     }
-  }, []);
+  }, [])
 
-  const metaImage = carrossel.map(group => group.medias.map(subItem => subItem.media));
+  const metaImage = carrossel.map(group => group.medias.map(subItem => subItem.media))
 
-  console.log(metaImage);
+  console.log(metaImage)
 
   return (
     <>
@@ -43,5 +48,5 @@ export const HighImpactHero: React.FC<Page['hero'] & { isPreview?: boolean }> = 
         </div>
       )}
     </>
-  );
-};
+  )
+}

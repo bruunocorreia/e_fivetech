@@ -1,15 +1,16 @@
 // src/app/_components/Media/HighImpactImage/index.tsx
 
-'use client';
+'use client'
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react'
+import NextImage from 'next/image'
 
-import { Props as MediaProps } from '../types';
-import NextImage from 'next/image';
-import classes from './index.module.scss';
-import cssVariables from '../../../cssVariables';
+import cssVariables from '../../../cssVariables'
+import { Props as MediaProps } from '../types'
 
-const { breakpoints } = cssVariables;
+import classes from './index.module.scss'
+
+const { breakpoints } = cssVariables
 
 export const HighImpactImage: React.FC<
   MediaProps & { allowImageControls?: boolean; isPreview?: boolean }
@@ -22,104 +23,104 @@ export const HighImpactImage: React.FC<
     priority,
     allowImageControls = true,
     isPreview,
-  } = props;
+  } = props
 
-  const [gridColumns, setGridColumns] = useState('repeat(1, 1fr)');
+  const [gridColumns, setGridColumns] = useState('repeat(1, 1fr)')
 
   const handleLoad = () => {
     if (typeof onLoadFromProps === 'function') {
-      onLoadFromProps();
+      onLoadFromProps()
     }
-  };
+  }
 
   useEffect(() => {
     const updateGridColumns = () => {
-      const width = window.innerWidth;
+      const width = window.innerWidth
       if (width <= 450) {
-        setGridColumns('repeat(1, 1fr)');
+        setGridColumns('repeat(1, 1fr)')
       } else if (width <= 800) {
-        setGridColumns('repeat(2, 1fr)');
+        setGridColumns('repeat(2, 1fr)')
       } else {
-        setGridColumns(`repeat(${resources?.length || 1}, 1fr)`);
+        setGridColumns(`repeat(${resources?.length || 1}, 1fr)`)
       }
-    };
+    }
 
-    updateGridColumns();
-    window.addEventListener('resize', updateGridColumns);
+    updateGridColumns()
+    window.addEventListener('resize', updateGridColumns)
 
     return () => {
-      window.removeEventListener('resize', updateGridColumns);
-    };
-  }, [resources]);
+      window.removeEventListener('resize', updateGridColumns)
+    }
+  }, [resources])
 
   const containerStyle = {
     display: 'grid',
     gridTemplateColumns: gridColumns,
     width: '100%',
     margin: '0 auto',
-  };
+  }
 
   const sizes = Object.entries(breakpoints)
     .map(([, value]) => `(max-width: ${value}px) ${value}px`)
-    .join(', ');
+    .join(', ')
 
   const ControlledImage = ({ resource, index }) => {
     // Zoom effect states and refs
-    const containerRef = useRef(null);
-    const [position, setPosition] = useState({ x: 0, y: 0 });
-    const [zoom, setZoom] = useState(1);
-    const [isDragging, setIsDragging] = useState(false);
-    const [startPos, setStartPos] = useState({ x: 0, y: 0 });
+    const containerRef = useRef(null)
+    const [position, setPosition] = useState({ x: 0, y: 0 })
+    const [zoom, setZoom] = useState(1)
+    const [isDragging, setIsDragging] = useState(false)
+    const [startPos, setStartPos] = useState({ x: 0, y: 0 })
 
     useEffect(() => {
-      const initialZoomHeight = 800 / resource.height;
-      const initialZoomWidth = 800 / resource.width;
-      const initialZoom = Math.max(initialZoomHeight, initialZoomWidth);
-      setZoom(initialZoom);
-    }, [resource.height, resource.width]);
+      const initialZoomHeight = 800 / resource.height
+      const initialZoomWidth = 800 / resource.width
+      const initialZoom = Math.max(initialZoomHeight, initialZoomWidth)
+      setZoom(initialZoom)
+    }, [resource.height, resource.width])
 
     // Event handlers for zoom effect
     const handleMouseDown = e => {
-      e.preventDefault();
-      setIsDragging(true);
-      setStartPos({ x: e.clientX - position.x, y: e.clientY - position.y });
+      e.preventDefault()
+      setIsDragging(true)
+      setStartPos({ x: e.clientX - position.x, y: e.clientY - position.y })
       if (containerRef.current) {
-        containerRef.current.style.cursor = 'grabbing';
+        containerRef.current.style.cursor = 'grabbing'
       }
-    };
+    }
 
     const handleMouseMove = e => {
-      if (!isDragging) return;
-      e.preventDefault();
-      const x = e.clientX - startPos.x;
-      const y = e.clientY - startPos.y;
-      setPosition({ x, y });
-    };
+      if (!isDragging) return
+      e.preventDefault()
+      const x = e.clientX - startPos.x
+      const y = e.clientY - startPos.y
+      setPosition({ x, y })
+    }
 
     const handleMouseUp = () => {
-      setIsDragging(false);
+      setIsDragging(false)
       if (containerRef.current) {
-        containerRef.current.style.cursor = 'grab';
+        containerRef.current.style.cursor = 'grab'
       }
-    };
+    }
 
     const handleWheel = e => {
-      e.preventDefault();
-      e.stopPropagation();
-      setZoom(prevZoom => Math.max(1, prevZoom - e.deltaY * 0.001));
-    };
+      e.preventDefault()
+      e.stopPropagation()
+      setZoom(prevZoom => Math.max(1, prevZoom - e.deltaY * 0.001))
+    }
 
     useEffect(() => {
-      const currentRef = containerRef.current;
+      const currentRef = containerRef.current
       if (currentRef && isPreview) {
-        currentRef.addEventListener('wheel', handleWheel, { passive: false });
+        currentRef.addEventListener('wheel', handleWheel, { passive: false })
       }
       return () => {
         if (currentRef && isPreview) {
-          currentRef.removeEventListener('wheel', handleWheel);
+          currentRef.removeEventListener('wheel', handleWheel)
         }
-      };
-    }, [isPreview]);
+      }
+    }, [isPreview])
 
     // Conditionally render the image with or without zoom effect
     return (
@@ -147,7 +148,9 @@ export const HighImpactImage: React.FC<
             style={
               isPreview
                 ? {
-                    transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
+                    transform: `scale(${zoom}) translate(${position.x / zoom}px, ${
+                      position.y / zoom
+                    }px)`,
                     transformOrigin: 'center center',
                   }
                 : undefined
@@ -155,8 +158,8 @@ export const HighImpactImage: React.FC<
           />
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <div style={containerStyle} className={classes.highImpactImageContainer}>
@@ -164,5 +167,5 @@ export const HighImpactImage: React.FC<
         <ControlledImage resource={resource} index={index} key={index} />
       ))}
     </div>
-  );
-};
+  )
+}

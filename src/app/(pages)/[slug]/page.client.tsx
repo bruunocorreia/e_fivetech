@@ -1,26 +1,27 @@
 // src/app/(pages)/[slug]/page.client.tsx
 
-'use client';
+'use client'
 
-import { Blocks } from '../../_components/Blocks';
-import ExitPreviewButton from '../../_components/ExitPreview';
-import Filters from '../products/Filters';
-import { Gutter } from '../../../app/_components/Gutter';
-import { Hero } from '../../_components/Hero';
-import React from 'react';
-import classes from './index.module.scss';
-import { useLivePreview } from '@payloadcms/live-preview-react';
+import React from 'react'
+import { useLivePreview } from '@payloadcms/live-preview-react'
+
+import { Gutter } from '../../../app/_components/Gutter'
+import { Blocks } from '../../_components/Blocks'
+import ExitPreviewButton from '../../_components/ExitPreview'
+import { Hero } from '../../_components/Hero'
+import Filters from '../products/Filters'
+
+import classes from './index.module.scss'
 
 export const PageTemplate: React.FC<{
-  page: Page | null | undefined;
-  slug: string;
-  categories: Category[] | null;
-  isDraftMode: boolean;
+  page: Page | null | undefined
+  slug: string
+  categories: Category[] | null
+  isDraftMode: boolean
 }> = ({ page, slug, categories, isDraftMode }) => {
-  const { hero, layout } = page || {};
+  const { hero, layout } = page || {}
 
-  const pageTitle =
-    page?.title === 'hot' || page?.title === 'em-alta' ? 'Em Alta' : page?.title;
+  const pageTitle = page?.title === 'hot' || page?.title === 'em-alta' ? 'Em Alta' : page?.title
 
   return (
     <>
@@ -69,5 +70,5 @@ export const PageTemplate: React.FC<{
         </>
       )}
     </>
-  );
-};
+  )
+}
