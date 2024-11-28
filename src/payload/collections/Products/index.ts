@@ -1,43 +1,42 @@
-import type { CollectionConfig } from 'payload/types'
-
-import { admins } from '../../access/admins'
-import { ConditionalText } from '../../fields/conditionalText'
-import { slugField } from '../../fields/slug'
-import { revalidateProduct } from './hooks/revalidateProduct'
+import type { CollectionConfig } from 'payload/types';
+import { ConditionalText } from '../../fields/conditionalText';
+import { admins } from '../../access/admins';
+import { revalidateProduct } from './hooks/revalidateProduct';
+import { slugField } from '../../fields/slug';
 
 const Products: CollectionConfig = {
   slug: 'products',
   labels: { plural: 'Produtos', singular: 'Produto' },
   admin: {
     useAsTitle: 'title',
-    preview: doc => {
+    preview: (doc) => {
       return `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/api/preview?url=${encodeURIComponent(
-        `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/products/${doc.slug}`,
-      )}&secret=${process.env.PAYLOAD_PUBLIC_DRAFT_SECRET}`
+        `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/products/${doc.slug}`
+      )}&secret=${process.env.PAYLOAD_PUBLIC_DRAFT_SECRET}`;
     },
-    defaultColumns: ['title', 'price', 'discountPercentage', '_status'],
+    defaultColumns: ['title', 'price', 'stock', 'discountPercentage', '_status'],
   },
   hooks: {
     afterChange: [revalidateProduct],
     beforeValidate: [
       ({ data, originalDoc }) => {
         if (data.sale && data.price && data.discountPercentage) {
-          data.newprice = data.price - (data.price * data.discountPercentage) / 100
+          data.newprice = data.price - (data.price * data.discountPercentage) / 100;
         } else if (!data.sale) {
-          data.newprice = null
+          data.newprice = null;
         } else {
-          data.newprice = originalDoc.newprice
+          data.newprice = originalDoc.newprice;
         }
       },
     ],
     beforeChange: [
       ({ data, originalDoc }) => {
         if (data.sale && data.price && data.discountPercentage) {
-          data.newprice = data.price - (data.price * data.discountPercentage) / 100
+          data.newprice = data.price - (data.price * data.discountPercentage) / 100;
         } else if (!data.sale) {
-          data.newprice = 1
+          data.newprice = 1;
         } else {
-          data.newprice = originalDoc.newprice
+          data.newprice = originalDoc.newprice;
         }
       },
     ],
@@ -58,7 +57,6 @@ const Products: CollectionConfig = {
       type: 'text',
       required: true,
     },
-
     {
       name: 'new',
       label: 'New In',
@@ -129,6 +127,17 @@ const Products: CollectionConfig = {
       },
     },
     {
+      name: 'stock',
+      label: 'Estoque',
+      type: 'number',
+      required: true,
+      admin: {
+        step: 1,
+        description: 'Quantidade de produtos disponíveis em estoque.',
+      },
+      validate: (value) => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
+    },
+    {
       name: 'discountPercentage',
       label: 'Percentual de Desconto',
       type: 'number',
@@ -185,11 +194,11 @@ const Products: CollectionConfig = {
           id: {
             not_in: [id],
           },
-        }
+        };
       },
     },
     slugField(),
   ],
-}
+};
 
-export default Products
+export default Products;

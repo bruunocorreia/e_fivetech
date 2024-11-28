@@ -197,6 +197,7 @@ export interface Product {
   description: string;
   composition: string;
   price: number;
+  stock: number;
   discountPercentage?: number | null;
   photos?:
     | {
