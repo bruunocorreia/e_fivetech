@@ -58,6 +58,12 @@ const Products: CollectionConfig = {
       required: true,
     },
     {
+      name: 'productId',
+      label: 'ID do Produto',
+      type: 'text',
+      required: true,
+    },
+    {
       name: 'new',
       label: 'New In',
       type: 'checkbox',

@@ -188,6 +188,7 @@ export interface Category {
 export interface Product {
   id: string;
   title: string;
+  productId: string;
   new?: boolean | null;
   sale?: boolean | null;
   hot?: boolean | null;
