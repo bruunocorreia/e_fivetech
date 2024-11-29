@@ -123,7 +123,13 @@ const Products: CollectionConfig = {
       label: 'Preço',
       required: true,
       admin: {
-        step: 20.0,
+        step: 0.01,
+        description: 'Preço do produto em reais (R$).',
+        formatter: (value: number) =>
+          value?.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          }) || 'R$ 0,00',
       },
     },
     {
@@ -150,12 +156,14 @@ const Products: CollectionConfig = {
     {
       name: 'newprice',
       label: 'Preço após desconto',
-      type: 'ui',
+      type: 'number',
       admin: {
         condition: (_, siblingData) => siblingData?.sale === true,
-        components: {
-          Field: ConditionalText,
-        },
+        formatter: (value: number) =>
+          value?.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          }) || 'R$ 0,00',
       },
     },
     {
