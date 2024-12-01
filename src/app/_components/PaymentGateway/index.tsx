@@ -486,7 +486,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
       console.log('Dados do usuário (userData):', userData)
       // Atualiza o estoque
       console.log('Atualizando o estoque dos produtos...')
-      await updateProductStock(cart.items)
+      // comentado foi apenas para teste enquanto mercado livre fora do ar await updateProductStock(cart.items)
       const paymentData = {
         ...formData,
         description: transactionDescription,
