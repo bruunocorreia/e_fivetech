@@ -37,61 +37,80 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
   }
 
   const updateProductStock = async (items) => {
-    console.log('Iniciando a atualização do estoque...')
+    console.log('Iniciando a atualização do estoque...');
     try {
       for (const item of items) {
-        const { product, quantity } = item
-
-        // Caso o item do produto seja um ID em vez do objeto completo
-        const productId = typeof product === 'string' ? product : product.id
-
-        if (!productId) throw new Error(`Produto inválido: ${JSON.stringify(product)}`)
-
-        console.log(`Buscando dados do produto ${productId}...`)
-
-        // Buscando dados do produto atual para obter o estoque atual
-        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/products/${productId}`)
-        const productData = await res.json()
-
-        if (!productData?.stock && productData?.stock !== 0) {
-          throw new Error(`Estoque não encontrado para o produto ${productId}`)
+        const { product, quantity, selectedSize } = item;
+  
+        if (!selectedSize) {
+          throw new Error(`Tamanho não selecionado para o produto ${product.id || product}`);
         }
-
-        const currentStock = productData.stock
-        const updatedStock = currentStock - quantity
-
+  
+        // Caso o item do produto seja um ID em vez do objeto completo
+        const productId = typeof product === 'string' ? product : product.id;
+  
+        if (!productId) throw new Error(`Produto inválido: ${JSON.stringify(product)}`);
+  
+        console.log(`Buscando dados do produto ${productId}...`);
+  
+        // Buscando dados do produto atual para obter o estoque atual
+        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/products/${productId}`);
+        const productData = await res.json();
+  
+        if (!productData?.stock || typeof productData.stock !== 'object') {
+          throw new Error(`Estoque inválido ou não encontrado para o produto ${productId}`);
+        }
+  
+        // Acessar o estoque para o tamanho selecionado
+        const currentStock = productData.stock[selectedSize];
+  
+        if (currentStock === undefined || currentStock === null) {
+          throw new Error(`Estoque para o tamanho ${selectedSize} não encontrado no produto ${productId}`);
+        }
+  
+        const updatedStock = currentStock - quantity;
+  
         if (updatedStock < 0) {
           throw new Error(
-            `Estoque insuficiente para o produto ${productId}. Estoque atual: ${currentStock}, quantidade solicitada: ${quantity}`
-          )
+            `Estoque insuficiente para o produto ${productId} no tamanho ${selectedSize}. Estoque atual: ${currentStock}, quantidade solicitada: ${quantity}`
+          );
         }
-
+  
         console.log(
-          `Atualizando estoque do produto ${productId}: Estoque atual = ${currentStock}, Quantidade = ${quantity}, Estoque atualizado = ${updatedStock}`
-        )
-
-        // Atualizando o campo `stock` com o novo valor
+          `Atualizando estoque do produto ${productId}, tamanho ${selectedSize}: Estoque atual = ${currentStock}, Quantidade = ${quantity}, Estoque atualizado = ${updatedStock}`
+        );
+  
+        // Atualizando o campo `stock` com o novo valor para o tamanho específico
+        const updatedStockObject = {
+          ...productData.stock,
+          [selectedSize]: updatedStock,
+        };
+  
         const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/products/${productId}`, {
           method: 'PATCH',
-          body: JSON.stringify({ stock: updatedStock }),
+          body: JSON.stringify({ stock: updatedStockObject }),
           headers: {
             'Content-Type': 'application/json',
           },
-        })
-
+        });
+  
         if (!response.ok) {
-          throw new Error(`Erro ao atualizar o estoque do produto ${productId}: ${await response.text()}`)
+          throw new Error(
+            `Erro ao atualizar o estoque do produto ${productId}, tamanho ${selectedSize}: ${await response.text()}`
+          );
         }
-
-        console.log(`Estoque atualizado para o produto ${productId}:`, await response.json())
+  
+        console.log(`Estoque atualizado com sucesso para o produto ${productId}, tamanho ${selectedSize}`);
       }
-      console.log('Atualização do estoque concluída com sucesso.')
+  
+      console.log('Atualização do estoque concluída com sucesso.');
     } catch (err) {
-      console.error('Erro ao atualizar o estoque:', err.message)
-      throw new Error('Erro ao atualizar o estoque dos produtos.')
+      console.error('Erro ao atualizar o estoque:', err.message);
+      throw new Error('Erro ao atualizar o estoque dos produtos.');
     }
-  }
-
+  };
+  
+  
   // Função para gerar a nota fiscal e enviar o email com o PDF anexado
   const generateAndSendNotaFiscal = async order => {
     try {

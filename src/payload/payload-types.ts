@@ -198,7 +198,13 @@ export interface Product {
   description: string;
   composition: string;
   price: number;
-  stock: number;
+  stock: {
+    PP: number;
+    P: number;
+    M: number;
+    G: number;
+    GG: number;
+  };
   discountPercentage?: number | null;
   photos?:
     | {
