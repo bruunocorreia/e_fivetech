@@ -179,6 +179,14 @@ export const CollectionArchive: React.FC<Props> = props => {
             },
 
             ...(whereConditions.length > 0 ? { or: whereConditions } : {}),
+
+            or: [
+              { 'stock.PP': { greater_than: 0 } },
+              { 'stock.P': { greater_than: 0 } },
+              { 'stock.M': { greater_than: 0 } },
+              { 'stock.G': { greater_than: 0 } },
+              { 'stock.GG': { greater_than: 0 } },
+            ],
           },
           limit,
           page,

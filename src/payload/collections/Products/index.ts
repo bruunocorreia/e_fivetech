@@ -1,3 +1,5 @@
+// src/collections/Products/index.ts
+
 import type { CollectionConfig } from 'payload/types'
 
 import { admins } from '../../access/admins'
@@ -48,7 +50,7 @@ const Products: CollectionConfig = {
   access: {
     read: () => true,
     create: admins,
-    update: admins,
+    update: () => true,
     delete: admins,
   },
   fields: [
@@ -58,7 +60,12 @@ const Products: CollectionConfig = {
       type: 'text',
       required: true,
     },
-
+    {
+      name: 'productId',
+      label: 'ID do Produto',
+      type: 'text',
+      required: true,
+    },
     {
       name: 'new',
       label: 'New In',
@@ -127,6 +134,68 @@ const Products: CollectionConfig = {
       admin: {
         step: 20.0,
       },
+    },
+    {
+      name: 'stock',
+      label: 'Estoque por Tamanho',
+      type: 'group',
+      fields: [
+        {
+          name: 'PP',
+          label: 'PP',
+          type: 'number',
+          required: true,
+          admin: {
+            step: 1,
+          },
+          defaultValue: 0,
+          validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
+        },
+        {
+          name: 'P',
+          label: 'P',
+          type: 'number',
+          required: true,
+          admin: {
+            step: 1,
+          },
+          defaultValue: 0,
+          validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
+        },
+        {
+          name: 'M',
+          label: 'M',
+          type: 'number',
+          required: true,
+          admin: {
+            step: 1,
+          },
+          defaultValue: 0,
+          validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
+        },
+        {
+          name: 'G',
+          label: 'G',
+          type: 'number',
+          required: true,
+          admin: {
+            step: 1,
+          },
+          defaultValue: 0,
+          validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
+        },
+        {
+          name: 'GG',
+          label: 'GG',
+          type: 'number',
+          required: true,
+          admin: {
+            step: 1,
+          },
+          defaultValue: 0,
+          validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
+        },
+      ],
     },
     {
       name: 'discountPercentage',

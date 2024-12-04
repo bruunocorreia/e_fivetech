@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { initMercadoPago, Payment, StatusScreen } from '@mercadopago/sdk-react'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
@@ -34,6 +34,87 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
       }
     })
     return errors
+  }
+
+  const updateProductStock = async items => {
+    console.log('Iniciando a atualização do estoque...')
+    try {
+      for (const item of items) {
+        const { product, quantity, selectedSize } = item
+
+        if (!selectedSize) {
+          throw new Error(`Tamanho não selecionado para o produto ${product.id || product}`)
+        }
+
+        // Caso o item do produto seja um ID em vez do objeto completo
+        const productId = typeof product === 'string' ? product : product.id
+
+        if (!productId) throw new Error(`Produto inválido: ${JSON.stringify(product)}`)
+
+        console.log(`Buscando dados do produto ${productId}...`)
+
+        // Buscando dados do produto atual para obter o estoque atual
+        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/products/${productId}`)
+        const productData = await res.json()
+
+        if (!productData?.stock || typeof productData.stock !== 'object') {
+          throw new Error(`Estoque inválido ou não encontrado para o produto ${productId}`)
+        }
+
+        // Acessar o estoque para o tamanho selecionado
+        const currentStock = productData.stock[selectedSize]
+
+        if (currentStock === undefined || currentStock === null) {
+          throw new Error(
+            `Estoque para o tamanho ${selectedSize} não encontrado no produto ${productId}`,
+          )
+        }
+
+        const updatedStock = currentStock - quantity
+
+        if (updatedStock < 0) {
+          throw new Error(
+            `Estoque insuficiente para o produto ${productId} no tamanho ${selectedSize}. Estoque atual: ${currentStock}, quantidade solicitada: ${quantity}`,
+          )
+        }
+
+        console.log(
+          `Atualizando estoque do produto ${productId}, tamanho ${selectedSize}: Estoque atual = ${currentStock}, Quantidade = ${quantity}, Estoque atualizado = ${updatedStock}`,
+        )
+
+        // Atualizando o campo `stock` com o novo valor para o tamanho específico
+        const updatedStockObject = {
+          ...productData.stock,
+          [selectedSize]: updatedStock,
+        }
+
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/products/${productId}`,
+          {
+            method: 'PATCH',
+            body: JSON.stringify({ stock: updatedStockObject }),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        )
+
+        if (!response.ok) {
+          throw new Error(
+            `Erro ao atualizar o estoque do produto ${productId}, tamanho ${selectedSize}: ${await response.text()}`,
+          )
+        }
+
+        console.log(
+          `Estoque atualizado com sucesso para o produto ${productId}, tamanho ${selectedSize}`,
+        )
+      }
+
+      console.log('Atualização do estoque concluída com sucesso.')
+    } catch (err) {
+      console.error('Erro ao atualizar o estoque:', err.message)
+      throw new Error('Erro ao atualizar o estoque dos produtos.')
+    }
   }
 
   // Função para gerar a nota fiscal e enviar o email com o PDF anexado
@@ -240,10 +321,83 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
     }
   }
 
+  const proceedWithOrder = async paymentResponse => {
+    try {
+      console.log('Iniciando o fluxo de processamento do pedido...')
+
+      // Realiza a criação do pedido
+      const shippingTicketUrl = await completeFreightPurchase()
+
+      console.log('Criando pedido...')
+      const orderReq = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/create-order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          total: cartTotal.raw,
+          items: (cart?.items || []).map(({ product, quantity, selectedColor, selectedSize }) => ({
+            product: typeof product === 'string' ? product : product.id,
+            quantity,
+            selectedSize,
+            selectedColor,
+            price: typeof product === 'object' ? product.price : undefined,
+          })),
+          shippingTicket: shippingTicketUrl,
+          shippingZipCode: zipCode,
+          shippingHouseNumber: shippingData?.houseNumber,
+          shippingComplement: shippingData?.complement,
+          userName: userData?.name,
+          userMail: userData?.email,
+          userSocialId: userData?.socialId,
+          userPhoneNumber: userData?.phoneNumber,
+        }),
+      })
+
+      // Adicione validações antes de chamar a API
+      if (!cart?.items?.length) {
+        throw new Error('O carrinho está vazio.')
+      }
+      if (!userData?.email || !userData?.socialId) {
+        throw new Error('Informações do usuário estão incompletas (email ou CPF/CNPJ ausentes).')
+      }
+      if (!shippingData?.city || !zipCode) {
+        throw new Error('Informações de envio estão incompletas (cidade ou CEP ausentes).')
+      }
+
+      if (!orderReq.ok) {
+        const errorMessage = await orderReq.text()
+        console.error('Erro ao criar o pedido:', errorMessage)
+        throw new Error('Erro ao criar o pedido.')
+      }
+
+      const order = await orderReq.json()
+      console.log('Pedido criado com sucesso:', order)
+
+      // Gera a Nota Fiscal
+      console.log('Gerando e enviando a Nota Fiscal...')
+      await generateAndSendNotaFiscal(order)
+
+      // Gera email de agradecimento pela compra
+      console.log('Gerando email de agradecimento pela compra...')
+      sendEmail(userData.email, userData.name)
+
+      // Atualiza o estoque
+      console.log('Atualizando o estoque dos produtos...')
+      await updateProductStock(cart.items)
+
+      console.log('Fluxo de pedido concluído com sucesso.')
+      router.push(`/order-confirmation?order_id=${order.id}`)
+    } catch (err) {
+      console.error('Erro ao processar o pedido:', err.message)
+      throw err
+    }
+  }
+
   const completeFreightPurchase = async () => {
     setLoading(true)
     setError('')
-    
+
     try {
       const addToCartResponse = await axios.post('/api/add-to-cart', {
         service: serviceId,
@@ -253,14 +407,14 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
           name: process.env.NEXT_PUBLIC_COMPANY_RAZAO_SOCIAL,
           address: process.env.NEXT_PUBLIC_COMPANY_LOGRADOURO,
           city: process.env.NEXT_PUBLIC_COMPANY_CIDADE,
-          document: process.env.NEXT_PUBLIC_COMPANY_CPF,
+          document: process.env.NEXT_PUBLIC_COMPANY_CPF || '32948910080',
         },
         to: {
           postal_code: zipCode,
           name: userData?.name || 'Nome do Destinatário',
           address: shippingData?.city,
           city: shippingData?.city,
-          document: userData?.socialId,
+          document: userData?.socialId || '',
         },
         products: [
           {
@@ -310,6 +464,10 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
     }
   }
 
+  useEffect(() => {
+    console.log('userData recebido no PaymentGateway:', userData)
+  }, [userData])
+
   const initialization = {
     amount: amount,
   }
@@ -329,43 +487,49 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
     }
 
     try {
+      console.log('Iniciando o fluxo de pagamento...')
+      console.log('Dados do formulário (formData):', formData)
+      console.log('Dados do usuário (userData):', userData)
+      // Atualiza o estoque
+      console.log('Atualizando o estoque dos produtos...')
+      // comentado foi apenas para teste enquanto mercado livre fora do ar await updateProductStock(cart.items)
       const paymentData = {
         ...formData,
         description: transactionDescription,
         transaction_amount: parseFloat(amount.toFixed(2)),
       }
 
+      console.log('Dados de pagamento (paymentData) a serem enviados para o backend:', paymentData)
+
       const response = await axios.post('/api/process-payment', { paymentData })
       const paymentResponse = response.data
 
       if (paymentResponse && paymentResponse.id) {
         setPaymentId(paymentResponse.id)
-        console.log('Payment processed', paymentResponse)
+        console.log('Pagamento processado:', paymentResponse)
       } else {
+        console.log('Falha no processamento do pagamento. Resposta recebida:', paymentResponse)
+        setError('Erro no processamento do pagamento.')
         throw new Error('Falha no processamento do pagamento')
       }
 
-      // Verifica o status do pagamento
       if (paymentResponse.status === 'approved') {
         // Pagamento aprovado, prossegue com o fluxo
         await proceedWithOrder(paymentResponse)
       } else if (paymentResponse.payment_method_id === 'pix') {
-        //Se for PIX, exibe a mensagem informando que tem 1 minuto para concluir o pagamento
+        // Se for PIX, exibe a mensagem informando que tem 2 minutos para concluir o pagamento
         setShowPixMessage(true)
-        // Se for PIX, espera 1 minuto e verifica novamente
         setTimeout(async () => {
           try {
-            // Passa o paymentId como parâmetro
             const statusResponse = await axios.get('/api/payment-status', {
               params: { payment_id: paymentResponse.id },
             })
             const updatedPayment = statusResponse.data
 
             if (updatedPayment.status === 'approved') {
-              // Pagamento aprovado após 1 minuto
+              // Pagamento aprovado após 2 minutos
               await proceedWithOrder(updatedPayment)
             } else {
-              // Pagamento não aprovado após 1 minuto
               const errorMessage = 'Pagamento não aprovado. Por favor, tente novamente.'
               console.log(updatedPayment.status)
               setError(errorMessage)
@@ -375,72 +539,19 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
             console.error('Erro ao verificar o status do pagamento:', err)
             setError('Erro ao verificar o status do pagamento.')
           }
-        }, 60000) // 60000 milissegundos = 1 minuto
+        }, 120000) // 120000 milissegundos = 2 minutos
       } else {
-        // Pagamento não aprovado e não é PIX
-        const errorMessage = 'Pagamento não aprovado. Por favor, tente novamente.'
         setError('Pagamento não aprovado. Por favor, tente novamente.')
-        router.push(`/order-confirmation?error=${encodeURIComponent(errorMessage)}`)
+        router.push(`/order-confirmation?error=${encodeURIComponent('Pagamento não aprovado.')}`)
       }
     } catch (err) {
       console.error('Erro durante o processo de pagamento:', err)
-      setError(`Falha durante o processo de pagamento: ${err.message || err}`)
+      setError(`Falha durante o processo de pagamento: ${err.message}`)
     }
   }
 
-  // Função para prosseguir com o pedido após o pagamento aprovado
-  const proceedWithOrder = async paymentResponse => {
-    try {
-      const shippingTicketUrl = await completeFreightPurchase()
-
-      const orderReq = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/create-order`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          total: cartTotal.raw,
-          items: (cart?.items || [])?.map(({ product, quantity, selectedColor, selectedSize }) => ({
-            product: typeof product === 'string' ? product : product.id,
-            quantity,
-            selectedSize,
-            selectedColor,
-            price: typeof product === 'object' ? product.price : undefined,
-          })),
-          shippingTicket: shippingTicketUrl,
-          shippingZipCode: zipCode,
-          shippingHouseNumber: shippingData?.houseNumber,
-          shippingComplement: shippingData?.complement,
-          userName: userData?.name,
-          userMail: userData?.email,
-          userSocialId: userData?.socialId,
-          userPhoneNumber: userData?.phoneNumber,
-        }),
-      })
-
-      if (!orderReq.ok) throw new Error(orderReq.statusText || 'Algo deu errado.')
-
-      const order = await orderReq.json()
-      sendEmail(userData.email, userData.name)
-
-      // Gera a Nota Fiscal e envia o e-mail com o PDF após a confirmação do pedido
-      await generateAndSendNotaFiscal(order)
-
-      router.push(`/order-confirmation?order_id=${order.id}`)
-    } catch (err) {
-      console.error('Erro ao processar o pedido:', err)
-      setError(`Falha ao processar o pedido: ${err.message || err}`)
-      router.push(`/order-confirmation?error=${encodeURIComponent(err.message)}`)
-    }
-  }
-
-  const onError = error => {
-    console.error('Error processing payment', error)
-    setError(`Falha durante o processo de pagamento: ${error.message || error}`)
-  }
-
-  const onReady = () => {
-    console.log('Payment form ready')
+  if (!userData || !userData.email) {
+    return <div>Carregando dados do usuário...</div>
   }
 
   return (
@@ -451,8 +562,8 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
             initialization={initialization}
             customization={customization}
             onSubmit={onSubmit}
-            onError={onError}
-            onReady={onReady}
+            onError={err => setError(err.message)}
+            onReady={() => console.log('Payment form ready')}
           />
           {validationErrors.length > 0 && (
             <div className="validation-errors">
@@ -461,21 +572,13 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
               ))}
             </div>
           )}
-          {error && (
-            <div className="error-message" style={{ color: 'red', marginTop: '10px' }}>
-              {error}
-            </div>
-          )}
+          {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
         </div>
       ) : (
-        <StatusScreen
-          initialization={{ paymentId: paymentId }}
-          onError={error => {
-            console.error(error)
-            setError(`Falha ao exibir o status do pagamento: ${error.message || error}`)
-          }}
-        />
+        <StatusScreen initialization={{ paymentId }} onError={err => setError(err.message)} />
       )}
     </div>
   )
 }
+
+export default PaymentGateway

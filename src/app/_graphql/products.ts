@@ -8,6 +8,13 @@ export const PRODUCTS = `
     Products(limit: 300) {
       docs {
         slug
+        stock {
+          PP
+          P
+          M
+          G
+          GG
+        }
       }
     }
   }
@@ -15,10 +22,17 @@ export const PRODUCTS = `
 
 export const PRODUCT = `
   query Product($slug: String, $draft: Boolean) {
-    Products(where: { slug: { equals: $slug}}, limit: 1, draft: $draft) {
+    Products(where: { slug: { equals: $slug } }, limit: 1, draft: $draft) {
       docs {
         id
         title
+        stock {
+          PP
+          P
+          M
+          G
+          GG
+        }
         ${PRODUCT_CATEGORIES}
         price
         discountPercentage
@@ -32,16 +46,15 @@ export const PRODUCT = `
           price
           discountPercentage
           photos {
-            photo{
+            photo {
               ${MEDIA_FIELDS}
             }
           }
-          
         }
         ${PRODUCT_COLORS}
         sizes
         photos {
-          photo{
+          photo {
             ${MEDIA_FIELDS}
           }
         }

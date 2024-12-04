@@ -188,6 +188,7 @@ export interface Category {
 export interface Product {
   id: string;
   title: string;
+  productId: string;
   new?: boolean | null;
   sale?: boolean | null;
   hot?: boolean | null;
@@ -197,6 +198,13 @@ export interface Product {
   description: string;
   composition: string;
   price: number;
+  stock: {
+    PP: number;
+    P: number;
+    M: number;
+    G: number;
+    GG: number;
+  };
   discountPercentage?: number | null;
   photos?:
     | {
