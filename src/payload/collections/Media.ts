@@ -1,4 +1,3 @@
-import { slateEditor } from '@payloadcms/richtext-slate'
 import path from 'path'
 import type { CollectionConfig } from 'payload/types'
 
@@ -15,15 +14,19 @@ export const Media: CollectionConfig = {
       name: 'X_position',
       type: 'number',
       required: false,
-      hidden: false,
-      defaultValue: 100,
+      defaultValue: 0,
     },
     {
       name: 'Y_position',
       type: 'number',
       required: false,
-      hidden: false,
-      defaultValue: 100,
+      defaultValue: 0,
+    },
+    {
+      name: 'zoom',
+      type: 'number',
+      required: false,
+      defaultValue: 1,
     },
     {
       name: 'alt',
@@ -34,14 +37,10 @@ export const Media: CollectionConfig = {
     },
     {
       name: 'caption',
-      type: 'richText',
+      type: 'text',
       required: false,
       hidden: true,
-      editor: slateEditor({
-        admin: {
-          elements: ['link'],
-        },
-      }),
+      defaultValue: '1;0;0',
     },
   ],
 }

@@ -67,17 +67,15 @@ export const HighImpactImage: React.FC<
   const ControlledImage = ({ resource, index }) => {
     // Zoom effect states and refs
     const containerRef = useRef(null)
-    const [position, setPosition] = useState({ x: 0, y: 0 })
+    const [position, setPosition] = useState({ x: resource.X_position, y: resource.Y_position })
     const [zoom, setZoom] = useState(1)
     const [isDragging, setIsDragging] = useState(false)
     const [startPos, setStartPos] = useState({ x: 0, y: 0 })
 
     useEffect(() => {
-      const initialZoomHeight = 800 / resource.height
-      const initialZoomWidth = 800 / resource.width
-      const initialZoom = Math.max(initialZoomHeight, initialZoomWidth)
+      const initialZoom = resource.zoom
       setZoom(initialZoom)
-    }, [resource.height, resource.width])
+    }, [resource.zoom])
 
     // Event handlers for zoom effect
     const handleMouseDown = e => {
@@ -122,6 +120,43 @@ export const HighImpactImage: React.FC<
       }
     }, [isPreview])
 
+    useEffect(() => {
+      console.log(`Zoom: ${zoom}, Position: (${position.x}, ${position.y})`)
+    }, [zoom, position.x, position.y])
+
+    console.log(resource)
+
+    const handleSave = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/media/${resource.id}`,
+          {
+            credentials: 'include',
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              zoom: zoom,
+              X_position: position.x,
+              Y_position: position.y,
+            }),
+          },
+        )
+
+        if (!response.ok) {
+          throw new Error('Failed to update collection')
+        }
+
+        const result = await response.json()
+        alert('Imagem Atualizada com sucesso!')
+        console.log('Update response:', result)
+      } catch (error) {
+        console.error('Error updating collection:', error)
+        alert('Falha ao salvar a imagem')
+      }
+    }
+
     // Conditionally render the image with or without zoom effect
     return (
       <div
@@ -145,18 +180,17 @@ export const HighImpactImage: React.FC<
             height={resource.height}
             sizes={sizes}
             priority={priority}
-            style={
-              isPreview
-                ? {
-                    transform: `scale(${zoom}) translate(${position.x / zoom}px, ${
-                      position.y / zoom
-                    }px)`,
-                    transformOrigin: 'center center',
-                  }
-                : undefined
-            }
+            style={{
+              transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
+              transformOrigin: 'center center',
+            }}
           />
         </div>
+        {isPreview && (
+          <button className={classes.saveButton} onClick={handleSave}>
+            Salvar imagem
+          </button>
+        )}
       </div>
     )
   }

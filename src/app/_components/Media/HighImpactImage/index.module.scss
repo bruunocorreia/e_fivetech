@@ -59,3 +59,36 @@
 .controls button:hover {
   background-color: rgba(255, 255, 255, 1);
 }
+
+.saveButton {
+  display: block; /* Certifica-se de que o botão ocupe uma linha abaixo da imagem */
+  margin: 10px auto; /* Centraliza o botão horizontalmente e adiciona espaço acima */
+  padding: 10px 20px; /* Espaçamento interno para tornar o botão confortável */
+  background-color: transparent; /* Fundo transparente */
+  color: #000; /* Cor do texto */
+  font-size: 14px; /* Tamanho da fonte */
+  font-weight: normal; /* Fonte padrão */
+  border: 1px solid #000; /* Borda preta fina */
+  border-radius: 5px; /* Arredonda os cantos */
+  cursor: pointer; /* Altera o cursor para indicar que o botão é clicável */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Efeitos suaves para hover */
+
+  position: relative; /* Para garantir que esteja em um nível funcional */
+  z-index: 9999; /* Prioridade máxima no empilhamento */
+
+  &:hover {
+    background-color: #f0f0f0; /* Fundo cinza claro ao passar o mouse */
+    color: #000; /* Mantém a cor do texto preta */
+    transform: scale(1.05); /* Pequeno aumento para destacar o botão */
+  }
+
+  &:active {
+    background-color: #003f7f; /* Azul ainda mais escuro ao clicar */
+    transform: scale(0.95); /* Pequeno encolhimento ao clicar */
+  }
+
+  &:focus {
+    outline: 2px solid #80bdff; /* Adiciona um contorno visível ao focar */
+    outline-offset: 2px;
+  }
+}
