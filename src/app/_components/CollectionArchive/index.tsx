@@ -1,16 +1,17 @@
 'use client'
 
-import { Category, Product } from '../../../payload/payload-types'
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react'
+import { equal } from 'assert'
+import qs from 'qs'
 
+import { Category, Product } from '../../../payload/payload-types'
 import type { ArchiveBlockProps } from '../../_blocks/ArchiveBlock/types'
+import { useFilter } from '../../_providers/Filter'
 import { Card } from '../Card'
 import { PageRange } from '../PageRange'
 import { Pagination } from '../Pagination'
+
 import classes from './index.module.scss'
-import { equal } from 'assert'
-import qs from 'qs'
-import { useFilter } from '../../_providers/Filter'
 
 type Result = {
   totalDocs: number
@@ -178,7 +179,7 @@ export const CollectionArchive: React.FC<Props> = props => {
             },
 
             ...(whereConditions.length > 0 ? { or: whereConditions } : {}),
-            
+
             or: [
               { 'stock.PP': { greater_than: 0 } },
               { 'stock.P': { greater_than: 0 } },
@@ -186,7 +187,6 @@ export const CollectionArchive: React.FC<Props> = props => {
               { 'stock.G': { greater_than: 0 } },
               { 'stock.GG': { greater_than: 0 } },
             ],
-
           },
           limit,
           page,
