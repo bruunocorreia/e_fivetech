@@ -1,3 +1,5 @@
+// Inside src/app/_components/Hero/index.tsx
+
 import React from 'react'
 
 import { Page } from '../../../payload/payload-types'
@@ -13,8 +15,8 @@ const heroes = {
   customHero: CustomHero,
 }
 
-export const Hero: React.FC<Page['hero']> = props => {
-  const { type } = props || {}
+export const Hero: React.FC<Page['hero'] & { isPreview?: boolean }> = props => {
+  const { type, isPreview } = props || {}
 
   if (!type || type === 'none') return null
 
@@ -22,5 +24,5 @@ export const Hero: React.FC<Page['hero']> = props => {
 
   if (!HeroToRender) return null
 
-  return <HeroToRender {...props} />
+  return <HeroToRender {...props} isPreview={isPreview} />
 }

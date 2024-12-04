@@ -1,3 +1,5 @@
+// src/app/(pages)/[slug]/page.client.tsx
+
 'use client'
 
 import React from 'react'
@@ -13,16 +15,16 @@ import classes from './index.module.scss'
 
 export const PageTemplate: React.FC<{
   page: Page | null | undefined
-  slug
-  categories
-  isDraftMode
+  slug: string
+  categories: Category[] | null
+  isDraftMode: boolean
 }> = ({ page, slug, categories, isDraftMode }) => {
   const { hero, layout } = page || {}
 
-  const pageTitle = page.title === 'hot' || page.title === 'em-alta' ? 'Em Alta' : page.title
+  const pageTitle = page?.title === 'hot' || page?.title === 'em-alta' ? 'Em Alta' : page?.title
 
   return (
-    <React.Fragment>
+    <>
       {isDraftMode && (
         <div
           style={{
@@ -42,11 +44,11 @@ export const PageTemplate: React.FC<{
       )}
       {slug === 'home' ? (
         <section>
-          <Hero {...hero} />
+          <Hero {...hero} isPreview={isDraftMode} />
         </section>
       ) : (
         <>
-          <Hero {...hero} />
+          <Hero {...hero} isPreview={isDraftMode} /> {/* Added isPreview prop here */}
           {hero?.type !== 'highImpact' && (
             <>
               <div className={classes.filters}>
@@ -67,6 +69,6 @@ export const PageTemplate: React.FC<{
           )}
         </>
       )}
-    </React.Fragment>
+    </>
   )
 }

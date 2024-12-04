@@ -161,12 +161,9 @@ export interface Media {
   id: string;
   X_position?: number | null;
   Y_position?: number | null;
+  zoom?: number | null;
   alt?: string | null;
-  caption?:
-    | {
-        [k: string]: unknown;
-      }[]
-    | null;
+  caption?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;

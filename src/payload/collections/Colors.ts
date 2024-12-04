@@ -24,6 +24,7 @@ const Colors: CollectionConfig = {
       type: 'text',
       required: true,
     },
+
     slugField(),
   ],
 }
