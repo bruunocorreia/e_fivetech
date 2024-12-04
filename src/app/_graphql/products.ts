@@ -1,3 +1,4 @@
+import { ARCHIVE_BLOCK, CALL_TO_ACTION, CONTENT, MEDIA_BLOCK } from './blocks'
 import { PRODUCT_CATEGORIES } from './categories'
 import { PRODUCT_COLORS } from './colors'
 import { MEDIA_FIELDS } from './media'
@@ -56,6 +57,21 @@ export const PRODUCT = `
           photo {
             ${MEDIA_FIELDS}
           }
+        }
+      }
+    }
+  }
+`
+
+export const PRODUCT_PAYWALL = `
+  query Product($slug: String, $draft: Boolean) {
+    Products(where: { slug: { equals: $slug}}, limit: 1, draft: $draft) {
+      docs {
+        paywall {
+          ${CALL_TO_ACTION}
+          ${CONTENT}
+          ${MEDIA_BLOCK}
+          ${ARCHIVE_BLOCK}
         }
       }
     }
