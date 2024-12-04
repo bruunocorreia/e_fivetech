@@ -1,8 +1,6 @@
-import { ARCHIVE_BLOCK, CALL_TO_ACTION, CONTENT, MEDIA_BLOCK } from './blocks';
-
-import { MEDIA_FIELDS } from './media';
-import { PRODUCT_CATEGORIES } from './categories';
-import { PRODUCT_COLORS } from './colors';
+import { PRODUCT_CATEGORIES } from './categories'
+import { PRODUCT_COLORS } from './colors'
+import { MEDIA_FIELDS } from './media'
 
 export const PRODUCTS = `
   query Products {
@@ -19,7 +17,7 @@ export const PRODUCTS = `
       }
     }
   }
-`;
+`
 
 export const PRODUCT = `
   query Product($slug: String, $draft: Boolean) {
@@ -62,4 +60,4 @@ export const PRODUCT = `
       }
     }
   }
-`;
+`
