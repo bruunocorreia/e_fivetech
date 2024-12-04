@@ -1,11 +1,11 @@
-import { Payment, StatusScreen, initMercadoPago } from '@mercadopago/sdk-react'
 import React, { useEffect, useState } from 'react'
-
+import { initMercadoPago, Payment, StatusScreen } from '@mercadopago/sdk-react'
 import axios from 'axios'
+import { useRouter } from 'next/navigation'
+
+import { useEmailSender } from '../../_components/email'
 import { useAuth } from '../../_providers/Auth'
 import { useCart } from '../../_providers/Cart'
-import { useEmailSender } from '../../_components/email'
-import { useRouter } from 'next/navigation'
 
 initMercadoPago('TEST-e4e31358-531f-4c4d-bd5c-3e77edc4ee3f', { locale: 'pt-BR' })
 
@@ -23,7 +23,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
   const [showPixMessage, setShowPixMessage] = useState(false)
   const transactionDescription = 'Minimo1'
 
-  const validateCartItems = (items) => {
+  const validateCartItems = items => {
     const errors = []
     items.forEach((item, index) => {
       if (!item.selectedSize) {
@@ -36,81 +36,87 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
     return errors
   }
 
-  const updateProductStock = async (items) => {
-    console.log('Iniciando a atualização do estoque...');
+  const updateProductStock = async items => {
+    console.log('Iniciando a atualização do estoque...')
     try {
       for (const item of items) {
-        const { product, quantity, selectedSize } = item;
-  
+        const { product, quantity, selectedSize } = item
+
         if (!selectedSize) {
-          throw new Error(`Tamanho não selecionado para o produto ${product.id || product}`);
+          throw new Error(`Tamanho não selecionado para o produto ${product.id || product}`)
         }
-  
+
         // Caso o item do produto seja um ID em vez do objeto completo
-        const productId = typeof product === 'string' ? product : product.id;
-  
-        if (!productId) throw new Error(`Produto inválido: ${JSON.stringify(product)}`);
-  
-        console.log(`Buscando dados do produto ${productId}...`);
-  
+        const productId = typeof product === 'string' ? product : product.id
+
+        if (!productId) throw new Error(`Produto inválido: ${JSON.stringify(product)}`)
+
+        console.log(`Buscando dados do produto ${productId}...`)
+
         // Buscando dados do produto atual para obter o estoque atual
-        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/products/${productId}`);
-        const productData = await res.json();
-  
+        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/products/${productId}`)
+        const productData = await res.json()
+
         if (!productData?.stock || typeof productData.stock !== 'object') {
-          throw new Error(`Estoque inválido ou não encontrado para o produto ${productId}`);
+          throw new Error(`Estoque inválido ou não encontrado para o produto ${productId}`)
         }
-  
+
         // Acessar o estoque para o tamanho selecionado
-        const currentStock = productData.stock[selectedSize];
-  
+        const currentStock = productData.stock[selectedSize]
+
         if (currentStock === undefined || currentStock === null) {
-          throw new Error(`Estoque para o tamanho ${selectedSize} não encontrado no produto ${productId}`);
+          throw new Error(
+            `Estoque para o tamanho ${selectedSize} não encontrado no produto ${productId}`,
+          )
         }
-  
-        const updatedStock = currentStock - quantity;
-  
+
+        const updatedStock = currentStock - quantity
+
         if (updatedStock < 0) {
           throw new Error(
-            `Estoque insuficiente para o produto ${productId} no tamanho ${selectedSize}. Estoque atual: ${currentStock}, quantidade solicitada: ${quantity}`
-          );
+            `Estoque insuficiente para o produto ${productId} no tamanho ${selectedSize}. Estoque atual: ${currentStock}, quantidade solicitada: ${quantity}`,
+          )
         }
-  
+
         console.log(
-          `Atualizando estoque do produto ${productId}, tamanho ${selectedSize}: Estoque atual = ${currentStock}, Quantidade = ${quantity}, Estoque atualizado = ${updatedStock}`
-        );
-  
+          `Atualizando estoque do produto ${productId}, tamanho ${selectedSize}: Estoque atual = ${currentStock}, Quantidade = ${quantity}, Estoque atualizado = ${updatedStock}`,
+        )
+
         // Atualizando o campo `stock` com o novo valor para o tamanho específico
         const updatedStockObject = {
           ...productData.stock,
           [selectedSize]: updatedStock,
-        };
-  
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/products/${productId}`, {
-          method: 'PATCH',
-          body: JSON.stringify({ stock: updatedStockObject }),
-          headers: {
-            'Content-Type': 'application/json',
+        }
+
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/products/${productId}`,
+          {
+            method: 'PATCH',
+            body: JSON.stringify({ stock: updatedStockObject }),
+            headers: {
+              'Content-Type': 'application/json',
+            },
           },
-        });
-  
+        )
+
         if (!response.ok) {
           throw new Error(
-            `Erro ao atualizar o estoque do produto ${productId}, tamanho ${selectedSize}: ${await response.text()}`
-          );
+            `Erro ao atualizar o estoque do produto ${productId}, tamanho ${selectedSize}: ${await response.text()}`,
+          )
         }
-  
-        console.log(`Estoque atualizado com sucesso para o produto ${productId}, tamanho ${selectedSize}`);
+
+        console.log(
+          `Estoque atualizado com sucesso para o produto ${productId}, tamanho ${selectedSize}`,
+        )
       }
-  
-      console.log('Atualização do estoque concluída com sucesso.');
+
+      console.log('Atualização do estoque concluída com sucesso.')
     } catch (err) {
-      console.error('Erro ao atualizar o estoque:', err.message);
-      throw new Error('Erro ao atualizar o estoque dos produtos.');
+      console.error('Erro ao atualizar o estoque:', err.message)
+      throw new Error('Erro ao atualizar o estoque dos produtos.')
     }
-  };
-  
-  
+  }
+
   // Função para gerar a nota fiscal e enviar o email com o PDF anexado
   const generateAndSendNotaFiscal = async order => {
     try {
@@ -315,7 +321,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
     }
   }
 
-  const proceedWithOrder = async (paymentResponse) => {
+  const proceedWithOrder = async paymentResponse => {
     try {
       console.log('Iniciando o fluxo de processamento do pedido...')
 
@@ -371,7 +377,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
       // Gera a Nota Fiscal
       console.log('Gerando e enviando a Nota Fiscal...')
       await generateAndSendNotaFiscal(order)
-      
+
       // Gera email de agradecimento pela compra
       console.log('Gerando email de agradecimento pela compra...')
       sendEmail(userData.email, userData.name)
@@ -391,7 +397,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
   const completeFreightPurchase = async () => {
     setLoading(true)
     setError('')
-    
+
     try {
       const addToCartResponse = await axios.post('/api/add-to-cart', {
         service: serviceId,
@@ -490,7 +496,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
       const paymentData = {
         ...formData,
         description: transactionDescription,
-        transaction_amount: parseFloat(amount.toFixed(2))
+        transaction_amount: parseFloat(amount.toFixed(2)),
       }
 
       console.log('Dados de pagamento (paymentData) a serem enviados para o backend:', paymentData)
@@ -556,7 +562,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
             initialization={initialization}
             customization={customization}
             onSubmit={onSubmit}
-            onError={(err) => setError(err.message)}
+            onError={err => setError(err.message)}
             onReady={() => console.log('Payment form ready')}
           />
           {validationErrors.length > 0 && (
@@ -569,10 +575,7 @@ export const PaymentGateway = ({ amount, serviceId, shippingData, userData, zipC
           {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
         </div>
       ) : (
-        <StatusScreen
-          initialization={{ paymentId }}
-          onError={(err) => setError(err.message)}
-        />
+        <StatusScreen initialization={{ paymentId }} onError={err => setError(err.message)} />
       )}
     </div>
   )
