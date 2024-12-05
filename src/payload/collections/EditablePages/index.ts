@@ -37,7 +37,7 @@ export const EditablePages: CollectionConfig = {
     read: adminsOrPublished,
     update: admins,
     create: () => false,
-    // create: adminsOrPublished,
+    create: adminsOrPublished,
     delete: admins,
   },
   fields: [
