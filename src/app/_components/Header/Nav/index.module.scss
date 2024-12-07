@@ -1,15 +1,12 @@
 @use '../../../_css/queries.scss' as *;
 
 .nav {
-  display: flex;
-  gap: 15px; // Reduzir o gap entre os ícones
-  align-items: center;
-  flex-wrap: wrap;
-  opacity: 1;
-  transition: opacity 100ms linear;
-  justify-content: flex-end;
-  visibility: visible;
-  margin-top:5px; // Adicionar margem superior para mover os itens para baixo
+  display: flex; /* Layout flexível */
+  gap: 15px; /* Espaçamento entre ícones */
+  align-items: center; /* Centraliza os itens verticalmente */
+  justify-content: flex-end; /* Alinha à direita */
+  flex-wrap: nowrap; /* Evita quebra de linha */
+  margin-left: auto; /* Empurra os itens para o lado direito */Adicionar margem superior para mover os itens para baixo
 
   > * {
     text-decoration: none;
