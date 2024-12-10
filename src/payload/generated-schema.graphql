@@ -1155,6 +1155,7 @@ union Archive_SelectedDocs = Product
 type Product {
   id: String
   title: String
+  productId: String
   new: Boolean
   sale: Boolean
   hot: Boolean
@@ -1164,6 +1165,7 @@ type Product {
   description: String
   composition: String
   price: Float
+  stock: Product_Stock
   discountPercentage: Float
   photos: [Product_Photos!]
   publishedOn: DateTime
@@ -1189,6 +1191,14 @@ enum Product_sizes {
   M
   P
   PP
+}
+
+type Product_Stock {
+  PP: Float
+  P: Float
+  M: Float
+  G: Float
+  GG: Float
 }
 
 type Product_Photos {
@@ -4300,6 +4310,7 @@ type Products {
 
 input Product_where {
   title: Product_title_operator
+  productId: Product_productId_operator
   new: Product_new_operator
   sale: Product_sale_operator
   hot: Product_hot_operator
@@ -4309,6 +4320,11 @@ input Product_where {
   description: Product_description_operator
   composition: Product_composition_operator
   price: Product_price_operator
+  stock__PP: Product_stock__PP_operator
+  stock__P: Product_stock__P_operator
+  stock__M: Product_stock__M_operator
+  stock__G: Product_stock__G_operator
+  stock__GG: Product_stock__GG_operator
   discountPercentage: Product_discountPercentage_operator
   photos__photo: Product_photos__photo_operator
   photos__id: Product_photos__id_operator
@@ -4324,6 +4340,16 @@ input Product_where {
 }
 
 input Product_title_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+}
+
+input Product_productId_operator {
   equals: String
   not_equals: String
   like: String
@@ -4401,6 +4427,51 @@ input Product_composition_operator {
 }
 
 input Product_price_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
+}
+
+input Product_stock__PP_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
+}
+
+input Product_stock__P_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
+}
+
+input Product_stock__M_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
+}
+
+input Product_stock__G_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
+}
+
+input Product_stock__GG_operator {
   equals: Float
   not_equals: Float
   greater_than_equal: Float
@@ -4515,6 +4586,7 @@ input Product_id_operator {
 
 input Product_where_and {
   title: Product_title_operator
+  productId: Product_productId_operator
   new: Product_new_operator
   sale: Product_sale_operator
   hot: Product_hot_operator
@@ -4524,6 +4596,11 @@ input Product_where_and {
   description: Product_description_operator
   composition: Product_composition_operator
   price: Product_price_operator
+  stock__PP: Product_stock__PP_operator
+  stock__P: Product_stock__P_operator
+  stock__M: Product_stock__M_operator
+  stock__G: Product_stock__G_operator
+  stock__GG: Product_stock__GG_operator
   discountPercentage: Product_discountPercentage_operator
   photos__photo: Product_photos__photo_operator
   photos__id: Product_photos__id_operator
@@ -4540,6 +4617,7 @@ input Product_where_and {
 
 input Product_where_or {
   title: Product_title_operator
+  productId: Product_productId_operator
   new: Product_new_operator
   sale: Product_sale_operator
   hot: Product_hot_operator
@@ -4549,6 +4627,11 @@ input Product_where_or {
   description: Product_description_operator
   composition: Product_composition_operator
   price: Product_price_operator
+  stock__PP: Product_stock__PP_operator
+  stock__P: Product_stock__P_operator
+  stock__M: Product_stock__M_operator
+  stock__G: Product_stock__G_operator
+  stock__GG: Product_stock__GG_operator
   discountPercentage: Product_discountPercentage_operator
   photos__photo: Product_photos__photo_operator
   photos__id: Product_photos__id_operator
@@ -4574,6 +4657,7 @@ type productsDocAccess {
 
 type ProductsDocAccessFields {
   title: ProductsDocAccessFields_title
+  productId: ProductsDocAccessFields_productId
   new: ProductsDocAccessFields_new
   sale: ProductsDocAccessFields_sale
   hot: ProductsDocAccessFields_hot
@@ -4583,6 +4667,7 @@ type ProductsDocAccessFields {
   description: ProductsDocAccessFields_description
   composition: ProductsDocAccessFields_composition
   price: ProductsDocAccessFields_price
+  stock: ProductsDocAccessFields_stock
   discountPercentage: ProductsDocAccessFields_discountPercentage
   newprice: ProductsDocAccessFields_newprice
   photos: ProductsDocAccessFields_photos
@@ -4614,6 +4699,29 @@ type ProductsDocAccessFields_title_Update {
 }
 
 type ProductsDocAccessFields_title_Delete {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_productId {
+  create: ProductsDocAccessFields_productId_Create
+  read: ProductsDocAccessFields_productId_Read
+  update: ProductsDocAccessFields_productId_Update
+  delete: ProductsDocAccessFields_productId_Delete
+}
+
+type ProductsDocAccessFields_productId_Create {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_productId_Read {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_productId_Update {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_productId_Delete {
   permission: Boolean!
 }
 
@@ -4821,6 +4929,153 @@ type ProductsDocAccessFields_price_Update {
 }
 
 type ProductsDocAccessFields_price_Delete {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock {
+  create: ProductsDocAccessFields_stock_Create
+  read: ProductsDocAccessFields_stock_Read
+  update: ProductsDocAccessFields_stock_Update
+  delete: ProductsDocAccessFields_stock_Delete
+  fields: ProductsDocAccessFields_stock_Fields
+}
+
+type ProductsDocAccessFields_stock_Create {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_Read {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_Update {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_Delete {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_Fields {
+  PP: ProductsDocAccessFields_stock_PP
+  P: ProductsDocAccessFields_stock_P
+  M: ProductsDocAccessFields_stock_M
+  G: ProductsDocAccessFields_stock_G
+  GG: ProductsDocAccessFields_stock_GG
+}
+
+type ProductsDocAccessFields_stock_PP {
+  create: ProductsDocAccessFields_stock_PP_Create
+  read: ProductsDocAccessFields_stock_PP_Read
+  update: ProductsDocAccessFields_stock_PP_Update
+  delete: ProductsDocAccessFields_stock_PP_Delete
+}
+
+type ProductsDocAccessFields_stock_PP_Create {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_PP_Read {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_PP_Update {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_PP_Delete {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_P {
+  create: ProductsDocAccessFields_stock_P_Create
+  read: ProductsDocAccessFields_stock_P_Read
+  update: ProductsDocAccessFields_stock_P_Update
+  delete: ProductsDocAccessFields_stock_P_Delete
+}
+
+type ProductsDocAccessFields_stock_P_Create {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_P_Read {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_P_Update {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_P_Delete {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_M {
+  create: ProductsDocAccessFields_stock_M_Create
+  read: ProductsDocAccessFields_stock_M_Read
+  update: ProductsDocAccessFields_stock_M_Update
+  delete: ProductsDocAccessFields_stock_M_Delete
+}
+
+type ProductsDocAccessFields_stock_M_Create {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_M_Read {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_M_Update {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_M_Delete {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_G {
+  create: ProductsDocAccessFields_stock_G_Create
+  read: ProductsDocAccessFields_stock_G_Read
+  update: ProductsDocAccessFields_stock_G_Update
+  delete: ProductsDocAccessFields_stock_G_Delete
+}
+
+type ProductsDocAccessFields_stock_G_Create {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_G_Read {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_G_Update {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_G_Delete {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_GG {
+  create: ProductsDocAccessFields_stock_GG_Create
+  read: ProductsDocAccessFields_stock_GG_Read
+  update: ProductsDocAccessFields_stock_GG_Update
+  delete: ProductsDocAccessFields_stock_GG_Delete
+}
+
+type ProductsDocAccessFields_stock_GG_Create {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_GG_Read {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_GG_Update {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_stock_GG_Delete {
   permission: Boolean!
 }
 
@@ -5119,6 +5374,7 @@ type ProductVersion {
 
 type ProductVersion_Version {
   title: String
+  productId: String
   new: Boolean
   sale: Boolean
   hot: Boolean
@@ -5128,6 +5384,7 @@ type ProductVersion_Version {
   description: String
   composition: String
   price: Float
+  stock: ProductVersion_Version_Stock
   discountPercentage: Float
   photos: [ProductVersion_Version_Photos!]
   publishedOn: DateTime
@@ -5144,6 +5401,14 @@ enum ProductVersion_Version_sizes {
   M
   P
   PP
+}
+
+type ProductVersion_Version_Stock {
+  PP: Float
+  P: Float
+  M: Float
+  G: Float
+  GG: Float
 }
 
 type ProductVersion_Version_Photos {
@@ -5350,6 +5615,7 @@ type versionsProducts {
 input versionsProduct_where {
   parent: versionsProduct_parent_operator
   version__title: versionsProduct_version__title_operator
+  version__productId: versionsProduct_version__productId_operator
   version__new: versionsProduct_version__new_operator
   version__sale: versionsProduct_version__sale_operator
   version__hot: versionsProduct_version__hot_operator
@@ -5359,6 +5625,11 @@ input versionsProduct_where {
   version__description: versionsProduct_version__description_operator
   version__composition: versionsProduct_version__composition_operator
   version__price: versionsProduct_version__price_operator
+  version__stock__PP: versionsProduct_version__stock__PP_operator
+  version__stock__P: versionsProduct_version__stock__P_operator
+  version__stock__M: versionsProduct_version__stock__M_operator
+  version__stock__G: versionsProduct_version__stock__G_operator
+  version__stock__GG: versionsProduct_version__stock__GG_operator
   version__discountPercentage: versionsProduct_version__discountPercentage_operator
   version__photos__photo: versionsProduct_version__photos__photo_operator
   version__photos__id: versionsProduct_version__photos__id_operator
@@ -5386,6 +5657,16 @@ input versionsProduct_parent_operator {
 }
 
 input versionsProduct_version__title_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+}
+
+input versionsProduct_version__productId_operator {
   equals: String
   not_equals: String
   like: String
@@ -5463,6 +5744,51 @@ input versionsProduct_version__composition_operator {
 }
 
 input versionsProduct_version__price_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
+}
+
+input versionsProduct_version__stock__PP_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
+}
+
+input versionsProduct_version__stock__P_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
+}
+
+input versionsProduct_version__stock__M_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
+}
+
+input versionsProduct_version__stock__G_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
+}
+
+input versionsProduct_version__stock__GG_operator {
   equals: Float
   not_equals: Float
   greater_than_equal: Float
@@ -5606,6 +5932,7 @@ input versionsProduct_id_operator {
 input versionsProduct_where_and {
   parent: versionsProduct_parent_operator
   version__title: versionsProduct_version__title_operator
+  version__productId: versionsProduct_version__productId_operator
   version__new: versionsProduct_version__new_operator
   version__sale: versionsProduct_version__sale_operator
   version__hot: versionsProduct_version__hot_operator
@@ -5615,6 +5942,11 @@ input versionsProduct_where_and {
   version__description: versionsProduct_version__description_operator
   version__composition: versionsProduct_version__composition_operator
   version__price: versionsProduct_version__price_operator
+  version__stock__PP: versionsProduct_version__stock__PP_operator
+  version__stock__P: versionsProduct_version__stock__P_operator
+  version__stock__M: versionsProduct_version__stock__M_operator
+  version__stock__G: versionsProduct_version__stock__G_operator
+  version__stock__GG: versionsProduct_version__stock__GG_operator
   version__discountPercentage: versionsProduct_version__discountPercentage_operator
   version__photos__photo: versionsProduct_version__photos__photo_operator
   version__photos__id: versionsProduct_version__photos__id_operator
@@ -5635,6 +5967,7 @@ input versionsProduct_where_and {
 input versionsProduct_where_or {
   parent: versionsProduct_parent_operator
   version__title: versionsProduct_version__title_operator
+  version__productId: versionsProduct_version__productId_operator
   version__new: versionsProduct_version__new_operator
   version__sale: versionsProduct_version__sale_operator
   version__hot: versionsProduct_version__hot_operator
@@ -5644,6 +5977,11 @@ input versionsProduct_where_or {
   version__description: versionsProduct_version__description_operator
   version__composition: versionsProduct_version__composition_operator
   version__price: versionsProduct_version__price_operator
+  version__stock__PP: versionsProduct_version__stock__PP_operator
+  version__stock__P: versionsProduct_version__stock__P_operator
+  version__stock__M: versionsProduct_version__stock__M_operator
+  version__stock__G: versionsProduct_version__stock__G_operator
+  version__stock__GG: versionsProduct_version__stock__GG_operator
   version__discountPercentage: versionsProduct_version__discountPercentage_operator
   version__photos__photo: versionsProduct_version__photos__photo_operator
   version__photos__id: versionsProduct_version__photos__id_operator
@@ -10566,6 +10904,7 @@ type productsAccess {
 
 type ProductsFields {
   title: ProductsFields_title
+  productId: ProductsFields_productId
   new: ProductsFields_new
   sale: ProductsFields_sale
   hot: ProductsFields_hot
@@ -10575,6 +10914,7 @@ type ProductsFields {
   description: ProductsFields_description
   composition: ProductsFields_composition
   price: ProductsFields_price
+  stock: ProductsFields_stock
   discountPercentage: ProductsFields_discountPercentage
   newprice: ProductsFields_newprice
   photos: ProductsFields_photos
@@ -10606,6 +10946,29 @@ type ProductsFields_title_Update {
 }
 
 type ProductsFields_title_Delete {
+  permission: Boolean!
+}
+
+type ProductsFields_productId {
+  create: ProductsFields_productId_Create
+  read: ProductsFields_productId_Read
+  update: ProductsFields_productId_Update
+  delete: ProductsFields_productId_Delete
+}
+
+type ProductsFields_productId_Create {
+  permission: Boolean!
+}
+
+type ProductsFields_productId_Read {
+  permission: Boolean!
+}
+
+type ProductsFields_productId_Update {
+  permission: Boolean!
+}
+
+type ProductsFields_productId_Delete {
   permission: Boolean!
 }
 
@@ -10813,6 +11176,153 @@ type ProductsFields_price_Update {
 }
 
 type ProductsFields_price_Delete {
+  permission: Boolean!
+}
+
+type ProductsFields_stock {
+  create: ProductsFields_stock_Create
+  read: ProductsFields_stock_Read
+  update: ProductsFields_stock_Update
+  delete: ProductsFields_stock_Delete
+  fields: ProductsFields_stock_Fields
+}
+
+type ProductsFields_stock_Create {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_Read {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_Update {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_Delete {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_Fields {
+  PP: ProductsFields_stock_PP
+  P: ProductsFields_stock_P
+  M: ProductsFields_stock_M
+  G: ProductsFields_stock_G
+  GG: ProductsFields_stock_GG
+}
+
+type ProductsFields_stock_PP {
+  create: ProductsFields_stock_PP_Create
+  read: ProductsFields_stock_PP_Read
+  update: ProductsFields_stock_PP_Update
+  delete: ProductsFields_stock_PP_Delete
+}
+
+type ProductsFields_stock_PP_Create {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_PP_Read {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_PP_Update {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_PP_Delete {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_P {
+  create: ProductsFields_stock_P_Create
+  read: ProductsFields_stock_P_Read
+  update: ProductsFields_stock_P_Update
+  delete: ProductsFields_stock_P_Delete
+}
+
+type ProductsFields_stock_P_Create {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_P_Read {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_P_Update {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_P_Delete {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_M {
+  create: ProductsFields_stock_M_Create
+  read: ProductsFields_stock_M_Read
+  update: ProductsFields_stock_M_Update
+  delete: ProductsFields_stock_M_Delete
+}
+
+type ProductsFields_stock_M_Create {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_M_Read {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_M_Update {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_M_Delete {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_G {
+  create: ProductsFields_stock_G_Create
+  read: ProductsFields_stock_G_Read
+  update: ProductsFields_stock_G_Update
+  delete: ProductsFields_stock_G_Delete
+}
+
+type ProductsFields_stock_G_Create {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_G_Read {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_G_Update {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_G_Delete {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_GG {
+  create: ProductsFields_stock_GG_Create
+  read: ProductsFields_stock_GG_Read
+  update: ProductsFields_stock_GG_Update
+  delete: ProductsFields_stock_GG_Delete
+}
+
+type ProductsFields_stock_GG_Create {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_GG_Read {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_GG_Update {
+  permission: Boolean!
+}
+
+type ProductsFields_stock_GG_Delete {
   permission: Boolean!
 }
 
@@ -13678,6 +14188,7 @@ enum EditablepageUpdate__status_MutationInput {
 
 input mutationProductInput {
   title: String!
+  productId: String!
   new: Boolean
   sale: Boolean
   hot: Boolean
@@ -13687,6 +14198,7 @@ input mutationProductInput {
   description: String!
   composition: String!
   price: Float!
+  stock: mutationProduct_StockInput!
   discountPercentage: Float
   photos: [mutationProduct_PhotosInput]
   publishedOn: String
@@ -13705,6 +14217,14 @@ enum Product_sizes_MutationInput {
   PP
 }
 
+input mutationProduct_StockInput {
+  PP: Float!
+  P: Float!
+  M: Float!
+  G: Float!
+  GG: Float!
+}
+
 input mutationProduct_PhotosInput {
   photo: String
   id: String
@@ -13717,6 +14237,7 @@ enum Product__status_MutationInput {
 
 input mutationProductUpdateInput {
   title: String
+  productId: String
   new: Boolean
   sale: Boolean
   hot: Boolean
@@ -13726,6 +14247,7 @@ input mutationProductUpdateInput {
   description: String
   composition: String
   price: Float
+  stock: mutationProductUpdate_StockInput!
   discountPercentage: Float
   photos: [mutationProductUpdate_PhotosInput]
   publishedOn: String
@@ -13742,6 +14264,14 @@ enum ProductUpdate_sizes_MutationInput {
   M
   P
   PP
+}
+
+input mutationProductUpdate_StockInput {
+  PP: Float!
+  P: Float!
+  M: Float!
+  G: Float!
+  GG: Float!
 }
 
 input mutationProductUpdate_PhotosInput {
