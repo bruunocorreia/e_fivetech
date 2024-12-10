@@ -10,6 +10,7 @@ import EmailRouter from './payload/endpoints/email_compra'
 import EmailRouterFiscal from './payload/endpoints/email_notafiscal'
 import processPayment from './payload/endpoints/gateway_pagamento'
 import CheckProcessPayment from './payload/endpoints/gateway_pagamento_check'
+import mediaHandler from './payload/endpoints/media-handler'
 import calculateFreightRouter from './payload/endpoints/melhor_envio'
 import carrinhoFreightRouter from './payload/endpoints/melhor_envio_add_carrinho'
 import GeraEtiquetaFreightRouter from './payload/endpoints/melhor_envio_add_etiqueta'
@@ -43,6 +44,7 @@ app.use('/api', NotaFiscal)
 app.use('/api', NotaFiscalImprimir)
 app.use('/api', processPayment)
 app.use('/api', CheckProcessPayment)
+app.use('/api', mediaHandler)
 
 const start = async (): Promise<void> => {
   await payload.init({

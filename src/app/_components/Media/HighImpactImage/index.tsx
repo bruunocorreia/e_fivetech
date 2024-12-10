@@ -128,21 +128,18 @@ export const HighImpactImage: React.FC<
 
     const handleSave = async () => {
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/media/${resource.id}`,
-          {
-            credentials: 'include',
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              zoom: zoom,
-              X_position: position.x,
-              Y_position: position.y,
-            }),
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/resize-media`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        )
+          body: JSON.stringify({
+            id: resource.id,
+            X_position: position.x,
+            Y_position: position.y,
+            zoom: zoom,
+          }),
+        })
 
         if (!response.ok) {
           throw new Error('Failed to update collection')

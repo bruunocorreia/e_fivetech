@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { Router } from 'express';
-import payload from 'payload';
+import { Router } from 'express'
+import payload from 'payload'
 
-const router = Router();
+const router = Router()
 
 router.post('/send-email-nota-fiscal', async (req, res) => {
-  const { from_name, to_email, to_name, pdf} = req.body;
+  const { from_name, to_email, to_name, pdf } = req.body
 
   const emailTemplate = `
     <p>Olá ${to_name},</p>
@@ -15,7 +15,7 @@ router.post('/send-email-nota-fiscal', async (req, res) => {
     <p>Em anexo, você encontrará a sua Nota Fiscal em formato PDF. Por favor, guarde-a para referência futura.</p>
     <p>Atenciosamente,</p>
     <p>Equipe Minimo 1</p>
-  `;
+  `
 
   await payload.sendEmail({
     from_name: from_name,
@@ -23,7 +23,8 @@ router.post('/send-email-nota-fiscal', async (req, res) => {
     subject: 'Bem-vindo à Minimo 1! Aqui está sua nota fiscal!',
     html: emailTemplate,
     attachments: [pdf],
-  })})
+  })
+})
 
-  export default router
-  /* eslint-enable @typescript-eslint/no-unused-vars */
+export default router
+/* eslint-enable @typescript-eslint/no-unused-vars */
