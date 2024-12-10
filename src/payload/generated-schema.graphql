@@ -27,12 +27,12 @@ type Query {
   PayloadPreference(id: String!, draft: Boolean): PayloadPreference
   PayloadPreferences(draft: Boolean, where: PayloadPreference_where, limit: Int, page: Int, sort: String): PayloadPreferences
   docAccessPayloadPreference(id: String!): payload_preferencesDocAccess
+  Footer(draft: Boolean): Footer
+  docAccessFooter: footerDocAccess
   Settings(draft: Boolean): Settings
   docAccessSettings: settingsDocAccess
   Header(draft: Boolean): Header
   docAccessHeader: headerDocAccess
-  Footer(draft: Boolean): Footer
-  docAccessFooter: footerDocAccess
   Access: Access
 }
 
@@ -1227,6 +1227,9 @@ type Archive {
   selectedDocs: [Archive_SelectedDocs_Relationship!]
   populatedDocs: [Archive_PopulatedDocs_Relationship!]
   populatedDocsTotal: Float
+  new: Boolean
+  hot: Boolean
+  sale: Boolean
   id: String
   blockName: String
   blockType: String
@@ -1274,6 +1277,9 @@ type Product {
   publishedOn: DateTime
   relatedProducts: [Product!]
   categories: [Category!]
+  new: Boolean
+  sale: Boolean
+  hot: Boolean
   slug: String
   updatedAt: DateTime
   createdAt: DateTime
@@ -3349,6 +3355,9 @@ input Product_where {
   publishedOn: Product_publishedOn_operator
   relatedProducts: Product_relatedProducts_operator
   categories: Product_categories_operator
+  new: Product_new_operator
+  sale: Product_sale_operator
+  hot: Product_hot_operator
   slug: Product_slug_operator
   updatedAt: Product_updatedAt_operator
   createdAt: Product_createdAt_operator
@@ -3465,6 +3474,24 @@ input Product_categories_operator {
   exists: Boolean
 }
 
+input Product_new_operator {
+  equals: Boolean
+  not_equals: Boolean
+  exists: Boolean
+}
+
+input Product_sale_operator {
+  equals: Boolean
+  not_equals: Boolean
+  exists: Boolean
+}
+
+input Product_hot_operator {
+  equals: Boolean
+  not_equals: Boolean
+  exists: Boolean
+}
+
 input Product_slug_operator {
   equals: String
   not_equals: String
@@ -3521,6 +3548,9 @@ input Product_where_and {
   publishedOn: Product_publishedOn_operator
   relatedProducts: Product_relatedProducts_operator
   categories: Product_categories_operator
+  new: Product_new_operator
+  sale: Product_sale_operator
+  hot: Product_hot_operator
   slug: Product_slug_operator
   updatedAt: Product_updatedAt_operator
   createdAt: Product_createdAt_operator
@@ -3541,6 +3571,9 @@ input Product_where_or {
   publishedOn: Product_publishedOn_operator
   relatedProducts: Product_relatedProducts_operator
   categories: Product_categories_operator
+  new: Product_new_operator
+  sale: Product_sale_operator
+  hot: Product_hot_operator
   slug: Product_slug_operator
   updatedAt: Product_updatedAt_operator
   createdAt: Product_createdAt_operator
@@ -3568,6 +3601,9 @@ type ProductsDocAccessFields {
   publishedOn: ProductsDocAccessFields_publishedOn
   relatedProducts: ProductsDocAccessFields_relatedProducts
   categories: ProductsDocAccessFields_categories
+  new: ProductsDocAccessFields_new
+  sale: ProductsDocAccessFields_sale
+  hot: ProductsDocAccessFields_hot
   slug: ProductsDocAccessFields_slug
   updatedAt: ProductsDocAccessFields_updatedAt
   createdAt: ProductsDocAccessFields_createdAt
@@ -3852,6 +3888,75 @@ type ProductsDocAccessFields_categories_Update {
 }
 
 type ProductsDocAccessFields_categories_Delete {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_new {
+  create: ProductsDocAccessFields_new_Create
+  read: ProductsDocAccessFields_new_Read
+  update: ProductsDocAccessFields_new_Update
+  delete: ProductsDocAccessFields_new_Delete
+}
+
+type ProductsDocAccessFields_new_Create {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_new_Read {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_new_Update {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_new_Delete {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_sale {
+  create: ProductsDocAccessFields_sale_Create
+  read: ProductsDocAccessFields_sale_Read
+  update: ProductsDocAccessFields_sale_Update
+  delete: ProductsDocAccessFields_sale_Delete
+}
+
+type ProductsDocAccessFields_sale_Create {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_sale_Read {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_sale_Update {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_sale_Delete {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_hot {
+  create: ProductsDocAccessFields_hot_Create
+  read: ProductsDocAccessFields_hot_Read
+  update: ProductsDocAccessFields_hot_Update
+  delete: ProductsDocAccessFields_hot_Delete
+}
+
+type ProductsDocAccessFields_hot_Create {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_hot_Read {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_hot_Update {
+  permission: Boolean!
+}
+
+type ProductsDocAccessFields_hot_Delete {
   permission: Boolean!
 }
 
@@ -4509,20 +4614,33 @@ type ColorsDeleteDocAccess {
 type Order {
   id: String
   orderedBy: User
-  stripePaymentIntentID: String
   total: Float!
   items: [Order_Items!]
+  shippingTicket: String!
+  shippingZipCode: Float!
+  shippingHouseNumber: Float!
+  shippingComplement: String
+  userSocialId: Float!
+  userPhoneNumber: String!
   updatedAt: DateTime
   createdAt: DateTime
 }
 
 type User {
   id: String
-  name: String
-  teste: String
+  name: String!
+  socialId: Float
+  birthdate: String
+  phoneNumber: String
+  address: String
+  houseNumber: Float
+  complement: String
+  neighborhood: String
+  city: String
+  state: String
+  zipCode: Float
   roles: [User_roles!]
   purchases: [Product!]
-  stripeCustomerID: String
   cart: User_Cart
   skipSync: Boolean
   updatedAt: DateTime
@@ -4549,6 +4667,8 @@ type User_Cart {
 type CartItems {
   product: Product
   quantity: Float
+  selectedColor: String
+  selectedSize: String
   id: String
 }
 
@@ -4561,6 +4681,8 @@ type Order_Items {
   product: Product
   price: Float
   quantity: Float
+  selectedSize: String
+  selectedColor: String
   id: String
 }
 
@@ -4580,12 +4702,19 @@ type Orders {
 
 input Order_where {
   orderedBy: Order_orderedBy_operator
-  stripePaymentIntentID: Order_stripePaymentIntentID_operator
   total: Order_total_operator
   items__product: Order_items__product_operator
   items__price: Order_items__price_operator
   items__quantity: Order_items__quantity_operator
+  items__selectedSize: Order_items__selectedSize_operator
+  items__selectedColor: Order_items__selectedColor_operator
   items__id: Order_items__id_operator
+  shippingTicket: Order_shippingTicket_operator
+  shippingZipCode: Order_shippingZipCode_operator
+  shippingHouseNumber: Order_shippingHouseNumber_operator
+  shippingComplement: Order_shippingComplement_operator
+  userSocialId: Order_userSocialId_operator
+  userPhoneNumber: Order_userPhoneNumber_operator
   updatedAt: Order_updatedAt_operator
   createdAt: Order_createdAt_operator
   id: Order_id_operator
@@ -4599,17 +4728,6 @@ input Order_orderedBy_operator {
   in: [JSON]
   not_in: [JSON]
   all: [JSON]
-  exists: Boolean
-}
-
-input Order_stripePaymentIntentID_operator {
-  equals: String
-  not_equals: String
-  like: String
-  contains: String
-  in: [String]
-  not_in: [String]
-  all: [String]
   exists: Boolean
 }
 
@@ -4650,6 +4768,26 @@ input Order_items__quantity_operator {
   exists: Boolean
 }
 
+input Order_items__selectedSize_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+}
+
+input Order_items__selectedColor_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+}
+
 input Order_items__id_operator {
   equals: String
   not_equals: String
@@ -4659,6 +4797,64 @@ input Order_items__id_operator {
   not_in: [String]
   all: [String]
   exists: Boolean
+}
+
+input Order_shippingTicket_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+}
+
+input Order_shippingZipCode_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
+}
+
+input Order_shippingHouseNumber_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
+}
+
+input Order_shippingComplement_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input Order_userSocialId_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
+}
+
+input Order_userPhoneNumber_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
 }
 
 input Order_updatedAt_operator {
@@ -4696,12 +4892,19 @@ input Order_id_operator {
 
 input Order_where_and {
   orderedBy: Order_orderedBy_operator
-  stripePaymentIntentID: Order_stripePaymentIntentID_operator
   total: Order_total_operator
   items__product: Order_items__product_operator
   items__price: Order_items__price_operator
   items__quantity: Order_items__quantity_operator
+  items__selectedSize: Order_items__selectedSize_operator
+  items__selectedColor: Order_items__selectedColor_operator
   items__id: Order_items__id_operator
+  shippingTicket: Order_shippingTicket_operator
+  shippingZipCode: Order_shippingZipCode_operator
+  shippingHouseNumber: Order_shippingHouseNumber_operator
+  shippingComplement: Order_shippingComplement_operator
+  userSocialId: Order_userSocialId_operator
+  userPhoneNumber: Order_userPhoneNumber_operator
   updatedAt: Order_updatedAt_operator
   createdAt: Order_createdAt_operator
   id: Order_id_operator
@@ -4711,12 +4914,19 @@ input Order_where_and {
 
 input Order_where_or {
   orderedBy: Order_orderedBy_operator
-  stripePaymentIntentID: Order_stripePaymentIntentID_operator
   total: Order_total_operator
   items__product: Order_items__product_operator
   items__price: Order_items__price_operator
   items__quantity: Order_items__quantity_operator
+  items__selectedSize: Order_items__selectedSize_operator
+  items__selectedColor: Order_items__selectedColor_operator
   items__id: Order_items__id_operator
+  shippingTicket: Order_shippingTicket_operator
+  shippingZipCode: Order_shippingZipCode_operator
+  shippingHouseNumber: Order_shippingHouseNumber_operator
+  shippingComplement: Order_shippingComplement_operator
+  userSocialId: Order_userSocialId_operator
+  userPhoneNumber: Order_userPhoneNumber_operator
   updatedAt: Order_updatedAt_operator
   createdAt: Order_createdAt_operator
   id: Order_id_operator
@@ -4734,9 +4944,14 @@ type ordersDocAccess {
 
 type OrdersDocAccessFields {
   orderedBy: OrdersDocAccessFields_orderedBy
-  stripePaymentIntentID: OrdersDocAccessFields_stripePaymentIntentID
   total: OrdersDocAccessFields_total
   items: OrdersDocAccessFields_items
+  shippingTicket: OrdersDocAccessFields_shippingTicket
+  shippingZipCode: OrdersDocAccessFields_shippingZipCode
+  shippingHouseNumber: OrdersDocAccessFields_shippingHouseNumber
+  shippingComplement: OrdersDocAccessFields_shippingComplement
+  userSocialId: OrdersDocAccessFields_userSocialId
+  userPhoneNumber: OrdersDocAccessFields_userPhoneNumber
   updatedAt: OrdersDocAccessFields_updatedAt
   createdAt: OrdersDocAccessFields_createdAt
 }
@@ -4761,29 +4976,6 @@ type OrdersDocAccessFields_orderedBy_Update {
 }
 
 type OrdersDocAccessFields_orderedBy_Delete {
-  permission: Boolean!
-}
-
-type OrdersDocAccessFields_stripePaymentIntentID {
-  create: OrdersDocAccessFields_stripePaymentIntentID_Create
-  read: OrdersDocAccessFields_stripePaymentIntentID_Read
-  update: OrdersDocAccessFields_stripePaymentIntentID_Update
-  delete: OrdersDocAccessFields_stripePaymentIntentID_Delete
-}
-
-type OrdersDocAccessFields_stripePaymentIntentID_Create {
-  permission: Boolean!
-}
-
-type OrdersDocAccessFields_stripePaymentIntentID_Read {
-  permission: Boolean!
-}
-
-type OrdersDocAccessFields_stripePaymentIntentID_Update {
-  permission: Boolean!
-}
-
-type OrdersDocAccessFields_stripePaymentIntentID_Delete {
   permission: Boolean!
 }
 
@@ -4838,6 +5030,8 @@ type OrdersDocAccessFields_items_Fields {
   product: OrdersDocAccessFields_items_product
   price: OrdersDocAccessFields_items_price
   quantity: OrdersDocAccessFields_items_quantity
+  selectedSize: OrdersDocAccessFields_items_selectedSize
+  selectedColor: OrdersDocAccessFields_items_selectedColor
   id: OrdersDocAccessFields_items_id
 }
 
@@ -4910,6 +5104,52 @@ type OrdersDocAccessFields_items_quantity_Delete {
   permission: Boolean!
 }
 
+type OrdersDocAccessFields_items_selectedSize {
+  create: OrdersDocAccessFields_items_selectedSize_Create
+  read: OrdersDocAccessFields_items_selectedSize_Read
+  update: OrdersDocAccessFields_items_selectedSize_Update
+  delete: OrdersDocAccessFields_items_selectedSize_Delete
+}
+
+type OrdersDocAccessFields_items_selectedSize_Create {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_items_selectedSize_Read {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_items_selectedSize_Update {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_items_selectedSize_Delete {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_items_selectedColor {
+  create: OrdersDocAccessFields_items_selectedColor_Create
+  read: OrdersDocAccessFields_items_selectedColor_Read
+  update: OrdersDocAccessFields_items_selectedColor_Update
+  delete: OrdersDocAccessFields_items_selectedColor_Delete
+}
+
+type OrdersDocAccessFields_items_selectedColor_Create {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_items_selectedColor_Read {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_items_selectedColor_Update {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_items_selectedColor_Delete {
+  permission: Boolean!
+}
+
 type OrdersDocAccessFields_items_id {
   create: OrdersDocAccessFields_items_id_Create
   read: OrdersDocAccessFields_items_id_Read
@@ -4930,6 +5170,144 @@ type OrdersDocAccessFields_items_id_Update {
 }
 
 type OrdersDocAccessFields_items_id_Delete {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_shippingTicket {
+  create: OrdersDocAccessFields_shippingTicket_Create
+  read: OrdersDocAccessFields_shippingTicket_Read
+  update: OrdersDocAccessFields_shippingTicket_Update
+  delete: OrdersDocAccessFields_shippingTicket_Delete
+}
+
+type OrdersDocAccessFields_shippingTicket_Create {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_shippingTicket_Read {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_shippingTicket_Update {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_shippingTicket_Delete {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_shippingZipCode {
+  create: OrdersDocAccessFields_shippingZipCode_Create
+  read: OrdersDocAccessFields_shippingZipCode_Read
+  update: OrdersDocAccessFields_shippingZipCode_Update
+  delete: OrdersDocAccessFields_shippingZipCode_Delete
+}
+
+type OrdersDocAccessFields_shippingZipCode_Create {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_shippingZipCode_Read {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_shippingZipCode_Update {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_shippingZipCode_Delete {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_shippingHouseNumber {
+  create: OrdersDocAccessFields_shippingHouseNumber_Create
+  read: OrdersDocAccessFields_shippingHouseNumber_Read
+  update: OrdersDocAccessFields_shippingHouseNumber_Update
+  delete: OrdersDocAccessFields_shippingHouseNumber_Delete
+}
+
+type OrdersDocAccessFields_shippingHouseNumber_Create {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_shippingHouseNumber_Read {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_shippingHouseNumber_Update {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_shippingHouseNumber_Delete {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_shippingComplement {
+  create: OrdersDocAccessFields_shippingComplement_Create
+  read: OrdersDocAccessFields_shippingComplement_Read
+  update: OrdersDocAccessFields_shippingComplement_Update
+  delete: OrdersDocAccessFields_shippingComplement_Delete
+}
+
+type OrdersDocAccessFields_shippingComplement_Create {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_shippingComplement_Read {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_shippingComplement_Update {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_shippingComplement_Delete {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_userSocialId {
+  create: OrdersDocAccessFields_userSocialId_Create
+  read: OrdersDocAccessFields_userSocialId_Read
+  update: OrdersDocAccessFields_userSocialId_Update
+  delete: OrdersDocAccessFields_userSocialId_Delete
+}
+
+type OrdersDocAccessFields_userSocialId_Create {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_userSocialId_Read {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_userSocialId_Update {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_userSocialId_Delete {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_userPhoneNumber {
+  create: OrdersDocAccessFields_userPhoneNumber_Create
+  read: OrdersDocAccessFields_userPhoneNumber_Read
+  update: OrdersDocAccessFields_userPhoneNumber_Update
+  delete: OrdersDocAccessFields_userPhoneNumber_Delete
+}
+
+type OrdersDocAccessFields_userPhoneNumber_Create {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_userPhoneNumber_Read {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_userPhoneNumber_Update {
+  permission: Boolean!
+}
+
+type OrdersDocAccessFields_userPhoneNumber_Delete {
   permission: Boolean!
 }
 
@@ -5462,12 +5840,22 @@ type Users {
 
 input User_where {
   name: User_name_operator
-  teste: User_teste_operator
+  socialId: User_socialId_operator
+  birthdate: User_birthdate_operator
+  phoneNumber: User_phoneNumber_operator
+  address: User_address_operator
+  houseNumber: User_houseNumber_operator
+  complement: User_complement_operator
+  neighborhood: User_neighborhood_operator
+  city: User_city_operator
+  state: User_state_operator
+  zipCode: User_zipCode_operator
   roles: User_roles_operator
   purchases: User_purchases_operator
-  stripeCustomerID: User_stripeCustomerID_operator
   cart__items__product: User_cart__items__product_operator
   cart__items__quantity: User_cart__items__quantity_operator
+  cart__items__selectedColor: User_cart__items__selectedColor_operator
+  cart__items__selectedSize: User_cart__items__selectedSize_operator
   cart__items__id: User_cart__items__id_operator
   skipSync: User_skipSync_operator
   updatedAt: User_updatedAt_operator
@@ -5486,10 +5874,19 @@ input User_name_operator {
   in: [String]
   not_in: [String]
   all: [String]
+}
+
+input User_socialId_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
   exists: Boolean
 }
 
-input User_teste_operator {
+input User_birthdate_operator {
   equals: String
   not_equals: String
   like: String
@@ -5497,6 +5894,92 @@ input User_teste_operator {
   in: [String]
   not_in: [String]
   all: [String]
+  exists: Boolean
+}
+
+input User_phoneNumber_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input User_address_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input User_houseNumber_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
+  exists: Boolean
+}
+
+input User_complement_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input User_neighborhood_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input User_city_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input User_state_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input User_zipCode_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
   exists: Boolean
 }
 
@@ -5523,17 +6006,6 @@ input User_purchases_operator {
   exists: Boolean
 }
 
-input User_stripeCustomerID_operator {
-  equals: String
-  not_equals: String
-  like: String
-  contains: String
-  in: [String]
-  not_in: [String]
-  all: [String]
-  exists: Boolean
-}
-
 input User_cart__items__product_operator {
   equals: JSON
   not_equals: JSON
@@ -5550,6 +6022,28 @@ input User_cart__items__quantity_operator {
   greater_than: Float
   less_than_equal: Float
   less_than: Float
+  exists: Boolean
+}
+
+input User_cart__items__selectedColor_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input User_cart__items__selectedSize_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
   exists: Boolean
 }
 
@@ -5615,12 +6109,22 @@ input User_id_operator {
 
 input User_where_and {
   name: User_name_operator
-  teste: User_teste_operator
+  socialId: User_socialId_operator
+  birthdate: User_birthdate_operator
+  phoneNumber: User_phoneNumber_operator
+  address: User_address_operator
+  houseNumber: User_houseNumber_operator
+  complement: User_complement_operator
+  neighborhood: User_neighborhood_operator
+  city: User_city_operator
+  state: User_state_operator
+  zipCode: User_zipCode_operator
   roles: User_roles_operator
   purchases: User_purchases_operator
-  stripeCustomerID: User_stripeCustomerID_operator
   cart__items__product: User_cart__items__product_operator
   cart__items__quantity: User_cart__items__quantity_operator
+  cart__items__selectedColor: User_cart__items__selectedColor_operator
+  cart__items__selectedSize: User_cart__items__selectedSize_operator
   cart__items__id: User_cart__items__id_operator
   skipSync: User_skipSync_operator
   updatedAt: User_updatedAt_operator
@@ -5633,12 +6137,22 @@ input User_where_and {
 
 input User_where_or {
   name: User_name_operator
-  teste: User_teste_operator
+  socialId: User_socialId_operator
+  birthdate: User_birthdate_operator
+  phoneNumber: User_phoneNumber_operator
+  address: User_address_operator
+  houseNumber: User_houseNumber_operator
+  complement: User_complement_operator
+  neighborhood: User_neighborhood_operator
+  city: User_city_operator
+  state: User_state_operator
+  zipCode: User_zipCode_operator
   roles: User_roles_operator
   purchases: User_purchases_operator
-  stripeCustomerID: User_stripeCustomerID_operator
   cart__items__product: User_cart__items__product_operator
   cart__items__quantity: User_cart__items__quantity_operator
+  cart__items__selectedColor: User_cart__items__selectedColor_operator
+  cart__items__selectedSize: User_cart__items__selectedSize_operator
   cart__items__id: User_cart__items__id_operator
   skipSync: User_skipSync_operator
   updatedAt: User_updatedAt_operator
@@ -5660,10 +6174,18 @@ type usersDocAccess {
 
 type UsersDocAccessFields {
   name: UsersDocAccessFields_name
-  teste: UsersDocAccessFields_teste
+  socialId: UsersDocAccessFields_socialId
+  birthdate: UsersDocAccessFields_birthdate
+  phoneNumber: UsersDocAccessFields_phoneNumber
+  address: UsersDocAccessFields_address
+  houseNumber: UsersDocAccessFields_houseNumber
+  complement: UsersDocAccessFields_complement
+  neighborhood: UsersDocAccessFields_neighborhood
+  city: UsersDocAccessFields_city
+  state: UsersDocAccessFields_state
+  zipCode: UsersDocAccessFields_zipCode
   roles: UsersDocAccessFields_roles
   purchases: UsersDocAccessFields_purchases
-  stripeCustomerID: UsersDocAccessFields_stripeCustomerID
   cart: UsersDocAccessFields_cart
   skipSync: UsersDocAccessFields_skipSync
   updatedAt: UsersDocAccessFields_updatedAt
@@ -5695,26 +6217,233 @@ type UsersDocAccessFields_name_Delete {
   permission: Boolean!
 }
 
-type UsersDocAccessFields_teste {
-  create: UsersDocAccessFields_teste_Create
-  read: UsersDocAccessFields_teste_Read
-  update: UsersDocAccessFields_teste_Update
-  delete: UsersDocAccessFields_teste_Delete
+type UsersDocAccessFields_socialId {
+  create: UsersDocAccessFields_socialId_Create
+  read: UsersDocAccessFields_socialId_Read
+  update: UsersDocAccessFields_socialId_Update
+  delete: UsersDocAccessFields_socialId_Delete
 }
 
-type UsersDocAccessFields_teste_Create {
+type UsersDocAccessFields_socialId_Create {
   permission: Boolean!
 }
 
-type UsersDocAccessFields_teste_Read {
+type UsersDocAccessFields_socialId_Read {
   permission: Boolean!
 }
 
-type UsersDocAccessFields_teste_Update {
+type UsersDocAccessFields_socialId_Update {
   permission: Boolean!
 }
 
-type UsersDocAccessFields_teste_Delete {
+type UsersDocAccessFields_socialId_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_birthdate {
+  create: UsersDocAccessFields_birthdate_Create
+  read: UsersDocAccessFields_birthdate_Read
+  update: UsersDocAccessFields_birthdate_Update
+  delete: UsersDocAccessFields_birthdate_Delete
+}
+
+type UsersDocAccessFields_birthdate_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_birthdate_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_birthdate_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_birthdate_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_phoneNumber {
+  create: UsersDocAccessFields_phoneNumber_Create
+  read: UsersDocAccessFields_phoneNumber_Read
+  update: UsersDocAccessFields_phoneNumber_Update
+  delete: UsersDocAccessFields_phoneNumber_Delete
+}
+
+type UsersDocAccessFields_phoneNumber_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_phoneNumber_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_phoneNumber_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_phoneNumber_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_address {
+  create: UsersDocAccessFields_address_Create
+  read: UsersDocAccessFields_address_Read
+  update: UsersDocAccessFields_address_Update
+  delete: UsersDocAccessFields_address_Delete
+}
+
+type UsersDocAccessFields_address_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_address_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_address_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_address_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_houseNumber {
+  create: UsersDocAccessFields_houseNumber_Create
+  read: UsersDocAccessFields_houseNumber_Read
+  update: UsersDocAccessFields_houseNumber_Update
+  delete: UsersDocAccessFields_houseNumber_Delete
+}
+
+type UsersDocAccessFields_houseNumber_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_houseNumber_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_houseNumber_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_houseNumber_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_complement {
+  create: UsersDocAccessFields_complement_Create
+  read: UsersDocAccessFields_complement_Read
+  update: UsersDocAccessFields_complement_Update
+  delete: UsersDocAccessFields_complement_Delete
+}
+
+type UsersDocAccessFields_complement_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_complement_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_complement_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_complement_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_neighborhood {
+  create: UsersDocAccessFields_neighborhood_Create
+  read: UsersDocAccessFields_neighborhood_Read
+  update: UsersDocAccessFields_neighborhood_Update
+  delete: UsersDocAccessFields_neighborhood_Delete
+}
+
+type UsersDocAccessFields_neighborhood_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_neighborhood_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_neighborhood_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_neighborhood_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_city {
+  create: UsersDocAccessFields_city_Create
+  read: UsersDocAccessFields_city_Read
+  update: UsersDocAccessFields_city_Update
+  delete: UsersDocAccessFields_city_Delete
+}
+
+type UsersDocAccessFields_city_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_city_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_city_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_city_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_state {
+  create: UsersDocAccessFields_state_Create
+  read: UsersDocAccessFields_state_Read
+  update: UsersDocAccessFields_state_Update
+  delete: UsersDocAccessFields_state_Delete
+}
+
+type UsersDocAccessFields_state_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_state_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_state_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_state_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_zipCode {
+  create: UsersDocAccessFields_zipCode_Create
+  read: UsersDocAccessFields_zipCode_Read
+  update: UsersDocAccessFields_zipCode_Update
+  delete: UsersDocAccessFields_zipCode_Delete
+}
+
+type UsersDocAccessFields_zipCode_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_zipCode_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_zipCode_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_zipCode_Delete {
   permission: Boolean!
 }
 
@@ -5761,29 +6490,6 @@ type UsersDocAccessFields_purchases_Update {
 }
 
 type UsersDocAccessFields_purchases_Delete {
-  permission: Boolean!
-}
-
-type UsersDocAccessFields_stripeCustomerID {
-  create: UsersDocAccessFields_stripeCustomerID_Create
-  read: UsersDocAccessFields_stripeCustomerID_Read
-  update: UsersDocAccessFields_stripeCustomerID_Update
-  delete: UsersDocAccessFields_stripeCustomerID_Delete
-}
-
-type UsersDocAccessFields_stripeCustomerID_Create {
-  permission: Boolean!
-}
-
-type UsersDocAccessFields_stripeCustomerID_Read {
-  permission: Boolean!
-}
-
-type UsersDocAccessFields_stripeCustomerID_Update {
-  permission: Boolean!
-}
-
-type UsersDocAccessFields_stripeCustomerID_Delete {
   permission: Boolean!
 }
 
@@ -5842,6 +6548,8 @@ type UsersDocAccessFields_cart_items_Delete {
 type UsersDocAccessFields_cart_items_Fields {
   product: UsersDocAccessFields_cart_items_product
   quantity: UsersDocAccessFields_cart_items_quantity
+  selectedColor: UsersDocAccessFields_cart_items_selectedColor
+  selectedSize: UsersDocAccessFields_cart_items_selectedSize
   id: UsersDocAccessFields_cart_items_id
 }
 
@@ -5888,6 +6596,52 @@ type UsersDocAccessFields_cart_items_quantity_Update {
 }
 
 type UsersDocAccessFields_cart_items_quantity_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_cart_items_selectedColor {
+  create: UsersDocAccessFields_cart_items_selectedColor_Create
+  read: UsersDocAccessFields_cart_items_selectedColor_Read
+  update: UsersDocAccessFields_cart_items_selectedColor_Update
+  delete: UsersDocAccessFields_cart_items_selectedColor_Delete
+}
+
+type UsersDocAccessFields_cart_items_selectedColor_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_cart_items_selectedColor_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_cart_items_selectedColor_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_cart_items_selectedColor_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_cart_items_selectedSize {
+  create: UsersDocAccessFields_cart_items_selectedSize_Create
+  read: UsersDocAccessFields_cart_items_selectedSize_Read
+  update: UsersDocAccessFields_cart_items_selectedSize_Update
+  delete: UsersDocAccessFields_cart_items_selectedSize_Delete
+}
+
+type UsersDocAccessFields_cart_items_selectedSize_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_cart_items_selectedSize_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_cart_items_selectedSize_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_cart_items_selectedSize_Delete {
   permission: Boolean!
 }
 
@@ -6338,6 +7092,520 @@ type PayloadPreferencesUpdateDocAccess {
 }
 
 type PayloadPreferencesDeleteDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type Footer {
+  copyright: String
+  navItems: [Footer_NavItems!]
+  updatedAt: DateTime
+  createdAt: DateTime
+}
+
+type Footer_NavItems {
+  link: Footer_NavItems_Link
+  id: String
+}
+
+type Footer_NavItems_Link {
+  type: Footer_NavItems_Link_type
+  newTab: Boolean
+  reference: Footer_NavItems_Link_Reference_Relationship
+  url: String
+  label: String
+  icon(where: Footer_NavItems_Link_Icon_where): Media
+}
+
+enum Footer_NavItems_Link_type {
+  reference
+  custom
+}
+
+type Footer_NavItems_Link_Reference_Relationship {
+  relationTo: Footer_NavItems_Link_Reference_RelationTo
+  value: Footer_NavItems_Link_Reference
+}
+
+enum Footer_NavItems_Link_Reference_RelationTo {
+  pages
+}
+
+union Footer_NavItems_Link_Reference = Page
+
+input Footer_NavItems_Link_Icon_where {
+  alt: Footer_NavItems_Link_Icon_alt_operator
+  caption: Footer_NavItems_Link_Icon_caption_operator
+  updatedAt: Footer_NavItems_Link_Icon_updatedAt_operator
+  createdAt: Footer_NavItems_Link_Icon_createdAt_operator
+  url: Footer_NavItems_Link_Icon_url_operator
+  filename: Footer_NavItems_Link_Icon_filename_operator
+  mimeType: Footer_NavItems_Link_Icon_mimeType_operator
+  filesize: Footer_NavItems_Link_Icon_filesize_operator
+  width: Footer_NavItems_Link_Icon_width_operator
+  height: Footer_NavItems_Link_Icon_height_operator
+  id: Footer_NavItems_Link_Icon_id_operator
+  AND: [Footer_NavItems_Link_Icon_where_and]
+  OR: [Footer_NavItems_Link_Icon_where_or]
+}
+
+input Footer_NavItems_Link_Icon_alt_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+}
+
+input Footer_NavItems_Link_Icon_caption_operator {
+  equals: JSON
+  not_equals: JSON
+  like: JSON
+  contains: JSON
+  exists: Boolean
+}
+
+input Footer_NavItems_Link_Icon_updatedAt_operator {
+  equals: DateTime
+  not_equals: DateTime
+  greater_than_equal: DateTime
+  greater_than: DateTime
+  less_than_equal: DateTime
+  less_than: DateTime
+  like: DateTime
+  exists: Boolean
+}
+
+input Footer_NavItems_Link_Icon_createdAt_operator {
+  equals: DateTime
+  not_equals: DateTime
+  greater_than_equal: DateTime
+  greater_than: DateTime
+  less_than_equal: DateTime
+  less_than: DateTime
+  like: DateTime
+  exists: Boolean
+}
+
+input Footer_NavItems_Link_Icon_url_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input Footer_NavItems_Link_Icon_filename_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input Footer_NavItems_Link_Icon_mimeType_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input Footer_NavItems_Link_Icon_filesize_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
+  exists: Boolean
+}
+
+input Footer_NavItems_Link_Icon_width_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
+  exists: Boolean
+}
+
+input Footer_NavItems_Link_Icon_height_operator {
+  equals: Float
+  not_equals: Float
+  greater_than_equal: Float
+  greater_than: Float
+  less_than_equal: Float
+  less_than: Float
+  exists: Boolean
+}
+
+input Footer_NavItems_Link_Icon_id_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input Footer_NavItems_Link_Icon_where_and {
+  alt: Footer_NavItems_Link_Icon_alt_operator
+  caption: Footer_NavItems_Link_Icon_caption_operator
+  updatedAt: Footer_NavItems_Link_Icon_updatedAt_operator
+  createdAt: Footer_NavItems_Link_Icon_createdAt_operator
+  url: Footer_NavItems_Link_Icon_url_operator
+  filename: Footer_NavItems_Link_Icon_filename_operator
+  mimeType: Footer_NavItems_Link_Icon_mimeType_operator
+  filesize: Footer_NavItems_Link_Icon_filesize_operator
+  width: Footer_NavItems_Link_Icon_width_operator
+  height: Footer_NavItems_Link_Icon_height_operator
+  id: Footer_NavItems_Link_Icon_id_operator
+  AND: [Footer_NavItems_Link_Icon_where_and]
+  OR: [Footer_NavItems_Link_Icon_where_or]
+}
+
+input Footer_NavItems_Link_Icon_where_or {
+  alt: Footer_NavItems_Link_Icon_alt_operator
+  caption: Footer_NavItems_Link_Icon_caption_operator
+  updatedAt: Footer_NavItems_Link_Icon_updatedAt_operator
+  createdAt: Footer_NavItems_Link_Icon_createdAt_operator
+  url: Footer_NavItems_Link_Icon_url_operator
+  filename: Footer_NavItems_Link_Icon_filename_operator
+  mimeType: Footer_NavItems_Link_Icon_mimeType_operator
+  filesize: Footer_NavItems_Link_Icon_filesize_operator
+  width: Footer_NavItems_Link_Icon_width_operator
+  height: Footer_NavItems_Link_Icon_height_operator
+  id: Footer_NavItems_Link_Icon_id_operator
+  AND: [Footer_NavItems_Link_Icon_where_and]
+  OR: [Footer_NavItems_Link_Icon_where_or]
+}
+
+type footerDocAccess {
+  fields: FooterDocAccessFields
+  read: FooterReadDocAccess
+  update: FooterUpdateDocAccess
+}
+
+type FooterDocAccessFields {
+  copyright: FooterDocAccessFields_copyright
+  navItems: FooterDocAccessFields_navItems
+  updatedAt: FooterDocAccessFields_updatedAt
+  createdAt: FooterDocAccessFields_createdAt
+}
+
+type FooterDocAccessFields_copyright {
+  create: FooterDocAccessFields_copyright_Create
+  read: FooterDocAccessFields_copyright_Read
+  update: FooterDocAccessFields_copyright_Update
+  delete: FooterDocAccessFields_copyright_Delete
+}
+
+type FooterDocAccessFields_copyright_Create {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_copyright_Read {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_copyright_Update {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_copyright_Delete {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems {
+  create: FooterDocAccessFields_navItems_Create
+  read: FooterDocAccessFields_navItems_Read
+  update: FooterDocAccessFields_navItems_Update
+  delete: FooterDocAccessFields_navItems_Delete
+  fields: FooterDocAccessFields_navItems_Fields
+}
+
+type FooterDocAccessFields_navItems_Create {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_Read {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_Update {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_Delete {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_Fields {
+  link: FooterDocAccessFields_navItems_link
+  id: FooterDocAccessFields_navItems_id
+}
+
+type FooterDocAccessFields_navItems_link {
+  create: FooterDocAccessFields_navItems_link_Create
+  read: FooterDocAccessFields_navItems_link_Read
+  update: FooterDocAccessFields_navItems_link_Update
+  delete: FooterDocAccessFields_navItems_link_Delete
+  fields: FooterDocAccessFields_navItems_link_Fields
+}
+
+type FooterDocAccessFields_navItems_link_Create {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_Read {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_Update {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_Delete {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_Fields {
+  type: FooterDocAccessFields_navItems_link_type
+  newTab: FooterDocAccessFields_navItems_link_newTab
+  reference: FooterDocAccessFields_navItems_link_reference
+  url: FooterDocAccessFields_navItems_link_url
+  label: FooterDocAccessFields_navItems_link_label
+  icon: FooterDocAccessFields_navItems_link_icon
+}
+
+type FooterDocAccessFields_navItems_link_type {
+  create: FooterDocAccessFields_navItems_link_type_Create
+  read: FooterDocAccessFields_navItems_link_type_Read
+  update: FooterDocAccessFields_navItems_link_type_Update
+  delete: FooterDocAccessFields_navItems_link_type_Delete
+}
+
+type FooterDocAccessFields_navItems_link_type_Create {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_type_Read {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_type_Update {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_type_Delete {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_newTab {
+  create: FooterDocAccessFields_navItems_link_newTab_Create
+  read: FooterDocAccessFields_navItems_link_newTab_Read
+  update: FooterDocAccessFields_navItems_link_newTab_Update
+  delete: FooterDocAccessFields_navItems_link_newTab_Delete
+}
+
+type FooterDocAccessFields_navItems_link_newTab_Create {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_newTab_Read {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_newTab_Update {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_newTab_Delete {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_reference {
+  create: FooterDocAccessFields_navItems_link_reference_Create
+  read: FooterDocAccessFields_navItems_link_reference_Read
+  update: FooterDocAccessFields_navItems_link_reference_Update
+  delete: FooterDocAccessFields_navItems_link_reference_Delete
+}
+
+type FooterDocAccessFields_navItems_link_reference_Create {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_reference_Read {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_reference_Update {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_reference_Delete {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_url {
+  create: FooterDocAccessFields_navItems_link_url_Create
+  read: FooterDocAccessFields_navItems_link_url_Read
+  update: FooterDocAccessFields_navItems_link_url_Update
+  delete: FooterDocAccessFields_navItems_link_url_Delete
+}
+
+type FooterDocAccessFields_navItems_link_url_Create {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_url_Read {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_url_Update {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_url_Delete {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_label {
+  create: FooterDocAccessFields_navItems_link_label_Create
+  read: FooterDocAccessFields_navItems_link_label_Read
+  update: FooterDocAccessFields_navItems_link_label_Update
+  delete: FooterDocAccessFields_navItems_link_label_Delete
+}
+
+type FooterDocAccessFields_navItems_link_label_Create {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_label_Read {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_label_Update {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_label_Delete {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_icon {
+  create: FooterDocAccessFields_navItems_link_icon_Create
+  read: FooterDocAccessFields_navItems_link_icon_Read
+  update: FooterDocAccessFields_navItems_link_icon_Update
+  delete: FooterDocAccessFields_navItems_link_icon_Delete
+}
+
+type FooterDocAccessFields_navItems_link_icon_Create {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_icon_Read {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_icon_Update {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_link_icon_Delete {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_id {
+  create: FooterDocAccessFields_navItems_id_Create
+  read: FooterDocAccessFields_navItems_id_Read
+  update: FooterDocAccessFields_navItems_id_Update
+  delete: FooterDocAccessFields_navItems_id_Delete
+}
+
+type FooterDocAccessFields_navItems_id_Create {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_id_Read {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_id_Update {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_navItems_id_Delete {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_updatedAt {
+  create: FooterDocAccessFields_updatedAt_Create
+  read: FooterDocAccessFields_updatedAt_Read
+  update: FooterDocAccessFields_updatedAt_Update
+  delete: FooterDocAccessFields_updatedAt_Delete
+}
+
+type FooterDocAccessFields_updatedAt_Create {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_updatedAt_Read {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_updatedAt_Update {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_updatedAt_Delete {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_createdAt {
+  create: FooterDocAccessFields_createdAt_Create
+  read: FooterDocAccessFields_createdAt_Read
+  update: FooterDocAccessFields_createdAt_Update
+  delete: FooterDocAccessFields_createdAt_Delete
+}
+
+type FooterDocAccessFields_createdAt_Create {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_createdAt_Read {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_createdAt_Update {
+  permission: Boolean!
+}
+
+type FooterDocAccessFields_createdAt_Delete {
+  permission: Boolean!
+}
+
+type FooterReadDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type FooterUpdateDocAccess {
   permission: Boolean!
   where: JSONObject
 }
@@ -6928,520 +8196,6 @@ type HeaderUpdateDocAccess {
   where: JSONObject
 }
 
-type Footer {
-  copyright: String
-  navItems: [Footer_NavItems!]
-  updatedAt: DateTime
-  createdAt: DateTime
-}
-
-type Footer_NavItems {
-  link: Footer_NavItems_Link
-  id: String
-}
-
-type Footer_NavItems_Link {
-  type: Footer_NavItems_Link_type
-  newTab: Boolean
-  reference: Footer_NavItems_Link_Reference_Relationship
-  url: String
-  label: String
-  icon(where: Footer_NavItems_Link_Icon_where): Media
-}
-
-enum Footer_NavItems_Link_type {
-  reference
-  custom
-}
-
-type Footer_NavItems_Link_Reference_Relationship {
-  relationTo: Footer_NavItems_Link_Reference_RelationTo
-  value: Footer_NavItems_Link_Reference
-}
-
-enum Footer_NavItems_Link_Reference_RelationTo {
-  pages
-}
-
-union Footer_NavItems_Link_Reference = Page
-
-input Footer_NavItems_Link_Icon_where {
-  alt: Footer_NavItems_Link_Icon_alt_operator
-  caption: Footer_NavItems_Link_Icon_caption_operator
-  updatedAt: Footer_NavItems_Link_Icon_updatedAt_operator
-  createdAt: Footer_NavItems_Link_Icon_createdAt_operator
-  url: Footer_NavItems_Link_Icon_url_operator
-  filename: Footer_NavItems_Link_Icon_filename_operator
-  mimeType: Footer_NavItems_Link_Icon_mimeType_operator
-  filesize: Footer_NavItems_Link_Icon_filesize_operator
-  width: Footer_NavItems_Link_Icon_width_operator
-  height: Footer_NavItems_Link_Icon_height_operator
-  id: Footer_NavItems_Link_Icon_id_operator
-  AND: [Footer_NavItems_Link_Icon_where_and]
-  OR: [Footer_NavItems_Link_Icon_where_or]
-}
-
-input Footer_NavItems_Link_Icon_alt_operator {
-  equals: String
-  not_equals: String
-  like: String
-  contains: String
-  in: [String]
-  not_in: [String]
-  all: [String]
-}
-
-input Footer_NavItems_Link_Icon_caption_operator {
-  equals: JSON
-  not_equals: JSON
-  like: JSON
-  contains: JSON
-  exists: Boolean
-}
-
-input Footer_NavItems_Link_Icon_updatedAt_operator {
-  equals: DateTime
-  not_equals: DateTime
-  greater_than_equal: DateTime
-  greater_than: DateTime
-  less_than_equal: DateTime
-  less_than: DateTime
-  like: DateTime
-  exists: Boolean
-}
-
-input Footer_NavItems_Link_Icon_createdAt_operator {
-  equals: DateTime
-  not_equals: DateTime
-  greater_than_equal: DateTime
-  greater_than: DateTime
-  less_than_equal: DateTime
-  less_than: DateTime
-  like: DateTime
-  exists: Boolean
-}
-
-input Footer_NavItems_Link_Icon_url_operator {
-  equals: String
-  not_equals: String
-  like: String
-  contains: String
-  in: [String]
-  not_in: [String]
-  all: [String]
-  exists: Boolean
-}
-
-input Footer_NavItems_Link_Icon_filename_operator {
-  equals: String
-  not_equals: String
-  like: String
-  contains: String
-  in: [String]
-  not_in: [String]
-  all: [String]
-  exists: Boolean
-}
-
-input Footer_NavItems_Link_Icon_mimeType_operator {
-  equals: String
-  not_equals: String
-  like: String
-  contains: String
-  in: [String]
-  not_in: [String]
-  all: [String]
-  exists: Boolean
-}
-
-input Footer_NavItems_Link_Icon_filesize_operator {
-  equals: Float
-  not_equals: Float
-  greater_than_equal: Float
-  greater_than: Float
-  less_than_equal: Float
-  less_than: Float
-  exists: Boolean
-}
-
-input Footer_NavItems_Link_Icon_width_operator {
-  equals: Float
-  not_equals: Float
-  greater_than_equal: Float
-  greater_than: Float
-  less_than_equal: Float
-  less_than: Float
-  exists: Boolean
-}
-
-input Footer_NavItems_Link_Icon_height_operator {
-  equals: Float
-  not_equals: Float
-  greater_than_equal: Float
-  greater_than: Float
-  less_than_equal: Float
-  less_than: Float
-  exists: Boolean
-}
-
-input Footer_NavItems_Link_Icon_id_operator {
-  equals: String
-  not_equals: String
-  like: String
-  contains: String
-  in: [String]
-  not_in: [String]
-  all: [String]
-  exists: Boolean
-}
-
-input Footer_NavItems_Link_Icon_where_and {
-  alt: Footer_NavItems_Link_Icon_alt_operator
-  caption: Footer_NavItems_Link_Icon_caption_operator
-  updatedAt: Footer_NavItems_Link_Icon_updatedAt_operator
-  createdAt: Footer_NavItems_Link_Icon_createdAt_operator
-  url: Footer_NavItems_Link_Icon_url_operator
-  filename: Footer_NavItems_Link_Icon_filename_operator
-  mimeType: Footer_NavItems_Link_Icon_mimeType_operator
-  filesize: Footer_NavItems_Link_Icon_filesize_operator
-  width: Footer_NavItems_Link_Icon_width_operator
-  height: Footer_NavItems_Link_Icon_height_operator
-  id: Footer_NavItems_Link_Icon_id_operator
-  AND: [Footer_NavItems_Link_Icon_where_and]
-  OR: [Footer_NavItems_Link_Icon_where_or]
-}
-
-input Footer_NavItems_Link_Icon_where_or {
-  alt: Footer_NavItems_Link_Icon_alt_operator
-  caption: Footer_NavItems_Link_Icon_caption_operator
-  updatedAt: Footer_NavItems_Link_Icon_updatedAt_operator
-  createdAt: Footer_NavItems_Link_Icon_createdAt_operator
-  url: Footer_NavItems_Link_Icon_url_operator
-  filename: Footer_NavItems_Link_Icon_filename_operator
-  mimeType: Footer_NavItems_Link_Icon_mimeType_operator
-  filesize: Footer_NavItems_Link_Icon_filesize_operator
-  width: Footer_NavItems_Link_Icon_width_operator
-  height: Footer_NavItems_Link_Icon_height_operator
-  id: Footer_NavItems_Link_Icon_id_operator
-  AND: [Footer_NavItems_Link_Icon_where_and]
-  OR: [Footer_NavItems_Link_Icon_where_or]
-}
-
-type footerDocAccess {
-  fields: FooterDocAccessFields
-  read: FooterReadDocAccess
-  update: FooterUpdateDocAccess
-}
-
-type FooterDocAccessFields {
-  copyright: FooterDocAccessFields_copyright
-  navItems: FooterDocAccessFields_navItems
-  updatedAt: FooterDocAccessFields_updatedAt
-  createdAt: FooterDocAccessFields_createdAt
-}
-
-type FooterDocAccessFields_copyright {
-  create: FooterDocAccessFields_copyright_Create
-  read: FooterDocAccessFields_copyright_Read
-  update: FooterDocAccessFields_copyright_Update
-  delete: FooterDocAccessFields_copyright_Delete
-}
-
-type FooterDocAccessFields_copyright_Create {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_copyright_Read {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_copyright_Update {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_copyright_Delete {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems {
-  create: FooterDocAccessFields_navItems_Create
-  read: FooterDocAccessFields_navItems_Read
-  update: FooterDocAccessFields_navItems_Update
-  delete: FooterDocAccessFields_navItems_Delete
-  fields: FooterDocAccessFields_navItems_Fields
-}
-
-type FooterDocAccessFields_navItems_Create {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_Read {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_Update {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_Delete {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_Fields {
-  link: FooterDocAccessFields_navItems_link
-  id: FooterDocAccessFields_navItems_id
-}
-
-type FooterDocAccessFields_navItems_link {
-  create: FooterDocAccessFields_navItems_link_Create
-  read: FooterDocAccessFields_navItems_link_Read
-  update: FooterDocAccessFields_navItems_link_Update
-  delete: FooterDocAccessFields_navItems_link_Delete
-  fields: FooterDocAccessFields_navItems_link_Fields
-}
-
-type FooterDocAccessFields_navItems_link_Create {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_Read {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_Update {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_Delete {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_Fields {
-  type: FooterDocAccessFields_navItems_link_type
-  newTab: FooterDocAccessFields_navItems_link_newTab
-  reference: FooterDocAccessFields_navItems_link_reference
-  url: FooterDocAccessFields_navItems_link_url
-  label: FooterDocAccessFields_navItems_link_label
-  icon: FooterDocAccessFields_navItems_link_icon
-}
-
-type FooterDocAccessFields_navItems_link_type {
-  create: FooterDocAccessFields_navItems_link_type_Create
-  read: FooterDocAccessFields_navItems_link_type_Read
-  update: FooterDocAccessFields_navItems_link_type_Update
-  delete: FooterDocAccessFields_navItems_link_type_Delete
-}
-
-type FooterDocAccessFields_navItems_link_type_Create {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_type_Read {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_type_Update {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_type_Delete {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_newTab {
-  create: FooterDocAccessFields_navItems_link_newTab_Create
-  read: FooterDocAccessFields_navItems_link_newTab_Read
-  update: FooterDocAccessFields_navItems_link_newTab_Update
-  delete: FooterDocAccessFields_navItems_link_newTab_Delete
-}
-
-type FooterDocAccessFields_navItems_link_newTab_Create {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_newTab_Read {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_newTab_Update {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_newTab_Delete {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_reference {
-  create: FooterDocAccessFields_navItems_link_reference_Create
-  read: FooterDocAccessFields_navItems_link_reference_Read
-  update: FooterDocAccessFields_navItems_link_reference_Update
-  delete: FooterDocAccessFields_navItems_link_reference_Delete
-}
-
-type FooterDocAccessFields_navItems_link_reference_Create {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_reference_Read {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_reference_Update {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_reference_Delete {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_url {
-  create: FooterDocAccessFields_navItems_link_url_Create
-  read: FooterDocAccessFields_navItems_link_url_Read
-  update: FooterDocAccessFields_navItems_link_url_Update
-  delete: FooterDocAccessFields_navItems_link_url_Delete
-}
-
-type FooterDocAccessFields_navItems_link_url_Create {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_url_Read {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_url_Update {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_url_Delete {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_label {
-  create: FooterDocAccessFields_navItems_link_label_Create
-  read: FooterDocAccessFields_navItems_link_label_Read
-  update: FooterDocAccessFields_navItems_link_label_Update
-  delete: FooterDocAccessFields_navItems_link_label_Delete
-}
-
-type FooterDocAccessFields_navItems_link_label_Create {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_label_Read {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_label_Update {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_label_Delete {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_icon {
-  create: FooterDocAccessFields_navItems_link_icon_Create
-  read: FooterDocAccessFields_navItems_link_icon_Read
-  update: FooterDocAccessFields_navItems_link_icon_Update
-  delete: FooterDocAccessFields_navItems_link_icon_Delete
-}
-
-type FooterDocAccessFields_navItems_link_icon_Create {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_icon_Read {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_icon_Update {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_link_icon_Delete {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_id {
-  create: FooterDocAccessFields_navItems_id_Create
-  read: FooterDocAccessFields_navItems_id_Read
-  update: FooterDocAccessFields_navItems_id_Update
-  delete: FooterDocAccessFields_navItems_id_Delete
-}
-
-type FooterDocAccessFields_navItems_id_Create {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_id_Read {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_id_Update {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_navItems_id_Delete {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_updatedAt {
-  create: FooterDocAccessFields_updatedAt_Create
-  read: FooterDocAccessFields_updatedAt_Read
-  update: FooterDocAccessFields_updatedAt_Update
-  delete: FooterDocAccessFields_updatedAt_Delete
-}
-
-type FooterDocAccessFields_updatedAt_Create {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_updatedAt_Read {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_updatedAt_Update {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_updatedAt_Delete {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_createdAt {
-  create: FooterDocAccessFields_createdAt_Create
-  read: FooterDocAccessFields_createdAt_Read
-  update: FooterDocAccessFields_createdAt_Update
-  delete: FooterDocAccessFields_createdAt_Delete
-}
-
-type FooterDocAccessFields_createdAt_Create {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_createdAt_Read {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_createdAt_Update {
-  permission: Boolean!
-}
-
-type FooterDocAccessFields_createdAt_Delete {
-  permission: Boolean!
-}
-
-type FooterReadDocAccess {
-  permission: Boolean!
-  where: JSONObject
-}
-
-type FooterUpdateDocAccess {
-  permission: Boolean!
-  where: JSONObject
-}
-
 type Access {
   canAccessAdmin: Boolean!
   pages: pagesAccess
@@ -7452,9 +8206,9 @@ type Access {
   media: mediaAccess
   users: usersAccess
   payload_preferences: payload_preferencesAccess
+  footer: footerAccess
   settings: settingsAccess
   header: headerAccess
-  footer: footerAccess
 }
 
 type pagesAccess {
@@ -8105,6 +8859,9 @@ type ProductsFields {
   publishedOn: ProductsFields_publishedOn
   relatedProducts: ProductsFields_relatedProducts
   categories: ProductsFields_categories
+  new: ProductsFields_new
+  sale: ProductsFields_sale
+  hot: ProductsFields_hot
   slug: ProductsFields_slug
   updatedAt: ProductsFields_updatedAt
   createdAt: ProductsFields_createdAt
@@ -8389,6 +9146,75 @@ type ProductsFields_categories_Update {
 }
 
 type ProductsFields_categories_Delete {
+  permission: Boolean!
+}
+
+type ProductsFields_new {
+  create: ProductsFields_new_Create
+  read: ProductsFields_new_Read
+  update: ProductsFields_new_Update
+  delete: ProductsFields_new_Delete
+}
+
+type ProductsFields_new_Create {
+  permission: Boolean!
+}
+
+type ProductsFields_new_Read {
+  permission: Boolean!
+}
+
+type ProductsFields_new_Update {
+  permission: Boolean!
+}
+
+type ProductsFields_new_Delete {
+  permission: Boolean!
+}
+
+type ProductsFields_sale {
+  create: ProductsFields_sale_Create
+  read: ProductsFields_sale_Read
+  update: ProductsFields_sale_Update
+  delete: ProductsFields_sale_Delete
+}
+
+type ProductsFields_sale_Create {
+  permission: Boolean!
+}
+
+type ProductsFields_sale_Read {
+  permission: Boolean!
+}
+
+type ProductsFields_sale_Update {
+  permission: Boolean!
+}
+
+type ProductsFields_sale_Delete {
+  permission: Boolean!
+}
+
+type ProductsFields_hot {
+  create: ProductsFields_hot_Create
+  read: ProductsFields_hot_Read
+  update: ProductsFields_hot_Update
+  delete: ProductsFields_hot_Delete
+}
+
+type ProductsFields_hot_Create {
+  permission: Boolean!
+}
+
+type ProductsFields_hot_Read {
+  permission: Boolean!
+}
+
+type ProductsFields_hot_Update {
+  permission: Boolean!
+}
+
+type ProductsFields_hot_Delete {
   permission: Boolean!
 }
 
@@ -8817,9 +9643,14 @@ type ordersAccess {
 
 type OrdersFields {
   orderedBy: OrdersFields_orderedBy
-  stripePaymentIntentID: OrdersFields_stripePaymentIntentID
   total: OrdersFields_total
   items: OrdersFields_items
+  shippingTicket: OrdersFields_shippingTicket
+  shippingZipCode: OrdersFields_shippingZipCode
+  shippingHouseNumber: OrdersFields_shippingHouseNumber
+  shippingComplement: OrdersFields_shippingComplement
+  userSocialId: OrdersFields_userSocialId
+  userPhoneNumber: OrdersFields_userPhoneNumber
   updatedAt: OrdersFields_updatedAt
   createdAt: OrdersFields_createdAt
 }
@@ -8844,29 +9675,6 @@ type OrdersFields_orderedBy_Update {
 }
 
 type OrdersFields_orderedBy_Delete {
-  permission: Boolean!
-}
-
-type OrdersFields_stripePaymentIntentID {
-  create: OrdersFields_stripePaymentIntentID_Create
-  read: OrdersFields_stripePaymentIntentID_Read
-  update: OrdersFields_stripePaymentIntentID_Update
-  delete: OrdersFields_stripePaymentIntentID_Delete
-}
-
-type OrdersFields_stripePaymentIntentID_Create {
-  permission: Boolean!
-}
-
-type OrdersFields_stripePaymentIntentID_Read {
-  permission: Boolean!
-}
-
-type OrdersFields_stripePaymentIntentID_Update {
-  permission: Boolean!
-}
-
-type OrdersFields_stripePaymentIntentID_Delete {
   permission: Boolean!
 }
 
@@ -8921,6 +9729,8 @@ type OrdersFields_items_Fields {
   product: OrdersFields_items_product
   price: OrdersFields_items_price
   quantity: OrdersFields_items_quantity
+  selectedSize: OrdersFields_items_selectedSize
+  selectedColor: OrdersFields_items_selectedColor
   id: OrdersFields_items_id
 }
 
@@ -8993,6 +9803,52 @@ type OrdersFields_items_quantity_Delete {
   permission: Boolean!
 }
 
+type OrdersFields_items_selectedSize {
+  create: OrdersFields_items_selectedSize_Create
+  read: OrdersFields_items_selectedSize_Read
+  update: OrdersFields_items_selectedSize_Update
+  delete: OrdersFields_items_selectedSize_Delete
+}
+
+type OrdersFields_items_selectedSize_Create {
+  permission: Boolean!
+}
+
+type OrdersFields_items_selectedSize_Read {
+  permission: Boolean!
+}
+
+type OrdersFields_items_selectedSize_Update {
+  permission: Boolean!
+}
+
+type OrdersFields_items_selectedSize_Delete {
+  permission: Boolean!
+}
+
+type OrdersFields_items_selectedColor {
+  create: OrdersFields_items_selectedColor_Create
+  read: OrdersFields_items_selectedColor_Read
+  update: OrdersFields_items_selectedColor_Update
+  delete: OrdersFields_items_selectedColor_Delete
+}
+
+type OrdersFields_items_selectedColor_Create {
+  permission: Boolean!
+}
+
+type OrdersFields_items_selectedColor_Read {
+  permission: Boolean!
+}
+
+type OrdersFields_items_selectedColor_Update {
+  permission: Boolean!
+}
+
+type OrdersFields_items_selectedColor_Delete {
+  permission: Boolean!
+}
+
 type OrdersFields_items_id {
   create: OrdersFields_items_id_Create
   read: OrdersFields_items_id_Read
@@ -9013,6 +9869,144 @@ type OrdersFields_items_id_Update {
 }
 
 type OrdersFields_items_id_Delete {
+  permission: Boolean!
+}
+
+type OrdersFields_shippingTicket {
+  create: OrdersFields_shippingTicket_Create
+  read: OrdersFields_shippingTicket_Read
+  update: OrdersFields_shippingTicket_Update
+  delete: OrdersFields_shippingTicket_Delete
+}
+
+type OrdersFields_shippingTicket_Create {
+  permission: Boolean!
+}
+
+type OrdersFields_shippingTicket_Read {
+  permission: Boolean!
+}
+
+type OrdersFields_shippingTicket_Update {
+  permission: Boolean!
+}
+
+type OrdersFields_shippingTicket_Delete {
+  permission: Boolean!
+}
+
+type OrdersFields_shippingZipCode {
+  create: OrdersFields_shippingZipCode_Create
+  read: OrdersFields_shippingZipCode_Read
+  update: OrdersFields_shippingZipCode_Update
+  delete: OrdersFields_shippingZipCode_Delete
+}
+
+type OrdersFields_shippingZipCode_Create {
+  permission: Boolean!
+}
+
+type OrdersFields_shippingZipCode_Read {
+  permission: Boolean!
+}
+
+type OrdersFields_shippingZipCode_Update {
+  permission: Boolean!
+}
+
+type OrdersFields_shippingZipCode_Delete {
+  permission: Boolean!
+}
+
+type OrdersFields_shippingHouseNumber {
+  create: OrdersFields_shippingHouseNumber_Create
+  read: OrdersFields_shippingHouseNumber_Read
+  update: OrdersFields_shippingHouseNumber_Update
+  delete: OrdersFields_shippingHouseNumber_Delete
+}
+
+type OrdersFields_shippingHouseNumber_Create {
+  permission: Boolean!
+}
+
+type OrdersFields_shippingHouseNumber_Read {
+  permission: Boolean!
+}
+
+type OrdersFields_shippingHouseNumber_Update {
+  permission: Boolean!
+}
+
+type OrdersFields_shippingHouseNumber_Delete {
+  permission: Boolean!
+}
+
+type OrdersFields_shippingComplement {
+  create: OrdersFields_shippingComplement_Create
+  read: OrdersFields_shippingComplement_Read
+  update: OrdersFields_shippingComplement_Update
+  delete: OrdersFields_shippingComplement_Delete
+}
+
+type OrdersFields_shippingComplement_Create {
+  permission: Boolean!
+}
+
+type OrdersFields_shippingComplement_Read {
+  permission: Boolean!
+}
+
+type OrdersFields_shippingComplement_Update {
+  permission: Boolean!
+}
+
+type OrdersFields_shippingComplement_Delete {
+  permission: Boolean!
+}
+
+type OrdersFields_userSocialId {
+  create: OrdersFields_userSocialId_Create
+  read: OrdersFields_userSocialId_Read
+  update: OrdersFields_userSocialId_Update
+  delete: OrdersFields_userSocialId_Delete
+}
+
+type OrdersFields_userSocialId_Create {
+  permission: Boolean!
+}
+
+type OrdersFields_userSocialId_Read {
+  permission: Boolean!
+}
+
+type OrdersFields_userSocialId_Update {
+  permission: Boolean!
+}
+
+type OrdersFields_userSocialId_Delete {
+  permission: Boolean!
+}
+
+type OrdersFields_userPhoneNumber {
+  create: OrdersFields_userPhoneNumber_Create
+  read: OrdersFields_userPhoneNumber_Read
+  update: OrdersFields_userPhoneNumber_Update
+  delete: OrdersFields_userPhoneNumber_Delete
+}
+
+type OrdersFields_userPhoneNumber_Create {
+  permission: Boolean!
+}
+
+type OrdersFields_userPhoneNumber_Read {
+  permission: Boolean!
+}
+
+type OrdersFields_userPhoneNumber_Update {
+  permission: Boolean!
+}
+
+type OrdersFields_userPhoneNumber_Delete {
   permission: Boolean!
 }
 
@@ -9364,10 +10358,18 @@ type usersAccess {
 
 type UsersFields {
   name: UsersFields_name
-  teste: UsersFields_teste
+  socialId: UsersFields_socialId
+  birthdate: UsersFields_birthdate
+  phoneNumber: UsersFields_phoneNumber
+  address: UsersFields_address
+  houseNumber: UsersFields_houseNumber
+  complement: UsersFields_complement
+  neighborhood: UsersFields_neighborhood
+  city: UsersFields_city
+  state: UsersFields_state
+  zipCode: UsersFields_zipCode
   roles: UsersFields_roles
   purchases: UsersFields_purchases
-  stripeCustomerID: UsersFields_stripeCustomerID
   cart: UsersFields_cart
   skipSync: UsersFields_skipSync
   updatedAt: UsersFields_updatedAt
@@ -9399,26 +10401,233 @@ type UsersFields_name_Delete {
   permission: Boolean!
 }
 
-type UsersFields_teste {
-  create: UsersFields_teste_Create
-  read: UsersFields_teste_Read
-  update: UsersFields_teste_Update
-  delete: UsersFields_teste_Delete
+type UsersFields_socialId {
+  create: UsersFields_socialId_Create
+  read: UsersFields_socialId_Read
+  update: UsersFields_socialId_Update
+  delete: UsersFields_socialId_Delete
 }
 
-type UsersFields_teste_Create {
+type UsersFields_socialId_Create {
   permission: Boolean!
 }
 
-type UsersFields_teste_Read {
+type UsersFields_socialId_Read {
   permission: Boolean!
 }
 
-type UsersFields_teste_Update {
+type UsersFields_socialId_Update {
   permission: Boolean!
 }
 
-type UsersFields_teste_Delete {
+type UsersFields_socialId_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_birthdate {
+  create: UsersFields_birthdate_Create
+  read: UsersFields_birthdate_Read
+  update: UsersFields_birthdate_Update
+  delete: UsersFields_birthdate_Delete
+}
+
+type UsersFields_birthdate_Create {
+  permission: Boolean!
+}
+
+type UsersFields_birthdate_Read {
+  permission: Boolean!
+}
+
+type UsersFields_birthdate_Update {
+  permission: Boolean!
+}
+
+type UsersFields_birthdate_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_phoneNumber {
+  create: UsersFields_phoneNumber_Create
+  read: UsersFields_phoneNumber_Read
+  update: UsersFields_phoneNumber_Update
+  delete: UsersFields_phoneNumber_Delete
+}
+
+type UsersFields_phoneNumber_Create {
+  permission: Boolean!
+}
+
+type UsersFields_phoneNumber_Read {
+  permission: Boolean!
+}
+
+type UsersFields_phoneNumber_Update {
+  permission: Boolean!
+}
+
+type UsersFields_phoneNumber_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_address {
+  create: UsersFields_address_Create
+  read: UsersFields_address_Read
+  update: UsersFields_address_Update
+  delete: UsersFields_address_Delete
+}
+
+type UsersFields_address_Create {
+  permission: Boolean!
+}
+
+type UsersFields_address_Read {
+  permission: Boolean!
+}
+
+type UsersFields_address_Update {
+  permission: Boolean!
+}
+
+type UsersFields_address_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_houseNumber {
+  create: UsersFields_houseNumber_Create
+  read: UsersFields_houseNumber_Read
+  update: UsersFields_houseNumber_Update
+  delete: UsersFields_houseNumber_Delete
+}
+
+type UsersFields_houseNumber_Create {
+  permission: Boolean!
+}
+
+type UsersFields_houseNumber_Read {
+  permission: Boolean!
+}
+
+type UsersFields_houseNumber_Update {
+  permission: Boolean!
+}
+
+type UsersFields_houseNumber_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_complement {
+  create: UsersFields_complement_Create
+  read: UsersFields_complement_Read
+  update: UsersFields_complement_Update
+  delete: UsersFields_complement_Delete
+}
+
+type UsersFields_complement_Create {
+  permission: Boolean!
+}
+
+type UsersFields_complement_Read {
+  permission: Boolean!
+}
+
+type UsersFields_complement_Update {
+  permission: Boolean!
+}
+
+type UsersFields_complement_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_neighborhood {
+  create: UsersFields_neighborhood_Create
+  read: UsersFields_neighborhood_Read
+  update: UsersFields_neighborhood_Update
+  delete: UsersFields_neighborhood_Delete
+}
+
+type UsersFields_neighborhood_Create {
+  permission: Boolean!
+}
+
+type UsersFields_neighborhood_Read {
+  permission: Boolean!
+}
+
+type UsersFields_neighborhood_Update {
+  permission: Boolean!
+}
+
+type UsersFields_neighborhood_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_city {
+  create: UsersFields_city_Create
+  read: UsersFields_city_Read
+  update: UsersFields_city_Update
+  delete: UsersFields_city_Delete
+}
+
+type UsersFields_city_Create {
+  permission: Boolean!
+}
+
+type UsersFields_city_Read {
+  permission: Boolean!
+}
+
+type UsersFields_city_Update {
+  permission: Boolean!
+}
+
+type UsersFields_city_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_state {
+  create: UsersFields_state_Create
+  read: UsersFields_state_Read
+  update: UsersFields_state_Update
+  delete: UsersFields_state_Delete
+}
+
+type UsersFields_state_Create {
+  permission: Boolean!
+}
+
+type UsersFields_state_Read {
+  permission: Boolean!
+}
+
+type UsersFields_state_Update {
+  permission: Boolean!
+}
+
+type UsersFields_state_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_zipCode {
+  create: UsersFields_zipCode_Create
+  read: UsersFields_zipCode_Read
+  update: UsersFields_zipCode_Update
+  delete: UsersFields_zipCode_Delete
+}
+
+type UsersFields_zipCode_Create {
+  permission: Boolean!
+}
+
+type UsersFields_zipCode_Read {
+  permission: Boolean!
+}
+
+type UsersFields_zipCode_Update {
+  permission: Boolean!
+}
+
+type UsersFields_zipCode_Delete {
   permission: Boolean!
 }
 
@@ -9465,29 +10674,6 @@ type UsersFields_purchases_Update {
 }
 
 type UsersFields_purchases_Delete {
-  permission: Boolean!
-}
-
-type UsersFields_stripeCustomerID {
-  create: UsersFields_stripeCustomerID_Create
-  read: UsersFields_stripeCustomerID_Read
-  update: UsersFields_stripeCustomerID_Update
-  delete: UsersFields_stripeCustomerID_Delete
-}
-
-type UsersFields_stripeCustomerID_Create {
-  permission: Boolean!
-}
-
-type UsersFields_stripeCustomerID_Read {
-  permission: Boolean!
-}
-
-type UsersFields_stripeCustomerID_Update {
-  permission: Boolean!
-}
-
-type UsersFields_stripeCustomerID_Delete {
   permission: Boolean!
 }
 
@@ -9546,6 +10732,8 @@ type UsersFields_cart_items_Delete {
 type UsersFields_cart_items_Fields {
   product: UsersFields_cart_items_product
   quantity: UsersFields_cart_items_quantity
+  selectedColor: UsersFields_cart_items_selectedColor
+  selectedSize: UsersFields_cart_items_selectedSize
   id: UsersFields_cart_items_id
 }
 
@@ -9592,6 +10780,52 @@ type UsersFields_cart_items_quantity_Update {
 }
 
 type UsersFields_cart_items_quantity_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_cart_items_selectedColor {
+  create: UsersFields_cart_items_selectedColor_Create
+  read: UsersFields_cart_items_selectedColor_Read
+  update: UsersFields_cart_items_selectedColor_Update
+  delete: UsersFields_cart_items_selectedColor_Delete
+}
+
+type UsersFields_cart_items_selectedColor_Create {
+  permission: Boolean!
+}
+
+type UsersFields_cart_items_selectedColor_Read {
+  permission: Boolean!
+}
+
+type UsersFields_cart_items_selectedColor_Update {
+  permission: Boolean!
+}
+
+type UsersFields_cart_items_selectedColor_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_cart_items_selectedSize {
+  create: UsersFields_cart_items_selectedSize_Create
+  read: UsersFields_cart_items_selectedSize_Read
+  update: UsersFields_cart_items_selectedSize_Update
+  delete: UsersFields_cart_items_selectedSize_Delete
+}
+
+type UsersFields_cart_items_selectedSize_Create {
+  permission: Boolean!
+}
+
+type UsersFields_cart_items_selectedSize_Read {
+  permission: Boolean!
+}
+
+type UsersFields_cart_items_selectedSize_Update {
+  permission: Boolean!
+}
+
+type UsersFields_cart_items_selectedSize_Delete {
   permission: Boolean!
 }
 
@@ -9905,6 +11139,321 @@ type PayloadPreferencesUpdateAccess {
 }
 
 type PayloadPreferencesDeleteAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type footerAccess {
+  fields: FooterFields
+  read: FooterReadAccess
+  update: FooterUpdateAccess
+}
+
+type FooterFields {
+  copyright: FooterFields_copyright
+  navItems: FooterFields_navItems
+  updatedAt: FooterFields_updatedAt
+  createdAt: FooterFields_createdAt
+}
+
+type FooterFields_copyright {
+  create: FooterFields_copyright_Create
+  read: FooterFields_copyright_Read
+  update: FooterFields_copyright_Update
+  delete: FooterFields_copyright_Delete
+}
+
+type FooterFields_copyright_Create {
+  permission: Boolean!
+}
+
+type FooterFields_copyright_Read {
+  permission: Boolean!
+}
+
+type FooterFields_copyright_Update {
+  permission: Boolean!
+}
+
+type FooterFields_copyright_Delete {
+  permission: Boolean!
+}
+
+type FooterFields_navItems {
+  create: FooterFields_navItems_Create
+  read: FooterFields_navItems_Read
+  update: FooterFields_navItems_Update
+  delete: FooterFields_navItems_Delete
+  fields: FooterFields_navItems_Fields
+}
+
+type FooterFields_navItems_Create {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_Read {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_Update {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_Delete {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_Fields {
+  link: FooterFields_navItems_link
+  id: FooterFields_navItems_id
+}
+
+type FooterFields_navItems_link {
+  create: FooterFields_navItems_link_Create
+  read: FooterFields_navItems_link_Read
+  update: FooterFields_navItems_link_Update
+  delete: FooterFields_navItems_link_Delete
+  fields: FooterFields_navItems_link_Fields
+}
+
+type FooterFields_navItems_link_Create {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_Read {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_Update {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_Delete {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_Fields {
+  type: FooterFields_navItems_link_type
+  newTab: FooterFields_navItems_link_newTab
+  reference: FooterFields_navItems_link_reference
+  url: FooterFields_navItems_link_url
+  label: FooterFields_navItems_link_label
+  icon: FooterFields_navItems_link_icon
+}
+
+type FooterFields_navItems_link_type {
+  create: FooterFields_navItems_link_type_Create
+  read: FooterFields_navItems_link_type_Read
+  update: FooterFields_navItems_link_type_Update
+  delete: FooterFields_navItems_link_type_Delete
+}
+
+type FooterFields_navItems_link_type_Create {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_type_Read {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_type_Update {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_type_Delete {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_newTab {
+  create: FooterFields_navItems_link_newTab_Create
+  read: FooterFields_navItems_link_newTab_Read
+  update: FooterFields_navItems_link_newTab_Update
+  delete: FooterFields_navItems_link_newTab_Delete
+}
+
+type FooterFields_navItems_link_newTab_Create {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_newTab_Read {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_newTab_Update {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_newTab_Delete {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_reference {
+  create: FooterFields_navItems_link_reference_Create
+  read: FooterFields_navItems_link_reference_Read
+  update: FooterFields_navItems_link_reference_Update
+  delete: FooterFields_navItems_link_reference_Delete
+}
+
+type FooterFields_navItems_link_reference_Create {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_reference_Read {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_reference_Update {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_reference_Delete {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_url {
+  create: FooterFields_navItems_link_url_Create
+  read: FooterFields_navItems_link_url_Read
+  update: FooterFields_navItems_link_url_Update
+  delete: FooterFields_navItems_link_url_Delete
+}
+
+type FooterFields_navItems_link_url_Create {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_url_Read {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_url_Update {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_url_Delete {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_label {
+  create: FooterFields_navItems_link_label_Create
+  read: FooterFields_navItems_link_label_Read
+  update: FooterFields_navItems_link_label_Update
+  delete: FooterFields_navItems_link_label_Delete
+}
+
+type FooterFields_navItems_link_label_Create {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_label_Read {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_label_Update {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_label_Delete {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_icon {
+  create: FooterFields_navItems_link_icon_Create
+  read: FooterFields_navItems_link_icon_Read
+  update: FooterFields_navItems_link_icon_Update
+  delete: FooterFields_navItems_link_icon_Delete
+}
+
+type FooterFields_navItems_link_icon_Create {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_icon_Read {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_icon_Update {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_link_icon_Delete {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_id {
+  create: FooterFields_navItems_id_Create
+  read: FooterFields_navItems_id_Read
+  update: FooterFields_navItems_id_Update
+  delete: FooterFields_navItems_id_Delete
+}
+
+type FooterFields_navItems_id_Create {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_id_Read {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_id_Update {
+  permission: Boolean!
+}
+
+type FooterFields_navItems_id_Delete {
+  permission: Boolean!
+}
+
+type FooterFields_updatedAt {
+  create: FooterFields_updatedAt_Create
+  read: FooterFields_updatedAt_Read
+  update: FooterFields_updatedAt_Update
+  delete: FooterFields_updatedAt_Delete
+}
+
+type FooterFields_updatedAt_Create {
+  permission: Boolean!
+}
+
+type FooterFields_updatedAt_Read {
+  permission: Boolean!
+}
+
+type FooterFields_updatedAt_Update {
+  permission: Boolean!
+}
+
+type FooterFields_updatedAt_Delete {
+  permission: Boolean!
+}
+
+type FooterFields_createdAt {
+  create: FooterFields_createdAt_Create
+  read: FooterFields_createdAt_Read
+  update: FooterFields_createdAt_Update
+  delete: FooterFields_createdAt_Delete
+}
+
+type FooterFields_createdAt_Create {
+  permission: Boolean!
+}
+
+type FooterFields_createdAt_Read {
+  permission: Boolean!
+}
+
+type FooterFields_createdAt_Update {
+  permission: Boolean!
+}
+
+type FooterFields_createdAt_Delete {
+  permission: Boolean!
+}
+
+type FooterReadAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type FooterUpdateAccess {
   permission: Boolean!
   where: JSONObject
 }
@@ -10291,321 +11840,6 @@ type HeaderUpdateAccess {
   where: JSONObject
 }
 
-type footerAccess {
-  fields: FooterFields
-  read: FooterReadAccess
-  update: FooterUpdateAccess
-}
-
-type FooterFields {
-  copyright: FooterFields_copyright
-  navItems: FooterFields_navItems
-  updatedAt: FooterFields_updatedAt
-  createdAt: FooterFields_createdAt
-}
-
-type FooterFields_copyright {
-  create: FooterFields_copyright_Create
-  read: FooterFields_copyright_Read
-  update: FooterFields_copyright_Update
-  delete: FooterFields_copyright_Delete
-}
-
-type FooterFields_copyright_Create {
-  permission: Boolean!
-}
-
-type FooterFields_copyright_Read {
-  permission: Boolean!
-}
-
-type FooterFields_copyright_Update {
-  permission: Boolean!
-}
-
-type FooterFields_copyright_Delete {
-  permission: Boolean!
-}
-
-type FooterFields_navItems {
-  create: FooterFields_navItems_Create
-  read: FooterFields_navItems_Read
-  update: FooterFields_navItems_Update
-  delete: FooterFields_navItems_Delete
-  fields: FooterFields_navItems_Fields
-}
-
-type FooterFields_navItems_Create {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_Read {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_Update {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_Delete {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_Fields {
-  link: FooterFields_navItems_link
-  id: FooterFields_navItems_id
-}
-
-type FooterFields_navItems_link {
-  create: FooterFields_navItems_link_Create
-  read: FooterFields_navItems_link_Read
-  update: FooterFields_navItems_link_Update
-  delete: FooterFields_navItems_link_Delete
-  fields: FooterFields_navItems_link_Fields
-}
-
-type FooterFields_navItems_link_Create {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_Read {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_Update {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_Delete {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_Fields {
-  type: FooterFields_navItems_link_type
-  newTab: FooterFields_navItems_link_newTab
-  reference: FooterFields_navItems_link_reference
-  url: FooterFields_navItems_link_url
-  label: FooterFields_navItems_link_label
-  icon: FooterFields_navItems_link_icon
-}
-
-type FooterFields_navItems_link_type {
-  create: FooterFields_navItems_link_type_Create
-  read: FooterFields_navItems_link_type_Read
-  update: FooterFields_navItems_link_type_Update
-  delete: FooterFields_navItems_link_type_Delete
-}
-
-type FooterFields_navItems_link_type_Create {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_type_Read {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_type_Update {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_type_Delete {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_newTab {
-  create: FooterFields_navItems_link_newTab_Create
-  read: FooterFields_navItems_link_newTab_Read
-  update: FooterFields_navItems_link_newTab_Update
-  delete: FooterFields_navItems_link_newTab_Delete
-}
-
-type FooterFields_navItems_link_newTab_Create {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_newTab_Read {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_newTab_Update {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_newTab_Delete {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_reference {
-  create: FooterFields_navItems_link_reference_Create
-  read: FooterFields_navItems_link_reference_Read
-  update: FooterFields_navItems_link_reference_Update
-  delete: FooterFields_navItems_link_reference_Delete
-}
-
-type FooterFields_navItems_link_reference_Create {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_reference_Read {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_reference_Update {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_reference_Delete {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_url {
-  create: FooterFields_navItems_link_url_Create
-  read: FooterFields_navItems_link_url_Read
-  update: FooterFields_navItems_link_url_Update
-  delete: FooterFields_navItems_link_url_Delete
-}
-
-type FooterFields_navItems_link_url_Create {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_url_Read {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_url_Update {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_url_Delete {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_label {
-  create: FooterFields_navItems_link_label_Create
-  read: FooterFields_navItems_link_label_Read
-  update: FooterFields_navItems_link_label_Update
-  delete: FooterFields_navItems_link_label_Delete
-}
-
-type FooterFields_navItems_link_label_Create {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_label_Read {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_label_Update {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_label_Delete {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_icon {
-  create: FooterFields_navItems_link_icon_Create
-  read: FooterFields_navItems_link_icon_Read
-  update: FooterFields_navItems_link_icon_Update
-  delete: FooterFields_navItems_link_icon_Delete
-}
-
-type FooterFields_navItems_link_icon_Create {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_icon_Read {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_icon_Update {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_link_icon_Delete {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_id {
-  create: FooterFields_navItems_id_Create
-  read: FooterFields_navItems_id_Read
-  update: FooterFields_navItems_id_Update
-  delete: FooterFields_navItems_id_Delete
-}
-
-type FooterFields_navItems_id_Create {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_id_Read {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_id_Update {
-  permission: Boolean!
-}
-
-type FooterFields_navItems_id_Delete {
-  permission: Boolean!
-}
-
-type FooterFields_updatedAt {
-  create: FooterFields_updatedAt_Create
-  read: FooterFields_updatedAt_Read
-  update: FooterFields_updatedAt_Update
-  delete: FooterFields_updatedAt_Delete
-}
-
-type FooterFields_updatedAt_Create {
-  permission: Boolean!
-}
-
-type FooterFields_updatedAt_Read {
-  permission: Boolean!
-}
-
-type FooterFields_updatedAt_Update {
-  permission: Boolean!
-}
-
-type FooterFields_updatedAt_Delete {
-  permission: Boolean!
-}
-
-type FooterFields_createdAt {
-  create: FooterFields_createdAt_Create
-  read: FooterFields_createdAt_Read
-  update: FooterFields_createdAt_Update
-  delete: FooterFields_createdAt_Delete
-}
-
-type FooterFields_createdAt_Create {
-  permission: Boolean!
-}
-
-type FooterFields_createdAt_Read {
-  permission: Boolean!
-}
-
-type FooterFields_createdAt_Update {
-  permission: Boolean!
-}
-
-type FooterFields_createdAt_Delete {
-  permission: Boolean!
-}
-
-type FooterReadAccess {
-  permission: Boolean!
-  where: JSONObject
-}
-
-type FooterUpdateAccess {
-  permission: Boolean!
-  where: JSONObject
-}
-
 type Mutation {
   createPage(data: mutationPageInput!, draft: Boolean): Page
   updatePage(id: String!, autosave: Boolean, data: mutationPageUpdateInput!, draft: Boolean): Page
@@ -10639,9 +11873,9 @@ type Mutation {
   createPayloadPreference(data: mutationPayloadPreferenceInput!, draft: Boolean): PayloadPreference
   updatePayloadPreference(id: String!, autosave: Boolean, data: mutationPayloadPreferenceUpdateInput!, draft: Boolean): PayloadPreference
   deletePayloadPreference(id: String!): PayloadPreference
+  updateFooter(data: mutationFooterInput!, draft: Boolean): Footer
   updateSettings(data: mutationSettingsInput!, draft: Boolean): Settings
   updateHeader(data: mutationHeaderInput!, draft: Boolean): Header
-  updateFooter(data: mutationFooterInput!, draft: Boolean): Footer
 }
 
 input mutationPageInput {
@@ -10789,6 +12023,9 @@ input mutationProductInput {
   publishedOn: String
   relatedProducts: [String]
   categories: [String]
+  new: Boolean
+  sale: Boolean
+  hot: Boolean
   slug: String
   updatedAt: String
   createdAt: String
@@ -10818,6 +12055,9 @@ input mutationProductUpdateInput {
   publishedOn: String
   relatedProducts: [String]
   categories: [String]
+  new: Boolean
+  sale: Boolean
+  hot: Boolean
   slug: String
   updatedAt: String
   createdAt: String
@@ -10872,9 +12112,14 @@ input mutationColorUpdateInput {
 
 input mutationOrderInput {
   orderedBy: String
-  stripePaymentIntentID: String
   total: Float!
   items: [mutationOrder_ItemsInput]
+  shippingTicket: String!
+  shippingZipCode: Float!
+  shippingHouseNumber: Float!
+  shippingComplement: String
+  userSocialId: Float!
+  userPhoneNumber: String!
   updatedAt: String
   createdAt: String
 }
@@ -10883,14 +12128,21 @@ input mutationOrder_ItemsInput {
   product: String
   price: Float
   quantity: Float
+  selectedSize: String!
+  selectedColor: String!
   id: String
 }
 
 input mutationOrderUpdateInput {
   orderedBy: String
-  stripePaymentIntentID: String
   total: Float
   items: [mutationOrderUpdate_ItemsInput]
+  shippingTicket: String
+  shippingZipCode: Float
+  shippingHouseNumber: Float
+  shippingComplement: String
+  userSocialId: Float
+  userPhoneNumber: String
   updatedAt: String
   createdAt: String
 }
@@ -10899,6 +12151,8 @@ input mutationOrderUpdate_ItemsInput {
   product: String
   price: Float
   quantity: Float
+  selectedSize: String!
+  selectedColor: String!
   id: String
 }
 
@@ -10929,11 +12183,19 @@ input mutationMediaUpdateInput {
 }
 
 input mutationUserInput {
-  name: String
-  teste: String
+  name: String!
+  socialId: Float
+  birthdate: String
+  phoneNumber: String
+  address: String
+  houseNumber: Float
+  complement: String
+  neighborhood: String
+  city: String
+  state: String
+  zipCode: Float
   roles: [User_roles_MutationInput]
   purchases: [String]
-  stripeCustomerID: String
   cart: mutationUser_CartInput
   skipSync: Boolean
   updatedAt: String
@@ -10960,15 +12222,25 @@ input mutationUser_CartInput {
 input mutationUser_Cart_ItemsInput {
   product: String
   quantity: Float
+  selectedColor: String
+  selectedSize: String
   id: String
 }
 
 input mutationUserUpdateInput {
   name: String
-  teste: String
+  socialId: Float
+  birthdate: String
+  phoneNumber: String
+  address: String
+  houseNumber: Float
+  complement: String
+  neighborhood: String
+  city: String
+  state: String
+  zipCode: Float
   roles: [UserUpdate_roles_MutationInput]
   purchases: [String]
-  stripeCustomerID: String
   cart: mutationUserUpdate_CartInput
   skipSync: Boolean
   updatedAt: String
@@ -10995,6 +12267,8 @@ input mutationUserUpdate_CartInput {
 input mutationUserUpdate_Cart_ItemsInput {
   product: String
   quantity: Float
+  selectedColor: String
+  selectedSize: String
   id: String
 }
 
@@ -11054,6 +12328,36 @@ enum PayloadPreferenceUpdate_UserRelationshipInputRelationTo {
   users
 }
 
+input mutationFooterInput {
+  copyright: String
+  navItems: [mutationFooter_NavItemsInput]
+  updatedAt: String
+  createdAt: String
+}
+
+input mutationFooter_NavItemsInput {
+  link: mutationFooter_NavItems_LinkInput
+  id: String
+}
+
+input mutationFooter_NavItems_LinkInput {
+  type: String
+  newTab: Boolean
+  reference: Footer_NavItems_Link_ReferenceRelationshipInput
+  url: String
+  label: String!
+  icon: String
+}
+
+input Footer_NavItems_Link_ReferenceRelationshipInput {
+  relationTo: Footer_NavItems_Link_ReferenceRelationshipInputRelationTo
+  value: JSON
+}
+
+enum Footer_NavItems_Link_ReferenceRelationshipInputRelationTo {
+  pages
+}
+
 input mutationSettingsInput {
   productsPage: String
   updatedAt: String
@@ -11086,35 +12390,5 @@ input Header_NavItems_Link_ReferenceRelationshipInput {
 }
 
 enum Header_NavItems_Link_ReferenceRelationshipInputRelationTo {
-  pages
-}
-
-input mutationFooterInput {
-  copyright: String
-  navItems: [mutationFooter_NavItemsInput]
-  updatedAt: String
-  createdAt: String
-}
-
-input mutationFooter_NavItemsInput {
-  link: mutationFooter_NavItems_LinkInput
-  id: String
-}
-
-input mutationFooter_NavItems_LinkInput {
-  type: String
-  newTab: Boolean
-  reference: Footer_NavItems_Link_ReferenceRelationshipInput
-  url: String
-  label: String!
-  icon: String
-}
-
-input Footer_NavItems_Link_ReferenceRelationshipInput {
-  relationTo: Footer_NavItems_Link_ReferenceRelationshipInputRelationTo
-  value: JSON
-}
-
-enum Footer_NavItems_Link_ReferenceRelationshipInputRelationTo {
   pages
 }
