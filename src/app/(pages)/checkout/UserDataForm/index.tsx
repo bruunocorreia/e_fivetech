@@ -95,13 +95,21 @@ export const PersonalDataForm = ({ onNext, onUserDataChange }) => {
     async data => {
       if (user && isEditable) {
         data.socialId = parseSocialId(data.socialId)
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/${user.id}`, {
-          credentials: 'include',
-          method: 'PATCH',
-          body: JSON.stringify(data),
+
+        data.id = user.id
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/update-user`, {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
+          body: JSON.stringify({
+            id: user.id,
+            birthdate: data.birthdate,
+            email: data.email,
+            name: data.name,
+            phoneNumber: data.phoneNumber,
+            socialId: data.socialId,
+          }),
         })
 
         if (response.ok) {

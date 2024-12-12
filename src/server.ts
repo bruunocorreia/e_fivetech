@@ -20,6 +20,7 @@ import PrintEtiquetaFreightRouter from './payload/endpoints/melhor_envio_print_e
 import NotaFiscal from './payload/endpoints/nota_fiscal'
 import NotaFiscalImprimir from './payload/endpoints/nota_fiscal_imprimir'
 import orderHandler from './payload/endpoints/order-handler'
+import userHandler from './payload/endpoints/user-handler'
 
 dotenv.config({
   path: path.resolve(__dirname, '../.env'),
@@ -45,6 +46,7 @@ app.use('/api', NotaFiscalImprimir)
 app.use('/api', processPayment)
 app.use('/api', CheckProcessPayment)
 app.use('/api', mediaHandler)
+app.use('/api', userHandler)
 
 const start = async (): Promise<void> => {
   await payload.init({

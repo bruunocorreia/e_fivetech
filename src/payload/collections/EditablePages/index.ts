@@ -74,6 +74,7 @@ export const EditablePages: CollectionConfig = {
       required: false,
       defaultValue: [],
       blocks: [Archive],
+      admin: { hidden: true },
     },
     slugField(),
   ],
