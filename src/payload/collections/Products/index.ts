@@ -107,6 +107,8 @@ const Products: CollectionConfig = {
         { value: 'PP', label: 'PP' },
       ],
       hasMany: true,
+      admin: { hidden: true },
+      defaultValue: ['GG', 'G', 'M', 'P', 'PP'], // Seleciona todos os valores por padrão
     },
     {
       name: 'description',
