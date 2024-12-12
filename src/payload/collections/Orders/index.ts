@@ -42,7 +42,6 @@ export const Orders: CollectionConfig = {
       type: 'number',
       required: true,
       min: 0,
-
     },
     {
       name: 'shipped',

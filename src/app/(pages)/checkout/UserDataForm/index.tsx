@@ -95,7 +95,7 @@ export const PersonalDataForm = ({ onNext, onUserDataChange }) => {
     async data => {
       if (user && isEditable) {
         data.socialId = parseSocialId(data.socialId)
-        
+
         data.id = user.id
         const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/update-user`, {
           method: 'POST',
@@ -108,7 +108,7 @@ export const PersonalDataForm = ({ onNext, onUserDataChange }) => {
             email: data.email,
             name: data.name,
             phoneNumber: data.phoneNumber,
-            socialId: data.socialId
+            socialId: data.socialId,
           }),
         })
 
