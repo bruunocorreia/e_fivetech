@@ -14,9 +14,8 @@ export const Orders: CollectionConfig = {
     useAsTitle: 'createdAt',
     description: 'Pedidos',
     defaultColumns: ['createdAt', 'orderedBy'],
-    // preview: doc => `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/orders/${doc.id}`,
     components: {
-      BeforeListTable: [ExportButton], // Adicione o componente aqui
+      BeforeListTable: [ExportButton],
     },
   },
   hooks: {
@@ -33,6 +32,7 @@ export const Orders: CollectionConfig = {
       name: 'orderedBy',
       type: 'relationship',
       relationTo: 'users',
+      admin: { readOnly: true },
       hooks: {
         beforeChange: [populateOrderedBy],
       },
@@ -42,6 +42,7 @@ export const Orders: CollectionConfig = {
       type: 'number',
       required: true,
       min: 0,
+      admin: { readOnly: true },
     },
     {
       name: 'shipped',
@@ -56,73 +57,84 @@ export const Orders: CollectionConfig = {
     {
       name: 'items',
       type: 'array',
+      admin: { readOnly: true },
       fields: [
         {
           name: 'product',
           type: 'relationship',
           relationTo: 'products',
           required: true,
+          admin: { readOnly: true },
         },
         {
           name: 'price',
           type: 'number',
           min: 0,
+          admin: { readOnly: true },
         },
         {
           name: 'quantity',
           type: 'number',
           min: 0,
+          admin: { readOnly: true },
         },
         {
           name: 'selectedSize',
           label: 'Tamanho',
           type: 'text',
           required: true,
+          admin: { readOnly: true },
         },
         {
           name: 'selectedColor',
           label: 'Cor',
           type: 'text',
           required: true,
+          admin: { readOnly: true },
         },
       ],
     },
-
     {
       name: 'shippingTicket',
       label: 'Etiqueta de Envio',
       type: 'text',
       required: true,
+      admin: { readOnly: true },
     },
     {
       name: 'shippingZipCode',
       label: 'CEP',
       type: 'number',
       required: true,
+      admin: { readOnly: true },
     },
     {
       name: 'shippingHouseNumber',
       label: 'Número',
       type: 'number',
       required: true,
+      admin: { readOnly: true },
     },
     {
       name: 'shippingComplement',
       label: 'Complemento',
       type: 'text',
       required: false,
+      admin: { readOnly: true },
     },
     {
       name: 'userSocialId',
       label: 'CPF',
       type: 'number',
       required: true,
+      admin: { readOnly: true },
     },
     {
       name: 'userPhoneNumber',
       label: 'Telefone',
       type: 'text',
       required: true,
+      admin: { readOnly: true },
     },
   ],
 }
