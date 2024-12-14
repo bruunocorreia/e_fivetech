@@ -28,18 +28,36 @@ const Products: CollectionConfig = {
         } else if (!data.sale) {
           data.newprice = null
         } else {
-          data.newprice = originalDoc.newprice
+          data.newprice = originalDoc?.newprice || null
         }
       },
     ],
     beforeChange: [
       ({ data, originalDoc }) => {
+        // Cálculo do newprice
         if (data.sale && data.price && data.discountPercentage) {
           data.newprice = data.price - (data.price * data.discountPercentage) / 100
         } else if (!data.sale) {
           data.newprice = 1
         } else {
-          data.newprice = originalDoc.newprice
+          data.newprice = originalDoc?.newprice || null
+        }
+
+        // Remover tamanhos sem estoque
+        if (data.stock && Array.isArray(data.sizes)) {
+          data.sizes = data.sizes.filter(size => {
+            const stockValue = data.stock[size]
+            return stockValue && stockValue > 0
+          })
+
+          // Adicionar tamanhos com estoque > 0 caso ainda não estejam no array sizes
+          const allSizes = ['PP', 'P', 'M', 'G', 'GG']
+          allSizes.forEach(size => {
+            const stockValue = data.stock[size]
+            if (stockValue && stockValue > 0 && !data.sizes.includes(size)) {
+              data.sizes.push(size)
+            }
+          })
         }
       },
     ],
