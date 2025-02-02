@@ -1,0 +1,39 @@
+.custom-currency-field {
+    margin-bottom: 1rem;
+  
+    &__input-wrapper {
+      display: flex;
+      align-items: center;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 0.5rem;
+      background-color: #fff;
+  
+      // Caso queira remover qualquer efeito de foco no container
+      &:focus-within {
+        border-color: #ccc;
+        box-shadow: none;
+      }
+    }
+  
+    &__currency-symbol {
+      margin-right: 0.5rem;
+      font-size: 1rem;
+      color: #333;
+    }
+  
+    &__input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      color: #333;
+  
+      // Removendo a borda preta no estado de foco
+      &:focus {
+        outline: none;
+        box-shadow: none;
+      }
+    }
+  }
+  

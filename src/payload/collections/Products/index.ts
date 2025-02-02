@@ -5,6 +5,7 @@ import { ConditionalText } from '../../fields/conditionalText'
 import { admins } from '../../access/admins'
 import { revalidateProduct } from './hooks/revalidateProduct'
 import { slugField } from '../../fields/slug'
+import CurrencyField from '../../fields/CurrencyField';
 
 const Products: CollectionConfig = {
   slug: 'products',
@@ -170,6 +171,9 @@ const Products: CollectionConfig = {
       required: true,
       admin: {
         step: 20.0,
+        components: {
+          Field: CurrencyField,
+        },
       },
     },
     {
