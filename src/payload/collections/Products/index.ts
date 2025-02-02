@@ -11,12 +11,23 @@ const Products: CollectionConfig = {
   labels: { plural: 'Produtos', singular: 'Produto' },
   admin: {
     useAsTitle: 'title',
-    preview: doc => {
+    preview: (doc) => {
       return `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/api/preview?url=${encodeURIComponent(
         `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/products/${doc.slug}`,
       )}&secret=${process.env.PAYLOAD_PUBLIC_DRAFT_SECRET}`
     },
-    defaultColumns: ['title', 'price', 'discountPercentage', '_status'],
+    // Exibe cada tamanho do estoque em sua própria coluna na table list
+    defaultColumns: [
+      'title',
+      'price',
+      'discountPercentage',
+      'stockPP',
+      'stockP',
+      'stockM',
+      'stockG',
+      'stockGG',
+      '_status'
+    ],
   },
   hooks: {
     afterChange: [revalidateProduct],
@@ -42,17 +53,24 @@ const Products: CollectionConfig = {
           data.newprice = originalDoc?.newprice || null
         }
 
-        // Remover tamanhos sem estoque
-        if (data.stock && Array.isArray(data.sizes)) {
+        // Atualiza o array "sizes" com base nos valores de estoque de cada tamanho
+        const sizesMapping = {
+          PP: data.stockPP,
+          P: data.stockP,
+          M: data.stockM,
+          G: data.stockG,
+          GG: data.stockGG,
+        }
+
+        if (sizesMapping && Array.isArray(data.sizes)) {
           data.sizes = data.sizes.filter(size => {
-            const stockValue = data.stock[size]
+            const stockValue = sizesMapping[size]
             return stockValue && stockValue > 0
           })
 
-          // Adicionar tamanhos com estoque > 0 caso ainda não estejam no array sizes
           const allSizes = ['PP', 'P', 'M', 'G', 'GG']
           allSizes.forEach(size => {
-            const stockValue = data.stock[size]
+            const stockValue = sizesMapping[size]
             if (stockValue && stockValue > 0 && !data.sizes.includes(size)) {
               data.sizes.push(size)
             }
@@ -175,67 +193,61 @@ const Products: CollectionConfig = {
         },
       },
     },
+    // Os campos de estoque agora são individuais, em vez de um group
     {
-      name: 'stock',
-      label: 'Estoque por Tamanho',
-      type: 'group',
-      fields: [
-        {
-          name: 'PP',
-          label: 'PP',
-          type: 'number',
-          required: false,
-          admin: {
-            step: 1,
-          },
-          defaultValue: 0,
-          validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
-        },
-        {
-          name: 'P',
-          label: 'P',
-          type: 'number',
-          required: false,
-          admin: {
-            step: 1,
-          },
-          defaultValue: 0,
-          validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
-        },
-        {
-          name: 'M',
-          label: 'M',
-          type: 'number',
-          required: false,
-          admin: {
-            step: 1,
-          },
-          defaultValue: 0,
-          validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
-        },
-        {
-          name: 'G',
-          label: 'G',
-          type: 'number',
-          required: false,
-          admin: {
-            step: 1,
-          },
-          defaultValue: 0,
-          validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
-        },
-        {
-          name: 'GG',
-          label: 'GG',
-          type: 'number',
-          required: false,
-          admin: {
-            step: 1,
-          },
-          defaultValue: 0,
-          validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
-        },
-      ],
+      name: 'stockPP',
+      label: 'Estoque PP',
+      type: 'number',
+      required: false,
+      admin: {
+        step: 1,
+      },
+      defaultValue: 0,
+      validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
+    },
+    {
+      name: 'stockP',
+      label: 'Estoque P',
+      type: 'number',
+      required: false,
+      admin: {
+        step: 1,
+      },
+      defaultValue: 0,
+      validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
+    },
+    {
+      name: 'stockM',
+      label: 'Estoque M',
+      type: 'number',
+      required: false,
+      admin: {
+        step: 1,
+      },
+      defaultValue: 0,
+      validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
+    },
+    {
+      name: 'stockG',
+      label: 'Estoque G',
+      type: 'number',
+      required: false,
+      admin: {
+        step: 1,
+      },
+      defaultValue: 0,
+      validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
+    },
+    {
+      name: 'stockGG',
+      label: 'Estoque GG',
+      type: 'number',
+      required: false,
+      admin: {
+        step: 1,
+      },
+      defaultValue: 0,
+      validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
     },
     {
       name: 'photos',
@@ -268,13 +280,9 @@ const Products: CollectionConfig = {
       label: 'Produtos Relacionados',
       relationTo: 'products',
       hasMany: true,
-      filterOptions: ({ id }) => {
-        return {
-          id: {
-            not_in: [id],
-          },
-        }
-      },
+      filterOptions: ({ id }) => ({
+        id: { not_in: [id] },
+      }),
     },
     slugField(),
   ],

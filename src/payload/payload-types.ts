@@ -195,14 +195,12 @@ export interface Product {
   description: string;
   composition: string;
   price: number;
-  stock: {
-    PP: number;
-    P: number;
-    M: number;
-    G: number;
-    GG: number;
-  };
   discountPercentage?: number | null;
+  stockPP?: number | null;
+  stockP?: number | null;
+  stockM?: number | null;
+  stockG?: number | null;
+  stockGG?: number | null;
   photos?:
     | {
         photo?: string | Media | null;
