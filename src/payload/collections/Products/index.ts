@@ -6,6 +6,8 @@ import { admins } from '../../access/admins'
 import { revalidateProduct } from './hooks/revalidateProduct'
 import { slugField } from '../../fields/slug'
 import CurrencyField from '../../fields/CurrencyField';
+import formatedPercentage from '../../fields/percentageField';
+import PercentageField from '../../fields/percentageField'
 
 const Products: CollectionConfig = {
   slug: 'products',
@@ -183,6 +185,9 @@ const Products: CollectionConfig = {
       admin: {
         step: 1.0,
         condition: (_, siblingData) => siblingData?.sale === true,
+        components: {
+          Field: PercentageField,
+        },
       },
       required: true,
     },
