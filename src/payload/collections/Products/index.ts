@@ -184,7 +184,7 @@ const Products: CollectionConfig = {
           name: 'PP',
           label: 'PP',
           type: 'number',
-          required: true,
+          required: false,
           admin: {
             step: 1,
           },
@@ -195,7 +195,7 @@ const Products: CollectionConfig = {
           name: 'P',
           label: 'P',
           type: 'number',
-          required: true,
+          required: false,
           admin: {
             step: 1,
           },
@@ -206,7 +206,7 @@ const Products: CollectionConfig = {
           name: 'M',
           label: 'M',
           type: 'number',
-          required: true,
+          required: false,
           admin: {
             step: 1,
           },
@@ -217,7 +217,7 @@ const Products: CollectionConfig = {
           name: 'G',
           label: 'G',
           type: 'number',
-          required: true,
+          required: false,
           admin: {
             step: 1,
           },
@@ -228,7 +228,7 @@ const Products: CollectionConfig = {
           name: 'GG',
           label: 'GG',
           type: 'number',
-          required: true,
+          required: false,
           admin: {
             step: 1,
           },
