@@ -12,7 +12,9 @@ export const LowImpactHero: React.FC<Page['hero']> = ({ media }) => {
   return (
     <div className={classes.content}>
       <Fragment>
-        <DefaultMedia resources={mainMedia} priority />
+       <div className={classes.imageContainer}>
+        <DefaultMedia resources={mainMedia} priority />]
+        </div>
       </Fragment>
     </div>
   )

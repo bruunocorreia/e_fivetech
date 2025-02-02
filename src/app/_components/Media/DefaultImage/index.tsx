@@ -37,6 +37,8 @@ export const DefaultImage: React.FC<MediaProps> = props => {
 
   const src = filename ? `${process.env.NEXT_PUBLIC_SERVER_URL}/media/${filename}` : ''
 
+  console.log(imageResource, "kk")
+
   return (
     <div>
       <NextImage
