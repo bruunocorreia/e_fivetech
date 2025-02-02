@@ -11,6 +11,7 @@ export const hero: Field = {
       label: 'Type',
       required: true,
       defaultValue: 'lowImpact',
+      admin: { hidden: true },
       options: [
         {
           label: 'None',

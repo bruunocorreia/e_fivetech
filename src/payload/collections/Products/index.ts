@@ -1,11 +1,10 @@
 // src/collections/Products/index.ts
 
 import type { CollectionConfig } from 'payload/types'
-
-import { admins } from '../../access/admins'
 import { ConditionalText } from '../../fields/conditionalText'
-import { slugField } from '../../fields/slug'
+import { admins } from '../../access/admins'
 import { revalidateProduct } from './hooks/revalidateProduct'
+import { slugField } from '../../fields/slug'
 
 const Products: CollectionConfig = {
   slug: 'products',
@@ -156,6 +155,27 @@ const Products: CollectionConfig = {
       },
     },
     {
+      name: 'discountPercentage',
+      label: 'Percentual de Desconto',
+      type: 'number',
+      admin: {
+        step: 1.0,
+        condition: (_, siblingData) => siblingData?.sale === true,
+      },
+      required: true,
+    },
+    {
+      name: 'newprice',
+      label: 'Preço após desconto',
+      type: 'ui',
+      admin: {
+        condition: (_, siblingData) => siblingData?.sale === true,
+        components: {
+          Field: ConditionalText,
+        },
+      },
+    },
+    {
       name: 'stock',
       label: 'Estoque por Tamanho',
       type: 'group',
@@ -216,27 +236,6 @@ const Products: CollectionConfig = {
           validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
         },
       ],
-    },
-    {
-      name: 'discountPercentage',
-      label: 'Percentual de Desconto',
-      type: 'number',
-      admin: {
-        step: 1.0,
-        condition: (_, siblingData) => siblingData?.sale === true,
-      },
-      required: true,
-    },
-    {
-      name: 'newprice',
-      label: 'Preço após desconto',
-      type: 'ui',
-      admin: {
-        condition: (_, siblingData) => siblingData?.sale === true,
-        components: {
-          Field: ConditionalText,
-        },
-      },
     },
     {
       name: 'photos',
