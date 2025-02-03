@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 
 import { Page } from '../../../payload/payload-types'
 import { Gutter } from '../../_components/Gutter'
@@ -8,14 +8,19 @@ import RichText from '../../_components/RichText'
 import classes from './index.module.scss'
 
 export const LowImpactHero: React.FC<Page['hero']> = ({ media }) => {
+  // Se media for null ou undefined, não renderiza nada
+  if (!media) {
+    return null
+  }
+
   const mainMedia = [media]
+  console.log(mainMedia, "debuf")
+  
   return (
     <div className={classes.content}>
-      <Fragment>
-       <div className={classes.imageContainer}>
-        <DefaultMedia resources={mainMedia} priority />]
-        </div>
-      </Fragment>
+      <div className={classes.imageContainer}>
+        <DefaultMedia resources={mainMedia} priority />
+      </div>
     </div>
   )
 }

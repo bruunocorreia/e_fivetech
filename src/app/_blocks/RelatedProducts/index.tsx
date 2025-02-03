@@ -27,7 +27,6 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = props => {
           {docs?.map(doc => {
             if (typeof doc === 'string') return null
             // Verifique se o preço e o desconto estão corretos
-            console.log('Preço: ', doc.price, 'Desconto: ', doc.discountPercentage)
 
             return (
               <RelatedProductsCard

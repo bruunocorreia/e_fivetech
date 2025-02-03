@@ -121,10 +121,10 @@ export const HighImpactImage: React.FC<
     }, [isPreview])
 
     useEffect(() => {
-      console.log(`Zoom: ${zoom}, Position: (${position.x}, ${position.y})`)
+      //console.log(`Zoom: ${zoom}, Position: (${position.x}, ${position.y})`)
     }, [zoom, position.x, position.y])
 
-    console.log(resource)
+    //console.log(resource)
 
     const handleSave = async () => {
       try {
@@ -147,7 +147,7 @@ export const HighImpactImage: React.FC<
 
         const result = await response.json()
         alert('Imagem Atualizada com sucesso!')
-        console.log('Update response:', result)
+        //console.log('Update response:', result)
       } catch (error) {
         console.error('Error updating collection:', error)
         alert('Falha ao salvar a imagem')

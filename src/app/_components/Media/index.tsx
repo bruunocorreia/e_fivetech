@@ -9,7 +9,7 @@ import { Video } from './Video'
 export const Media: React.FC<Props> = props => {
   const { className, resources, htmlElement = 'div' } = props
 
-  console.log(resources)
+  //console.log(resources)
 
   const isVideo = typeof resources !== 'string' && resources[0]?.mimeType?.includes('video')
   const Tag = (htmlElement as ElementType) || Fragment

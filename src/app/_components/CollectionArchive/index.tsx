@@ -196,7 +196,7 @@ export const CollectionArchive: React.FC<Props> = props => {
       )
 
       // Log the query to console
-      console.log('Query string being sent:', searchQuery)
+      //console.log('Query string being sent:', searchQuery)
 
       try {
         const req = await fetch(

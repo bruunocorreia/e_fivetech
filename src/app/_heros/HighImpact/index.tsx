@@ -32,7 +32,6 @@ export const HighImpactHero: React.FC<Page['hero'] & { isPreview?: boolean }> = 
 
   const metaImage = carrossel.map(group => group.medias.map(subItem => subItem.media))
 
-  console.log(metaImage)
 
   return (
     <>
