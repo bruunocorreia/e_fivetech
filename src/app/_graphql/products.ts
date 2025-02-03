@@ -1,20 +1,14 @@
 import { ARCHIVE_BLOCK, CALL_TO_ACTION, CONTENT, MEDIA_BLOCK } from './blocks'
+
+import { MEDIA_FIELDS } from './media'
 import { PRODUCT_CATEGORIES } from './categories'
 import { PRODUCT_COLORS } from './colors'
-import { MEDIA_FIELDS } from './media'
 
 export const PRODUCTS = `
   query Products {
     Products(limit: 300) {
       docs {
         slug
-        stock {
-          PP
-          P
-          M
-          G
-          GG
-        }
       }
     }
   }
@@ -26,13 +20,6 @@ export const PRODUCT = `
       docs {
         id
         title
-        stock {
-          PP
-          P
-          M
-          G
-          GG
-        }
         ${PRODUCT_CATEGORIES}
         price
         discountPercentage
