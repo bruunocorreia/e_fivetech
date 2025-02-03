@@ -1,8 +1,10 @@
 @use '../../_css/queries.scss' as *;
+
 .cartLink {
   cursor: pointer;
   display: flex;
   align-items: center;
+  position: relative; // Adicionado para criar um contexto de posicionamento
 
   .icon {
     max-width: 25px;
@@ -11,21 +13,12 @@
 }
 
 .quantity {
-  margin-left: 2px;
-  
-  @include large-break {
-    font-size: 14px;
-  }
-
-  @include mid-break {
-    font-size: 10px;
-  }
-
-  @include small-break {
-    font-size: 8px;
-  }
-
-  @include extra-small-break {
-    font-size: 6px;
-  }
+  position: absolute;      // Posiciona a quantidade de forma absoluta
+  top: 5px;               // Ajuste conforme necessário para centralizar verticalmente
+  right: -15px;            // Ajuste conforme necessário para posicionar horizontalmente
+  font-size: 10px;
+  background-color: white; // Opcional: define uma cor de fundo para o badge
+  padding: 2px 4px;        // Opcional: adiciona um espaçamento interno para dar o formato de badge
+  border-radius: 50%;      // Opcional: arredonda as bordas para um visual de badge
+  line-height: 1;          // Garante que o conteúdo do badge não expanda sua altura
 }
