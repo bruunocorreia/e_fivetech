@@ -1,20 +1,14 @@
-.sizeLabel {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: bold;
-}
-
 .sizeOptions {
   display: flex;
   gap: 5px; /* Espaço entre os botões */
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
 }
 
 .sizeButton {
-  padding:10px 18px;
+  padding: 10px 18px;
   border: 1px solid #ccc;
   background-color: #fff;
-  border-radius: 1px; /* Bordas arredondadas */
+  border-radius: 1px;
   cursor: pointer;
   font-size: 12px;
   align-items: center;
@@ -24,10 +18,21 @@
   &:hover,
   &.selectedSize {
     border-color: #333;
-    background-color: #f7f7f7; /* Cor de fundo ao passar o mouse e para tamanho selecionado */
+    background-color: #f7f7f7; /* Cor de fundo ao passar o mouse e para o botão selecionado */
   }
 }
 
 .selectedSize {
-  font-weight: bold; /* Texto em negrito para o tamanho selecionado */
+  font-weight: bold;
+}
+
+/* Classe aplicada para botões que estão desabilitados */
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Classe para aplicar risco no texto */
+.strike {
+  text-decoration: line-through;
 }

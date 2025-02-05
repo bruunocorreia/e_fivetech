@@ -1,14 +1,13 @@
 'use client'
 
+import { Color, Product } from '../../../payload/payload-types'
 import React, { useState } from 'react'
 
-import { Color, Product } from '../../../payload/payload-types'
 import { AddToCartButton } from '../../_components/AddToCartButton'
 import { ColorSelectButton } from '../../_components/ColorSelectButton'
 import { Gutter } from '../../_components/Gutter'
 import { Media } from '../../_components/Media'
 import { SizePicker } from '../../_components/SizePicker'
-
 import classes from './index.module.scss'
 
 const orderSizes = sizes => {
@@ -93,7 +92,6 @@ export const ProductHero: React.FC<{ product: Product }> = ({ product }) => {
         <div className={classes.description}>
           <p>{description}</p>
         </div>
-
         <SizePicker sizes={orderSizes(sizes)} onSizeSelect={handleSizeSelection} />
 
         <div className={classes.cartButton}>
