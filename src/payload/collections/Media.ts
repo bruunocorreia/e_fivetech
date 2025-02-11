@@ -15,18 +15,27 @@ export const Media: CollectionConfig = {
       type: 'number',
       required: false,
       defaultValue: 0,
+      admin: {
+        hidden: true,
+      },
     },
     {
       name: 'Y_position',
       type: 'number',
       required: false,
       defaultValue: 0,
+      admin: {
+        hidden: true,
+      },
     },
     {
       name: 'zoom',
       type: 'number',
       required: false,
       defaultValue: 1,
+      admin: {
+        hidden: true,
+      },
     },
     {
       name: 'alt',

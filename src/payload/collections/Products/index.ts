@@ -1,20 +1,20 @@
 // src/collections/Products/index.ts
 
 import type { CollectionConfig } from 'payload/types'
-import { ConditionalText } from '../../fields/conditionalText'
+
 import { admins } from '../../access/admins'
-import { revalidateProduct } from './hooks/revalidateProduct'
-import { slugField } from '../../fields/slug'
-import CurrencyField from '../../fields/CurrencyField';
-import formatedPercentage from '../../fields/percentageField';
+import { ConditionalText } from '../../fields/conditionalText'
+import CurrencyField from '../../fields/CurrencyField'
 import PercentageField from '../../fields/percentageField'
+import { slugField } from '../../fields/slug'
+import { revalidateProduct } from './hooks/revalidateProduct'
 
 const Products: CollectionConfig = {
   slug: 'products',
   labels: { plural: 'Produtos', singular: 'Produto' },
   admin: {
     useAsTitle: 'title',
-    preview: (doc) => {
+    preview: doc => {
       return `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/api/preview?url=${encodeURIComponent(
         `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/products/${doc.slug}`,
       )}&secret=${process.env.PAYLOAD_PUBLIC_DRAFT_SECRET}`
@@ -29,7 +29,7 @@ const Products: CollectionConfig = {
       'stockM',
       'stockG',
       'stockGG',
-      '_status'
+      '_status',
     ],
   },
   hooks: {

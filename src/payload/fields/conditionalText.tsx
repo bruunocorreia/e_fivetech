@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Props } from 'payload/components/fields/Text'
 import { Label, TextInput, useFormFields } from 'payload/components/forms'
 
-import './styles.scss';
-const baseClass = 'custom-currency-field';
+import './styles.scss'
+const baseClass = 'custom-currency-field'
 export const ConditionalText: React.FC<Props> = props => {
   const { label } = props
   const [value, setValue] = useState<string>('')
@@ -18,7 +18,7 @@ export const ConditionalText: React.FC<Props> = props => {
       // Formata o valor para notação contábil (ex: R$ 1.234,56)
       const formattedPrice = discountedPrice.toLocaleString('pt-BR', {
         style: 'currency',
-        currency: 'BRL'
+        currency: 'BRL',
       })
       setValue(formattedPrice)
     } else {
@@ -33,12 +33,7 @@ export const ConditionalText: React.FC<Props> = props => {
   return (
     <div style={{ marginBottom: '2rem' }}>
       <Label label={label} />
-      <TextInput
-        value={value || ''}
-        name="uiField"
-        path="uiField"
-        onChange={concatFunction}
-      />
+      <TextInput value={value || ''} name="uiField" path="uiField" onChange={concatFunction} />
     </div>
   )
 }

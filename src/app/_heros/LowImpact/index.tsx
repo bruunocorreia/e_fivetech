@@ -14,8 +14,8 @@ export const LowImpactHero: React.FC<Page['hero']> = ({ media }) => {
   }
 
   const mainMedia = [media]
-  console.log(mainMedia, "debuf")
-  
+  console.log(mainMedia, 'debuf')
+
   return (
     <div className={classes.content}>
       <div className={classes.imageContainer}>

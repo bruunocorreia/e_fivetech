@@ -31,8 +31,6 @@ export const ArchiveBlock: React.FC<
 
   const { categoryFilters, subCategoryFilters } = useFilter()
 
-
-
   return (
     <div id={`block-${id}`} className={classes.archiveBlock}>
       <CollectionArchive

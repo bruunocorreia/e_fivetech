@@ -9,15 +9,15 @@ import classes from './index.module.scss'
   A lista completa de tamanhos é definida internamente como "allSizes".
 */
 export const SizePicker = ({ sizes: availableSizes, onSizeSelect }) => {
-  const allSizes = ['PP', 'P', 'M', 'G', 'GG']  // Lista completa de opções
+  const allSizes = ['PP', 'P', 'M', 'G', 'GG'] // Lista completa de opções
   const [selectedSize, setSelectedSize] = useState(null)
-  
+
   const handleSizeSelection = (size, isAvailable) => {
-    if (!isAvailable) return  // Não faz nada se o tamanho não estiver disponível
+    if (!isAvailable) return // Não faz nada se o tamanho não estiver disponível
     setSelectedSize(size)
     onSizeSelect(size)
   }
-  
+
   return (
     <div>
       <div className={classes.sizeOptions}>
@@ -34,9 +34,7 @@ export const SizePicker = ({ sizes: availableSizes, onSizeSelect }) => {
                 ${!isAvailable ? classes.disabled : ''}
               `}
             >
-              <span className={!isAvailable ? classes.strike : ''}>
-                {size}
-              </span>
+              <span className={!isAvailable ? classes.strike : ''}>{size}</span>
             </button>
           )
         })}

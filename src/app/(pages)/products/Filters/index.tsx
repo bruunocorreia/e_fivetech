@@ -50,8 +50,6 @@ const FilterMenu = ({ categories, colors, page_name, preselectedCategory = null 
     setSearchTerm,
   } = useFilter()
 
-
-
   const [searchValue, setSearchValue] = useState(searchTerm || '')
   const [selectedSort, setSelectedSort] = useState(sort)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)

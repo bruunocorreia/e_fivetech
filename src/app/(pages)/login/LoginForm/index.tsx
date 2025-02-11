@@ -45,7 +45,6 @@ const LoginForm: React.FC = () => {
 
   const onSubmit = useCallback(
     async (data: FormData) => {
-
       try {
         await login(data)
         if (redirect?.current) router.push(redirect.current as string)
@@ -90,7 +89,6 @@ const LoginForm: React.FC = () => {
 
   const handleCodeSubmit = useCallback(
     async (code: string) => {
-
       if (code === generatedCode) {
         setResetPasswordForm(true)
       } else {
@@ -106,8 +104,6 @@ const LoginForm: React.FC = () => {
   }, [reset])
 
   const handleResetPasswordSubmit = useCallback(async () => {
-
-
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/forgot-password`,
       {
@@ -120,7 +116,6 @@ const LoginForm: React.FC = () => {
     )
 
     const responseData = await response.json()
-
 
     if (response.ok) {
       setTimeout(() => router.push('/login?resetSuccess=true'), 3000)
