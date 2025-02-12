@@ -210,6 +210,7 @@ const Products: CollectionConfig = {
       required: false,
       admin: {
         step: 1,
+        readOnly: true,
       },
       defaultValue: 0,
       validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
@@ -221,6 +222,7 @@ const Products: CollectionConfig = {
       required: false,
       admin: {
         step: 1,
+        readOnly: true,
       },
       defaultValue: 0,
       validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
@@ -232,6 +234,7 @@ const Products: CollectionConfig = {
       required: false,
       admin: {
         step: 1,
+        readOnly: true,
       },
       defaultValue: 0,
       validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
@@ -243,6 +246,7 @@ const Products: CollectionConfig = {
       required: false,
       admin: {
         step: 1,
+        readOnly: true,
       },
       defaultValue: 0,
       validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
@@ -254,9 +258,55 @@ const Products: CollectionConfig = {
       required: false,
       admin: {
         step: 1,
+        readOnly: true,
       },
       defaultValue: 0,
       validate: value => (value >= 0 ? true : 'O estoque não pode ser negativo.'),
+    },
+    {
+      name: 'AdicionePP',
+      label: 'Adicione PP',
+      type: 'number',
+      required: false,
+      admin: {
+        step: 1,
+      },
+    },
+    {
+      name: 'AdicioneP',
+      label: 'Adicione P',
+      type: 'number',
+      required: false,
+      admin: {
+        step: 1,
+      },
+    },
+    {
+      name: 'AdicioneM',
+      label: 'Adicione M',
+      type: 'number',
+      required: false,
+      admin: {
+        step: 1,
+      },
+    },
+    {
+      name: 'AdicioneG',
+      label: 'Adicione G',
+      type: 'number',
+      required: false,
+      admin: {
+        step: 1,
+      },
+    },
+    {
+      name: 'AdicioneGG',
+      label: 'Adicione GG',
+      type: 'number',
+      required: false,
+      admin: {
+        step: 1,
+      },
     },
     {
       name: 'photos',
