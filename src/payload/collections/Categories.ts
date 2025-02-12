@@ -14,13 +14,13 @@ const Categories: CollectionConfig = {
   fields: [
     {
       name: 'title',
-      label: 'Título',
+      label: 'Categoria',
       type: 'text',
       required: true,
     },
     {
       name: 'subtitle',
-      label: 'Sub Título',
+      label: 'Sub Categoria',
       type: 'text',
       required: true,
     },
@@ -29,6 +29,7 @@ const Categories: CollectionConfig = {
       name: 'category',
       label: 'Categoria',
       type: 'text',
+      hidden: true,
       admin: {
         condition: () => {
           return false
