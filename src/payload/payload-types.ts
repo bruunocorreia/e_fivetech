@@ -201,6 +201,11 @@ export interface Product {
   stockM?: number | null;
   stockG?: number | null;
   stockGG?: number | null;
+  AdicionePP?: number | null;
+  AdicioneP?: number | null;
+  AdicioneM?: number | null;
+  AdicioneG?: number | null;
+  AdicioneGG?: number | null;
   photos?:
     | {
         photo?: string | Media | null;
